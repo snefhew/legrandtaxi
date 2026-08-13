@@ -541,6 +541,32 @@
         <p class="confirm-micro">Je bericht staat klaar in WhatsApp. Druk daar op versturen, dan bevestigt <strong>Michell</strong> je rit persoonlijk, meestal binnen enkele minuten. Geen callcenter, geen wachtrij.</p>
         <div class="confirm-actions">
           <a class="btn block" id="waSendBtn" href="#" target="_blank" rel="noopener">Open WhatsApp en verstuur</a>
+
+          <!--
+            Email fallback via Web3Forms (free, ~250 submissions/month, plain
+            HTML POST, no server/JS required to deliver the email itself).
+
+            MANUAL STEP NEEDED: replace PASTE_WEB3FORMS_ACCESS_KEY_HERE below
+            with a real access key. To get one: go to https://web3forms.com,
+            enter Michell's email address, and a free access key is emailed
+            immediately (no account/password to create). Paste it as the
+            value="" of the access_key input right below. Until that's done,
+            this button will show a "verzenden mislukt" style response from
+            Web3Forms when clicked - WhatsApp above keeps working regardless.
+          -->
+          <form id="emailFallbackForm" action="https://api.web3forms.com/submit" method="POST" target="_blank">
+            <input type="hidden" name="access_key" value="PASTE_WEB3FORMS_ACCESS_KEY_HERE">
+            <input type="hidden" name="subject" id="efSubject" value="Nieuwe boeking via Le Grand Taxi">
+            <!-- honeypot: real visitors never see or fill this; bots often do, Web3Forms silently drops the submission -->
+            <input type="checkbox" name="botcheck" style="display:none;" tabindex="-1" autocomplete="off" aria-hidden="true">
+            <input type="hidden" name="Naam" id="efNaam">
+            <input type="hidden" name="Telefoon" id="efTelefoon">
+            <input type="hidden" name="Route" id="efRoute">
+            <input type="hidden" name="Datum en tijd" id="efWanneer">
+            <input type="hidden" name="Prijs" id="efPrijs">
+            <button class="btn ghost block" type="submit">Liever per e-mail?</button>
+          </form>
+
           <a class="confirm-secondary" href="tel:+31685639077">Liever bellen? 06 85 63 90 77</a>
           <button class="confirm-secondary" id="newBookingBtn" type="button" style="background:none;border:none;cursor:pointer;font-family:inherit;">Nieuwe boeking</button>
         </div>
@@ -568,13 +594,36 @@
   /* ============================================================
      SMART PRICING ENGINE
      PDOK Locatieserver (Dutch national geocoder, free, no API key,
-     CORS-enabled) resolves any NL address to coordinates. Distance
-     from Schiphol is computed via haversine (straight-line), then
-     run through a formula calibrated by least-squares regression
-     against the 4 advertised anchor prices:
+     CORS-enabled) resolves any NL address to coordinates. From there
+     we need a distance-from-Schiphol figure to feed into:
 
        price(km) = PRICE_A + PRICE_B * km
 
+     Two distance sources, in order of preference:
+
+       1. DRIVING-ROUTE distance via OpenRouteService (real road
+          distance, not as-the-crow-flies) - used whenever an ORS
+          API key is configured (see the ORS section below) and the
+          request succeeds. Formula calibrated for THIS distance
+          source: PRICE_A_DRIVING / PRICE_B_DRIVING.
+       2. HAVERSINE (straight-line) distance - the fallback, used
+          whenever no ORS key is set, or the ORS call fails/times
+          out/hits its quota/is offline. Formula calibrated for
+          THIS distance source: PRICE_A_HAVERSINE / PRICE_B_HAVERSINE
+          (this is the untouched original formula from the previous
+          version of this feature).
+
+     Using two separate formulas matters: driving distance is always
+     longer than straight-line, so applying one formula to both would
+     either systematically overprice (driving-calibrated coefficients
+     applied to short haversine distances) or underprice (haversine-
+     calibrated coefficients applied to longer driving distances).
+     Keeping the original haversine formula untouched also guarantees
+     today's default behaviour (no ORS key configured, which is the
+     state for every visitor until Michell/a developer sets one) is
+     byte-for-byte the same estimate as before this change.
+
+     --- Formula B: HAVERSINE (fallback), calibrated against ---
      Calibration inputs (haversine distance from Schiphol to each
      city's PDOK woonplaats-centroid vs. its advertised price):
        Amsterdam  11.60 km -> €39
@@ -587,10 +636,31 @@
      and Utrecht a little above it (more complex routing than its
      raw distance suggests), which is expected from fitting a
      straight line through only 4 points.
+
+     --- Formula A: DRIVING-ROUTE, calibrated against ---
+     Calibration inputs (real driving-route km from Schiphol to each
+     city centre, sourced from public route-distance data since no
+     production ORS key exists yet to query this live - re-verify and
+     re-fit once a real key is in place, see report/comment below):
+       Amsterdam  17 km -> €39
+       Almere     41 km -> €49
+       Utrecht    47 km -> €59
+       Rotterdam  59 km -> €69
+     Least-squares fit: PRICE_A = 25.09, PRICE_B = 0.7051 (R^2 = 0.93).
+     Residuals: Amsterdam +1.92, Almere -5.00, Utrecht +0.77,
+     Rotterdam +2.31 - same pattern as the haversine fit (Almere below
+     the line, Utrecht/Rotterdam a touch above), which makes sense
+     since it's the same 4 cities and the same underlying routing
+     quirks, just measured on driving km instead of straight-line km.
      ============================================================ */
   var SCHIPHOL_LAT = 52.3105, SCHIPHOL_LON = 4.7683;
-  var PRICE_A = 27.98;
-  var PRICE_B = 0.843;
+
+  var PRICE_A_DRIVING = 25.09;
+  var PRICE_B_DRIVING = 0.7051;
+
+  var PRICE_A_HAVERSINE = 27.98;
+  var PRICE_B_HAVERSINE = 0.843;
+
   var MIN_FARE = 25; // floor: nothing prices below this, even a few km from Schiphol
   var EXACT_MATCH_RADIUS_KM = 6; // geocoded point this close to an anchor -> flat rate applies
 
@@ -603,6 +673,76 @@
 
   var PDOK_URL = 'https://api.pdok.nl/bzk/locatieserver/search/v3_1/free';
 
+  /* ============================================================
+     DRIVING-ROUTE DISTANCE VIA OPENROUTESERVICE (ORS)
+     Free tier: ~2,500 requests/day, 40,000/month, no credit card.
+     Requires an API key. This site has NO key committed to source
+     (never commit a production key to a public repo) - it reads one
+     from localStorage instead, so it's a one-time browser setting a
+     developer (or Michell, with help) can turn on later.
+
+     HOW TO ACTIVATE REAL DRIVING-ROUTE PRICING (one-time, ~2 min):
+       1. Go to https://openrouteservice.org/dev/#/signup and sign
+          up for a free account (email + password only, no card).
+       2. In the ORS Dashboard, create a new API key/token - pick
+          the free "Standard" tier. Optionally restrict it to the
+          site's domain (snefhew.github.io) in the key settings to
+          reduce abuse risk.
+       3. Open https://snefhew.github.io/legrandtaxi/ in Chrome,
+          press F12 to open DevTools, click the "Console" tab, paste
+          the line below (with the real key instead of the example)
+          and press Enter:
+
+            localStorage.setItem('ors_api_key', 'PASTE_YOUR_KEY_HERE');
+
+       4. Reload the page. From then on, THAT BROWSER will use real
+          driving-route distances for pricing. Nothing needs to
+          change in the code, and nothing is required for anyone
+          else - every other visitor keeps using the safe
+          haversine-based estimate automatically, forever, since
+          they never set this value in their own browser's storage.
+       5. To turn it back off: localStorage.removeItem('ors_api_key')
+     ============================================================ */
+  var ORS_URL = 'https://api.openrouteservice.org/v2/directions/driving-car';
+  var ORS_TIMEOUT_MS = 6000;
+
+  function getOrsKey(){
+    try { return (window.localStorage.getItem('ors_api_key') || '').trim(); }
+    catch (e){ return ''; } // localStorage blocked (private mode etc.) -> treat as no key
+  }
+
+  // Calls back with driving-route km, or null if no key is set, or the
+  // request fails/times out/errors for ANY reason (bad key, quota hit,
+  // offline, CORS, referrer-restricted, malformed response, ...). Callers
+  // must treat null as "fall back to the haversine distance you already
+  // have" - this function never throws and never leaves the caller hanging.
+  function drivingDistanceKm(lat1, lon1, lat2, lon2, cb){
+    var key = getOrsKey();
+    if (!key){ cb(null); return; }
+    var controller = (typeof AbortController !== 'undefined') ? new AbortController() : null;
+    var timer = setTimeout(function(){ if (controller) controller.abort(); }, ORS_TIMEOUT_MS);
+    var url = ORS_URL + '?api_key=' + encodeURIComponent(key)
+      + '&start=' + lon1 + ',' + lat1
+      + '&end=' + lon2 + ',' + lat2;
+    fetch(url, controller ? { signal: controller.signal } : {})
+      .then(function(res){
+        if (!res.ok) throw new Error('ORS HTTP ' + res.status);
+        return res.json();
+      })
+      .then(function(data){
+        clearTimeout(timer);
+        // GET endpoint returns GeoJSON: features[0].properties.summary.distance (metres)
+        var summary = data && data.features && data.features[0] && data.features[0].properties && data.features[0].properties.summary;
+        if (!summary && data && data.routes && data.routes[0]) summary = data.routes[0].summary; // defensive: POST-style shape
+        if (!summary || typeof summary.distance !== 'number'){ cb(null); return; }
+        cb(summary.distance / 1000);
+      })
+      .catch(function(){
+        clearTimeout(timer);
+        cb(null);
+      });
+  }
+
   function haversineKm(lat1, lon1, lat2, lon2){
     var R = 6371;
     var p1 = lat1 * Math.PI / 180, p2 = lat2 * Math.PI / 180;
@@ -612,8 +752,10 @@
     return 2 * R * Math.asin(Math.sqrt(x));
   }
 
-  function estimateFromDistance(km){
-    return Math.max(MIN_FARE, PRICE_A + PRICE_B * km);
+  function estimateFromDistance(km, source){
+    var a = (source === 'driving') ? PRICE_A_DRIVING : PRICE_A_HAVERSINE;
+    var b = (source === 'driving') ? PRICE_B_DRIVING : PRICE_B_HAVERSINE;
+    return Math.max(MIN_FARE, a + b * km);
   }
 
   function findExactCity(lat, lon, woonplaatsnaam){
@@ -649,17 +791,42 @@
         var m = /POINT\(([-0-9.]+) ([-0-9.]+)\)/.exec(doc.centroide_ll || '');
         if (!m){ geocodeCache[query] = null; cb(null); return; }
         var lon = parseFloat(m[1]), lat = parseFloat(m[2]);
-        var distanceKm = haversineKm(SCHIPHOL_LAT, SCHIPHOL_LON, lat, lon);
-        var result = {
-          lat: lat, lon: lon,
-          label: doc.weergavenaam || query,
-          woonplaats: doc.woonplaatsnaam || '',
-          distanceKm: distanceKm,
-          exactCity: findExactCity(lat, lon, doc.woonplaatsnaam),
-          estimate: estimateFromDistance(distanceKm)
-        };
-        geocodeCache[query] = result;
-        cb(result);
+        var straightKm = haversineKm(SCHIPHOL_LAT, SCHIPHOL_LON, lat, lon);
+        var exactCity = findExactCity(lat, lon, doc.woonplaatsnaam);
+        var label = doc.weergavenaam || query;
+        var woonplaats = doc.woonplaatsnaam || '';
+
+        function finish(km, source){
+          var result = {
+            lat: lat, lon: lon,
+            label: label,
+            woonplaats: woonplaats,
+            distanceKm: km,
+            distanceSource: source, // 'driving' (ORS) or 'straight-line' (haversine fallback)
+            exactCity: exactCity,
+            estimate: estimateFromDistance(km, source)
+          };
+          geocodeCache[query] = result;
+          cb(result);
+        }
+
+        if (exactCity){
+          // flat rate applies regardless of distance - skip the ORS call
+          // entirely (saves quota; the km figure isn't shown for exact matches)
+          finish(straightKm, 'straight-line');
+          return;
+        }
+
+        // Try real driving-route distance; drivingDistanceKm() always calls
+        // back (never throws), with null if no key/failure/timeout, in
+        // which case we use the straight-line distance already computed above.
+        drivingDistanceKm(SCHIPHOL_LAT, SCHIPHOL_LON, lat, lon, function(drivingKm){
+          if (drivingKm != null && drivingKm > 0){
+            finish(drivingKm, 'driving');
+          } else {
+            finish(straightKm, 'straight-line');
+          }
+        });
       })
       .catch(function(){
         clearTimeout(timer);
@@ -708,6 +875,12 @@
   var summaryWhen = document.getElementById('summaryWhen');
   var summaryPrice = document.getElementById('summaryPrice');
   var waSendBtn = document.getElementById('waSendBtn');
+  var efSubject = document.getElementById('efSubject');
+  var efNaam = document.getElementById('efNaam');
+  var efTelefoon = document.getElementById('efTelefoon');
+  var efRoute = document.getElementById('efRoute');
+  var efWanneer = document.getElementById('efWanneer');
+  var efPrijs = document.getElementById('efPrijs');
 
   var lastTrigger = null;
   var cityManuallySet = false;
@@ -1105,14 +1278,25 @@
     summaryWhen.textContent = when;
     summaryPrice.textContent = priceText;
 
+    var naamVal = naamInput.value.trim();
+    var telefoonVal = telefoonInput.value.trim();
+
     waSendBtn.href = buildWaUrl({
-      naam: naamInput.value.trim(),
-      telefoon: telefoonInput.value.trim(),
+      naam: naamVal,
+      telefoon: telefoonVal,
       from: from,
       to: to,
       when: when,
       price: priceText
     });
+
+    // Same booking details, mirrored into the Web3Forms email-fallback form
+    efSubject.value = 'Nieuwe boeking via Le Grand Taxi - ' + (naamVal || 'onbekende klant');
+    efNaam.value = naamVal;
+    efTelefoon.value = telefoonVal;
+    efRoute.value = from + ' → ' + to;
+    efWanneer.value = when;
+    efPrijs.value = priceText;
 
     formView.hidden = true;
     modalFooter.hidden = true;
@@ -1135,6 +1319,11 @@
     tijdInput.value = '';
     naamInput.value = '';
     telefoonInput.value = '';
+    efNaam.value = '';
+    efTelefoon.value = '';
+    efRoute.value = '';
+    efWanneer.value = '';
+    efPrijs.value = '';
     updateDirection();
     formView.hidden = false;
     modalFooter.hidden = false;
