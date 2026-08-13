@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="icon" href="data:,">
-<title>Le Grand Taxi — vaste prijs naar Schiphol</title>
+<title>Le Grand Taxi | vaste prijs naar Schiphol</title>
 <style>
   :root{
     /* layered dark-surface ramp, from research/design/DESIGN-SPEC.md */
@@ -216,6 +216,9 @@
     @keyframes sheet-in{ from{transform:translateY(100%);} to{transform:translateY(0);} }
     .chip-group{ grid-template-columns:1fr 1fr; }
   }
+  @media (max-width:359px){
+    .navright .phone-link{ display:none; }
+  }
 </style>
 </head>
 <body>
@@ -323,7 +326,7 @@
             <div class="field-group" style="margin-bottom:0;"><label for="otherKm">Afstand (km)</label><input type="number" id="otherKm" min="0" step="1" inputmode="numeric" placeholder="bijv. 25"></div>
             <div class="field-group" style="margin-bottom:0;"><label for="otherMin">Reistijd (min)</label><input type="number" id="otherMin" min="0" step="1" inputmode="numeric" placeholder="bijv. 30"></div>
           </div>
-          <p class="field-hint">Weet je dit niet precies? Laat leeg &mdash; Michell bevestigt de exacte prijs.</p>
+          <p class="field-hint">Weet je dit niet precies? Laat leeg, Michell bevestigt de exacte prijs.</p>
         </div>
 
         <div class="field-group" id="pickupGroup">
@@ -363,11 +366,11 @@
         <div class="confirm-badge" aria-hidden="true">&check;</div>
         <h2>Bijna klaar</h2>
         <div class="confirm-summary">
-          <div class="row"><span class="k">Route</span><span class="v" id="summaryRoute">&mdash;</span></div>
-          <div class="row"><span class="k">Wanneer</span><span class="v" id="summaryWhen">&mdash;</span></div>
-          <div class="row"><span class="k">Prijs</span><span class="v" id="summaryPrice">&mdash;</span></div>
+          <div class="row"><span class="k">Route</span><span class="v" id="summaryRoute">&ndash;</span></div>
+          <div class="row"><span class="k">Wanneer</span><span class="v" id="summaryWhen">&ndash;</span></div>
+          <div class="row"><span class="k">Prijs</span><span class="v" id="summaryPrice">&ndash;</span></div>
         </div>
-        <p class="confirm-micro">Je bericht staat klaar in WhatsApp. Druk daar op versturen, dan bevestigt <strong>Michell</strong> je rit persoonlijk &mdash; meestal binnen enkele minuten. Geen callcenter, geen wachtrij.</p>
+        <p class="confirm-micro">Je bericht staat klaar in WhatsApp. Druk daar op versturen, dan bevestigt <strong>Michell</strong> je rit persoonlijk, meestal binnen enkele minuten. Geen callcenter, geen wachtrij.</p>
         <div class="confirm-actions">
           <a class="btn block" id="waSendBtn" href="#" target="_blank" rel="noopener">Open WhatsApp en verstuur</a>
           <a class="confirm-secondary" href="tel:+31685639077">Liever bellen? 06 85 63 90 77</a>
@@ -379,7 +382,7 @@
     <div class="modal-footer" id="modalFooter">
       <div class="price-display">
         <span class="price-label">Vaste prijs</span>
-        <span class="price-amt" id="priceAmt">&mdash;</span>
+        <span class="price-amt" id="priceAmt">&ndash;</span>
       </div>
       <button class="btn" id="reserveBtn" type="button" disabled>Reserveer</button>
     </div>
@@ -453,7 +456,7 @@
     if(!checked || checked.id !== 'cityOther') return;
     var km = parseFloat(otherKmInput.value);
     var min = parseFloat(otherMinInput.value);
-    if(km > 0 && min >= 0 && !isNaN(km) && !isNaN(min)){
+    if(km >= 0 && min >= 0 && !isNaN(km) && !isNaN(min)){
       priceAmt.textContent = euro(calcOtherPrice(km, min));
       priceAmt.classList.remove('price-formula');
     } else {
@@ -466,7 +469,7 @@
     var checked = dialog.querySelector('input[name="city"]:checked');
     if(!checked){
       otherDestGroup.hidden = true;
-      priceAmt.textContent = '—';
+      priceAmt.textContent = '–';
       priceAmt.classList.remove('price-formula');
       validateForm();
       return;
