@@ -1,0 +1,318 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Le Grand Taxi — vaste prijs naar Schiphol</title>
+<style>
+  *{box-sizing:border-box;}
+  html{-webkit-text-size-adjust:100%;}
+  body{
+    margin:0;
+    background:#050505;
+    font-family:-apple-system,"Segoe UI",Roboto,sans-serif;
+    color:#eee;
+  }
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:0.001ms !important; transition-duration:0.001ms !important;}
+  }
+  img{ max-width:100%; display:block; }
+
+  /* ============ SWITCHER SHELL (dev-only, remove for final single-theme launch) ============ */
+  .intro{ max-width:820px; margin:0 auto; padding:2rem 1.5rem .8rem; text-align:center; }
+  .intro .kicker{ font-size:.7rem; letter-spacing:.14em; text-transform:uppercase; color:#777; font-family:ui-monospace,"SF Mono",Consolas,monospace; }
+  .intro h1{ font-size:clamp(1.2rem,2.6vw,1.5rem); margin:.5rem 0 .3rem; font-weight:600; }
+  .intro p{ color:#888; font-size:.85rem; max-width:56ch; margin:0 auto; }
+
+  .switcher-bar{
+    position:sticky; top:0; z-index:50;
+    display:flex; justify-content:center; gap:.5rem;
+    padding:.9rem 1rem; background:rgba(5,5,5,0.9); backdrop-filter:blur(10px);
+    border-bottom:1px solid rgba(255,255,255,0.08);
+    margin-top:1rem;
+  }
+  .switcher-bar label{
+    cursor:pointer; user-select:none; padding:.5rem .95rem; border-radius:3px;
+    border:1px solid rgba(255,255,255,0.16); font-size:.78rem; color:#bbb;
+  }
+  input.hp-radio{ position:absolute; opacity:0; width:1px; height:1px; overflow:hidden; }
+  input.hp-radio:focus-visible + label{ outline:2px solid #fff; outline-offset:2px; }
+  #hp-1:checked ~ .switcher-bar label[for="hp-1"],
+  #hp-2:checked ~ .switcher-bar label[for="hp-2"]{ background:#fff; color:#111; border-color:#fff; }
+  .hp{ display:none; }
+  #hp-1:checked ~ #panel-1, #hp-2:checked ~ #panel-2{ display:block; }
+
+  /* ============ SHARED STRUCTURE ============ */
+  .hp{ background:var(--bg); color:var(--text); font-family:var(--font-body); }
+  .hp-inner{ max-width:1160px; margin:0 auto; padding:0 1.6rem; }
+
+  .hp-nav{ display:flex; align-items:center; justify-content:space-between; padding:1.3rem 1.6rem; max-width:1160px; margin:0 auto; }
+  .hp-brand{ display:flex; align-items:center; gap:.6rem; }
+  .hp-brand img.icon{ height:28px; width:auto; }
+  .hp-brand img.wordmark{ height:16px; width:auto; }
+  .hp-navright{ display:flex; align-items:center; gap:1.1rem; }
+  .hp-phone{ font-size:.85rem; color:var(--text-soft); text-decoration:none; font-variant-numeric:tabular-nums; }
+  .hp-btn{
+    font-family:var(--font-body); font-size:.85rem; font-weight:600;
+    padding:.6rem 1.2rem; border-radius:var(--radius); border:1px solid transparent;
+    background:var(--accent); color:var(--on-accent); text-decoration:none; display:inline-block; cursor:pointer;
+  }
+  .hp-btn.ghost{ background:transparent; color:var(--text); border-color:var(--line-strong); }
+
+  .hp-hero{ position:relative; overflow:hidden; padding:clamp(2.2rem,6vw,4.5rem) 1.6rem clamp(2.5rem,6vw,4rem); }
+  .hp-hero-inner{ max-width:1160px; margin:0 auto; position:relative; z-index:2; }
+  .hp-hero-mark{
+    position:absolute; z-index:1; opacity:var(--mark-opacity,0.14);
+    right:-6%; top:50%; transform:translateY(-50%);
+    width:min(60vw,620px); pointer-events:none;
+  }
+  .hp-eyebrow{ font-family:ui-monospace,"SF Mono",Consolas,monospace; font-size:.7rem; letter-spacing:.12em; text-transform:uppercase; color:var(--accent-text); margin:0 0 .9rem; display:block; }
+  .hp-h1{
+    font-family:var(--font-display); font-weight:var(--weight-display); letter-spacing:var(--tracking-display);
+    line-height:var(--leading-display); font-size:var(--size-display); text-wrap:balance;
+    margin:0 0 1rem; max-width:14ch; color:var(--text);
+  }
+  .hp-dek{ font-size:1.05rem; line-height:1.55; color:var(--text-soft); max-width:38ch; margin:0 0 1.6rem; }
+  .hp-hero-actions{ display:flex; gap:.7rem; flex-wrap:wrap; margin-bottom:2.4rem; }
+
+  .hp-quote{
+    background:var(--card); border:1px solid var(--line); border-radius:var(--radius);
+    padding:1.2rem; display:flex; flex-direction:column; gap:.75rem; max-width:480px;
+  }
+  .hp-quote-row{ display:grid; grid-template-columns:1fr 1fr; gap:.6rem; }
+  @media (max-width:480px){ .hp-quote-row{ grid-template-columns:1fr; } }
+  .hp-field{ display:flex; flex-direction:column; gap:.3rem; }
+  .hp-field label{ font-size:.66rem; letter-spacing:.06em; text-transform:uppercase; color:var(--text-soft); font-family:ui-monospace,"SF Mono",Consolas,monospace; }
+  .hp-field input{ background:var(--input-bg); border:1px solid var(--line); border-radius:2px; color:var(--text); padding:.55rem .65rem; font-size:.9rem; font-family:var(--font-body); }
+  .hp-quote-result{ display:flex; align-items:baseline; justify-content:space-between; padding-top:.4rem; border-top:1px solid var(--line); }
+  .hp-quote-result .amt{ font-family:var(--font-display); font-size:1.5rem; font-weight:600; color:var(--accent-text); font-variant-numeric:tabular-nums; }
+
+  .hp-process{
+    display:flex; flex-wrap:wrap; gap:.4rem 1.2rem; align-items:center;
+    padding:1.1rem 0; border-top:1px solid var(--line); border-bottom:1px solid var(--line);
+    font-size:.88rem; color:var(--text-soft);
+  }
+  .hp-process b{ color:var(--text); font-weight:600; }
+  .hp-process .arrow{ color:var(--accent-text); }
+
+  .hp-section{ padding:clamp(2rem,5vw,3.2rem) 1.6rem; }
+  .hp-section-label{ font-family:ui-monospace,"SF Mono",Consolas,monospace; font-size:.7rem; letter-spacing:.12em; text-transform:uppercase; color:var(--accent-text); margin-bottom:.7rem; display:block; }
+
+  .hp-prices{ border-top:1px solid var(--line); }
+  .hp-price-row{ display:flex; justify-content:space-between; align-items:baseline; padding:.9rem 0; border-bottom:1px solid var(--line); }
+  .hp-price-row .city{ font-size:1rem; color:var(--text); }
+  .hp-price-row .amt{ font-family:var(--font-display); font-size:1.3rem; font-weight:600; font-variant-numeric:tabular-nums; }
+  .hp-price-note{ margin-top:1rem; font-size:.85rem; color:var(--text-soft); }
+
+  .hp-footer{ padding:2rem 1.6rem 2.4rem; background:var(--bg-2); border-top:1px solid var(--line); }
+  .hp-footer-inner{ max-width:1160px; margin:0 auto; display:flex; justify-content:space-between; align-items:flex-end; flex-wrap:wrap; gap:1.1rem; }
+  .hp-footer-meta{ font-size:.78rem; color:var(--text-soft); line-height:1.7; }
+  .hp-footer-cta{ display:flex; gap:.6rem; }
+
+  /* ============ VARIANT: NACHTBLAUW (warm teal + single gold accent) ============ */
+  .variant-nacht{
+    --bg:#10181a; --bg-2:#0b1213; --card:#16211f; --input-bg:#0c1315;
+    --text:#ece7dc; --text-soft:#9fada8;
+    --line:rgba(236,231,220,0.14); --line-strong:rgba(236,231,220,0.3);
+    --accent:#c9a24b; --accent-text:#d3ac57; --on-accent:#14201f;
+    --font-display: Georgia,"Iowan Old Style",serif;
+    --font-body: -apple-system,"Segoe UI",sans-serif;
+    --weight-display:600; --tracking-display:-0.01em; --leading-display:1.04;
+    --size-display:clamp(2.4rem,5.4vw,3.6rem);
+    --radius:4px; --mark-opacity:0.16;
+  }
+
+  /* ============ VARIANT: ZWART-ROOD (black + white, red as single functional signal) ============ */
+  .variant-rood{
+    --bg:#0a0a0a; --bg-2:#000; --card:#111; --input-bg:#000;
+    --text:#f3efe9; --text-soft:#9c9992;
+    --line:rgba(243,239,233,0.14); --line-strong:rgba(243,239,233,0.32);
+    --accent:#b3372c; --accent-text:#c9564a; --on-accent:#f3efe9;
+    --font-display: "Arial Black","Segoe UI",sans-serif;
+    --font-body: -apple-system,"Segoe UI",sans-serif;
+    --weight-display:900; --tracking-display:-0.015em; --leading-display:0.94;
+    --size-display:clamp(2.6rem,6.4vw,4.6rem);
+    --radius:2px; --mark-opacity:0.1;
+  }
+</style>
+</head>
+<body>
+
+<div class="intro">
+  <span class="kicker">Le Grand Taxi — ontwerp v2</span>
+  <h1>Twee richtingen, verfijnd</h1>
+  <p>Warmer, persoonlijker, minder tekst. Wissel met de tabs.</p>
+</div>
+
+<input class="hp-radio" type="radio" name="hp" id="hp-1" checked>
+<input class="hp-radio" type="radio" name="hp" id="hp-2">
+
+<nav class="switcher-bar">
+  <label for="hp-1">Nachtblauw</label>
+  <label for="hp-2">Zwart-Rood</label>
+</nav>
+
+<!-- ============ PANEL 1 — NACHTBLAUW ============ -->
+<section class="hp variant-nacht" id="panel-1">
+  <div class="hp-nav">
+    <div class="hp-brand">
+      <img class="icon" src="data:image/png;base64,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" alt="Le Grand Taxi">
+      <img class="wordmark" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAlgAAADFAgMAAAD1b2T7AAAAIGNIUk0AAHomAACAhAAA+gAAAIDoAAB1MAAA6mAAADqYAAAXcJy6UTwAAAAJUExURcmiS8miS////0nI5wUAAAABdFJOUwBA5thmAAAAAWJLR0QCZgt8ZAAAAAd0SU1FB+oIDQ82Ov1dDqIAAAAldEVYdGRhdGU6Y3JlYXRlADIwMjYtMDgtMTNUMTU6NTQ6MzgrMDA6MDCcXkmfAAAAJXRFWHRkYXRlOm1vZGlmeQAyMDI2LTA4LTEzVDE1OjU0OjM4KzAwOjAw7QPxIwAAACh0RVh0ZGF0ZTp0aW1lc3RhbXAAMjAyNi0wOC0xM1QxNTo1NDo1OCswMDowMHx52XsAAAdPSURBVHja7dxLEvIoEABgWPR+NtyHuQFTRd//KjO/CdAvjEQFpkpWJkH4JA0hLx0iZkcT8pQcT4FsO9YAyx9V5sjLrou+VE2LLJhBltfbOCursgQrPWed2QdZoAmchaqsxJfzBSvfYRkEwSKN4y0WXrDwBssbG6H7BS93K3P3WGmcJQi5t+4dVh5nhWsWqh/RibUeC8dZ+AFWvmLFUZavNfdji8R8MFlIlkxW6rFcJ0H7uaEKoFJA/JAgnXyZFkV/dR5lBfJr66fGOlyJFWWwUlvirOIaZdFSgQ6npAFIcSoOrlhne8c7rEZIihVQDOMWK7clyfJ3WJ41BpCIinWdYP1jNV+fdYRJGmPx0PFkBhHrOvJt6LFinwXnLx9mxbqYNctJ1t+sOL5XLZa7wQrmti7rT/ZIV/gXWKGOi0OsrNZes9guRjXVYywYZ/FuZbJoFY+SgsFqI1+HFYdZUa1VrEhLMlmxz/IzWPmxtbRwZaU+yw2zvL2px/KKVacBfGLMWeHxhe+yUpu+FMhXWLojdllgs9ooY7NglAXjrMjL+1NAHZN9n5VHWekFFhdKli8xP5OFnOV0J6jH+w7L91ktvcFCm1VPFt9hRVH/BcvbrERrDF9gRacSXU16RakVJKvE/BMW3mMBHa5fYLH5aIn5DsuNssI1q42VtZW8ZJVM81i18wsWKhbOZKFgxVoNZYXJLPaVQFmRss6Yn8CiieQWX3MtqOjRcioLu6wz5ueysmSV2OcsnMw6BW1c0KxHzMdPsVr5z1hRssjAhW2EvcNyZnqNpTJr1hHz4wefN1hJZSYllsoeMTh+qL5i+T4rksyqDSkEP8kS15EVq24PVsQxVpzIii+x4AkLRln+mqWuGfGQKzmOmO+zklY8Z+FzFr7G4uexnBXwvdPXpyxxF0acsNZd/AmWuAZBWdHVixovsaDPOkoZZaUui20GwRL3vfqsm1dsnrDC6yz/SVZgmU1WJlmfsFyXBUfmURb/XYwFZLNild2c2faPXDsFFvOKJc9dn7GgxzrXDrNK9HRYscNKnOU7LH+D5ZFuBLROMVLL6WTOF1jhLGOcFUkJnNVinh+nANuEhs6pP3TPh909raeq1yxvsILJCrdYgTRX0KzWFetu47uUVAYWC+pgovrLM1b7GrnT2lgt5jnLGSzPWf/N7BMdzFR/ET2INWW7Vw34lBXoSNIOpn2W7LS3WKyExmpdUbDKIi2vz4qjLDUcRc2q5xAiJpNghS7LDbPAKIGwAi1VfE2yoMfK4yxvbCQsODneYGXB8j1WHGdZ59ySFfX9jiGWu8EKugTCKkMsiC+W1mOrO6x8h+VFbs4qVQGyYctmBZsV77DYZvcqqwxcaB4pg1HfKAtkY6nHM1ANWzbLm6x4j0W2O82Co2TFCmhMVyxWcjdZIEugrDPm8S6LHwOesJJksWm4ycr6cA8WKyiWrmwgwZMSUIm2SEHtvy0SvL0vvsfK75fz4eQ3DS7cM7jC/yW4/lpNqiy2F7foAF4O17BHB0DRFzfpAIE3F2zCAt5c2/RLNsEI27ACmaTAPoNrnSdGjxsdiuw7BevT5fx2TQLOiqs9Z/Jb7kNx4pdWa2pie3E1hqQtG4tF12oKS2HHxnJtN652iOT3GrNa2rCtfumXfumXfumXfumXfumXFiW/ds5uPsnizKePqhKwvU/wJfozFr8D3ZRhHSugvNXL38FN61jimWT2NFRcw0LNYo/6lZUrWK1OICxYx/KCRbti3aHrWU40ZFrDAnnBCJE9KRM3YbWu6JezyMDVYr59ms8KksXbqL17sYIlXwJLZVPL9CXWmbhB/jdNWZPYhwmsYLMiz1FfrItrWF6zSqST8X4ZK9kschN2Kgs0q+y8sJj1Nx8hSqgT7XRW6LAye7drCct64DurqcRy1hHzpCPOZz3qFrUe7UQifgkr91lpEet4AhhErY8+iItZST1aHcrRPJIVM1lgssoYy/8hbDKL/OOEYLH3QWaygsnyO7BcdxKWVrHQZgUx21nEktXKmfRkVgkqWS3swZIjhOcRv4KVuqzEvjSRVThyhJCXcRawosUKS1m1OnOEWMpyFmttbCFl0XqXs8xrH2sHCM9YrXEWD6eNJQautcfEhtmUJQautRObVpt+SX/hNLCeSogIXzyX35TFVTzC2Zo9WI9wpzE/lSWvPRfEcSiiMb8Fa/GlERAs9s8Y6y4k9VhHOwEJt6ksMT6w9YndTN+CdXpWsaRK/OUIifkdWCXWQ2vAtazEWLCGxWcNAentsIW3ojgLKqu2G+KKG3cNUpZy0baTx6/ffb1gec0KS1i8rvrgSov09mkdq57Ktjaa8sCBYpFxvSxGp/6zLG3HmvIwi2R5wToHrtmP/lisLDYk498DJ7MA9a2LzB8rq1Ouyaxks2Y+hHfFOmMNUZxrpLksWdXB8or15Qc8r1jHgFHDqeax7nJ8kYUWK9KOyGeEE1lqCzs7bF1xLou/Mw2Fleqq0hVB/oSL9C/ApEV8EWhCQAAAAABJRU5ErkJggg==" alt="">
+    </div>
+    <div class="hp-navright">
+      <a class="hp-phone" href="tel:+31685639077">06 85 63 90 77</a>
+      <a class="hp-btn" href="#reserveren-1">Reserveer</a>
+    </div>
+  </div>
+
+  <div class="hp-hero">
+    <img class="hp-hero-mark" src="data:image/png;base64,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" alt="">
+    <div class="hp-hero-inner">
+      <span class="hp-eyebrow">Schiphol · vaste prijs</span>
+      <h1 class="hp-h1">Eén chauffeur.<br>Eén vaste prijs.</h1>
+      <p class="hp-dek">Michell rijdt je zelf naar Schiphol. Geen meter, geen callcenter.</p>
+      <div class="hp-hero-actions">
+        <a class="hp-btn" href="#reserveren-1">Bereken je prijs</a>
+        <a class="hp-btn ghost" href="tel:+31685639077">Bel Michell</a>
+      </div>
+      <div class="hp-process">
+        <span>Boek je rit</span>
+        <span class="arrow">&rarr;</span>
+        <span><b>Michell</b> bevestigt persoonlijk</span>
+        <span class="arrow">&rarr;</span>
+        <span>vaste prijs, geen verrassingen</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="hp-section" id="reserveren-1">
+    <div class="hp-inner">
+      <div class="hp-quote">
+        <div class="hp-quote-row">
+          <div class="hp-field"><label>Ophaaladres</label><input type="text" placeholder="Straat, huisnummer, plaats"></div>
+          <div class="hp-field"><label>Bestemming</label><input type="text" placeholder="Schiphol Airport"></div>
+        </div>
+        <div class="hp-quote-row">
+          <div class="hp-field"><label>Datum</label><input type="text" placeholder="dd-mm-jjjj"></div>
+          <div class="hp-field"><label>Tijd</label><input type="text" placeholder="uu:mm"></div>
+        </div>
+        <div class="hp-quote-result">
+          <span style="font-size:.85rem;color:var(--text-soft);">Vaste prijs</span>
+          <span class="amt">&euro; 39,&ndash;</span>
+        </div>
+        <a class="hp-btn" href="#" style="text-align:center;">Reserveer</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="hp-section">
+    <div class="hp-inner">
+      <span class="hp-section-label">Tarieven</span>
+      <div class="hp-prices">
+        <div class="hp-price-row"><span class="city">Amsterdam</span><span class="amt">&euro; 39</span></div>
+        <div class="hp-price-row"><span class="city">Rotterdam</span><span class="amt">&euro; 69</span></div>
+        <div class="hp-price-row"><span class="city">Utrecht</span><span class="amt">&euro; 59</span></div>
+        <div class="hp-price-row"><span class="city">Almere</span><span class="amt">&euro; 49</span></div>
+      </div>
+      <p class="hp-price-note">Andere bestemming: &euro; 2,15 per km + &euro; 0,40 per minuut, ook vooraf berekend.</p>
+    </div>
+  </div>
+
+  <div class="hp-footer">
+    <div class="hp-footer-inner">
+      <div class="hp-footer-meta">
+        <strong style="color:var(--text)">Le Grand Taxi</strong><br>
+        Geldershoofd 116, Amsterdam &middot; 06 85 63 90 77<br>
+        KVK 91578388 &middot; BTW NL004905641B18
+      </div>
+      <div class="hp-footer-cta">
+        <a class="hp-btn ghost" href="tel:+31685639077">Bel</a>
+        <a class="hp-btn" href="#">WhatsApp</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PANEL 2 — ZWART-ROOD ============ -->
+<section class="hp variant-rood" id="panel-2">
+  <div class="hp-nav">
+    <div class="hp-brand">
+      <img class="icon" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAVEAAAFhAgMAAAC0YnF8AAAAIGNIUk0AAHomAACAhAAA+gAAAIDoAAB1MAAA6mAAADqYAAAXcJy6UTwAAAAJUExURfPv6fPv6f///3Kb0Y8AAAABdFJOUwBA5thmAAAAAWJLR0QCZgt8ZAAAAAd0SU1FB+oIDQ83DVz7muwAAAAldEVYdGRhdGU6Y3JlYXRlADIwMjYtMDgtMTNUMTU6NTQ6NTgrMDA6MDBaMUAYAAAAJXRFWHRkYXRlOm1vZGlmeQAyMDI2LTA4LTEzVDE1OjU0OjU4KzAwOjAwK2z4pAAAACh0RVh0ZGF0ZTp0aW1lc3RhbXAAMjAyNi0wOC0xM1QxNTo1NToxMyswMDowMBX26EUAAA8NSURBVHja1ZzLjuQqD4BB+r2fxeF96EXvaQne/1X+Cr5iSHVSYY50WIymU8kX4wsX46oQnrSUHz2+bO1oZS8zNmx7xW3cdkKTUDfqAFrbL2w00H3CJkvdJewg6jY3GEVt9W+IukkF4KlbVOChW7xgEnWLYpPVZ9qk2GihpI6NCij6kvyY6pWZdphLFMDywQ4qWFGPf+MOJ0hGVOSl59Tovap06TcpoMh/d1CNAvh/8blrqQJU6sfUqApQv01PqSAKMIGbnjpsEgXoGJPhKVVDwIyuT6mqVjPL1KdUVWsy1PiQqmplgY8r8WHIiloJlNrXc6qqFdBFoZXnVKvWiq85qF/PqFathajpMdWqNeOVeoTrHSp4f4lCBcags96gzvORGivxJ3epcZjy5D1srNcHsRL15zo1DdOzuYTGOl7SqfEONQpBmzFWD4H7VDM/rYxVPqPqSH9qrNSFRmq5BGVbRaOCQ/xvNVZot6nAvYc8GSsfxoLS/20lekW9aUkspVSZp+LhT8ckeAh5h7q689AyRxZNrfeoq0Xpce2HqGSzRmuMizM3oAL+56/9GBzelOE6NaFPVU/9JmN1TPyE+pqWir+WmJpZ+eEGlcaQ7K8ldAGKjQN4YxMTaQzxb2IXEJOnepsaq78mLiBvukMFfLqsqIVnwk4tYR4w31NT8de+zdiCXnCHii4wGuu4BuQCHViPN+UboYXUNlHZBfDvgxpuUvPCBYhaUSPHiHjbXeOpYxW0Xg48JnxMPXpaiJrxQok8JlzbGC3c9ZDpi1wgHzoNxxo7h3aZGn+hAm63SmLqJcdCKkxrAXKsikY/FHLHBd5SI0v3ijQ21sdU41hIjTqAX3OBt1Qw1DvGWlGtY71oCam88HhOTR3d6VXU8SHVOtYxERYcu28Y6z21ixY7PdwxFlOtuuw4+BIt5qAKuEWNSyrvM6Iq4GJ6JM6ji3VXVglvZu+ss3O0PTPuWkl42c1fMxavsgzVumsRBdxSq1DLgooLYpy9b6kVqcVS2bGEatIZlzdwSE11ohbcE6Gt4i21IrVahz0MhYMUZR2NAi6qVanZUnnMRlGLrOivQimrHLVzDXM2h7sVFjXeVCvvNcx6SoOgsKjpplp5iZ64d12lFARopXBfAbqdyIYqFkw2T3ojiUFUSTv02YTcldOttxWA1CojCc4qSO1GKx8dRkbSGKcsbBA0zmTdVYDsjXWAkiAg+Uwe9nrjJ+gxOxPgpXTbA/ihGnhjYYIAO60JiNtUzIgXQ2VXle33DVuFoDOyRDwHAaUHP1GAWT0k6reGljmJuGWrYOeORAcCHATGVLfPHgZj2CCw/b+dckzWGkzF6UGg9w8JhrFjmAk0TX4/OzrEDlOPadfk3m+LOnqkCYKf9kBUY+fsQuuJqMYmfUgpElpPRPUn5BJaj0T1p/kHtVrqh+lxGKgcWtI+g7qTd08tn1IHFeC5S3rY/+DsZeaXJ/0fha12J/jslNAdjGkQfKzU3mBNfXr87ILgzv7yig5MaG2owWAdZAmtLRUz4IKgLPtz91VQEwdBtdsPaR/5GiVY44k/qfOVW9TyjmrD7460GKb1pERgGIDuULPOL3NHxiH4DrV3fkkdR+AbOojN7F/e9v+OfxE1r6he1OvCQjWLrF9EvS7sG+os6mU3oCAIC+oCetUNzoNgJerlM0kNAkdty3bNXqdBMIpa+M9LKoinQTCGlWAvpqJPgiBOXU/XVQCN0q2eOtmq3siYGXedjiS8U8FlFQC66xQEcaa26zl+ctcpCFI7FfYata2CYOmrssv/rZG7empcUvEM9YK5aOvu3XUZrfjyC4pld/XUdbS2iyWbEd21B0G2l9cNVfArld3VBYFVQDay19WZ+5LK7uoz59zpQSXL+oCpnbjrBJV0QrpirpTFXRdFH83lksmsv1JbXgWBqHWSv8Yr5kLH4hzepNaM76j6qnCBGg01z2qt8keW/1xwglhX7hqtqEmslsRc5RMqGFGT/j+KuRbU1Ewnyspdk4qq3pApw75czstttr7ZUY2vquNWetuKOoVif+5ruNPsD8HA+fhqplooYY3i3E05KKHJ8cE8w/mhKIdV8jbJa9ThoqhgnuObbwZS/F1lKICHRqU601AME1XdXG/UJPmwqeXjPh8xq6G4yMuye3e1ARDwZK4THDUtqBqK/rZiVYEyhcVIdDJr8CderXkOMTyb/FqZdqWDZB1L3pZYYJZIA7H8IirHpb+vcho9WrtBc4sn6wA2GUodLO4+ez6hZ728KK2uYyyg4RasQRkVFeQ46TjvAlKFp3oFlHHG09IfVQA/elBZFQ3P1uoogu14MsL6+CtGfGYk2pik5ufzNXYeKrKpAuD8BqAT4BHIm7haCMt2MUVWzI8kiFJhQTUmmwLQ1q6J1ORaSk0rqmaGfaxUW7YT1Tb9Ac16LKFGtZOxTO2aUMFRT1eO4whijJWCo6bKdWVfTIUTqurAG8uuugpqpkRHTWfU4qYCYLVaHy7UB08ddDm8Q5RjjfWKgWyomY9v0RkXVO8SdRRWjBXGhvfSV1jaOI+qrVXReRCWjfVnhOpE3PDgOluGagtUWGCUPB18U2pSavKi2mtZhykxlm8gR6oLqjWsWbSosGfUREYeqFZUELgXtpjj1IlaaP2iVLvoUR2a0+HEL436qaOicCtqdrrgP9gNihRW+MZrJ0sFMYfb8jhhq18aOCqsqGWIKutxWQaVVQruhJr4mWHoMjowwsLKWESNK6o/eTIGM+7/RtaRKpiGQYx467RFnSutfGCg/lhqXyiWyKH5+tMKC8a5ypIKXA/9Y7VZurapDLcvSOosbKbl2kTts4OnfnNlM1UOAVfQyGLtrb36AmNJzdgPDoBMQrGDWOca7YX2hoGKXpn6czVw7RSvxCZhF/Zqsu9aUFFMUGO1pbC8CzLdz3xAZYcMwBUXAoGCqsi3QcSYooI02gsKn0VZasKC6ZBwD5BJramNwurg6uxFi9fSqWgjodLZFVeKmfrDWdjRuaDKHqEQtSqV9mzFqJWDdLZXGakYPPJmeo9SUzNqbba668xegDNaDnFJLUeQxjZsIIyw5cS5cKUZqdZ8QYWsAdhw9PFf2WV7qbC81uZ8fZMSoZ7a4Mp/2TxyamZpL9GsvADOqDQIcAwQQwYBOxho9V49ljIg69eJiot9qcGVWYoHATt4s4iHaQ89ylpbe8NUqudCtVZgqhO22K/30TcxGi2MHbVbSwKyP5xEIhaS7RYk19zdoWUdCA01kWc1+gYNZmebGmU1GKjvvVyqBv0GA6nokCrgPhofUrVm1h7eLvbS+bgSFXSH5qiJLva+WyoLG2dh+wAQC4/0hgoNvzTB6mqNjyp0EnHOZbZ4r77jl+Q0tAyV5ilSqzGWcS6xl1naH9RshiRDLcA25UWaMZYR1rCY8HKdZIekgrcfKjy8M1OEN2+slXPhUEHjxj8yeBhqYIoqwMTAyl4sbKbyyKgjPQd55cUQgkDUujh6MD4J8vahfFuGjo4W8/b/ZNaat5cKaxLcYOrXZTk5FPOhAuJorOzt1YJZ4EIzeTNJyWuCoQ4KEGPFOjlXCUPc6lZVqbbsSBVgEha6eLRxafaqZUwcQjNfahCRZFDSUdTNNJx6k3eYXQsXwWiAq2XHGNCZxj5u/g+eyvEkhnVqpSUAO5VVYJw8Qj0my6SBb/wa1RqsckZhgy+0leQxvauo/mFUK8+LTthhFZdmqssMFNGHiYAq8oiwq0OvYl4yjs5eAZH/ZhkdwrpuNuLV4bPkBAFGsLDgsXJhTCdl043i5DBbeC8svRvc3zbvwbr5tl3RLmTtjE0nlyFyy0idWlhRZVxKJ09JD3/5GO9I4ya0nsmSR0lOP+7U2mzQtCZ1GKc9hPcf4+J6dG8zzo5tPgc7+bjf8DNUhHcNLYUptoPvFQDDt/bljpUOFiF8IupB/V44/C+lVIu+WA843vptpJeb4tvHFooNYepLnoWYHrR6C2/fKe66cHCHrQthzt5JFKUurT8L43vi8kDkrvVcipXeJhVk/86DGn/x8N8q48aOcBDYLwyvhc2O+rbgEhr9KsQ7+y5EXZ1wD5999wg97dyJqG5tM7aEQQDLKfWdqIsz/gGQMOytNFdEfffdOaR26fJ0/3kXzdvL+jpT36g23Gw0E1TfFfi1/28azwR1eho+h8rGqs56j592X9aSsS6l+owpC5dY3tv6I2qGcq1M6GJLqE7ItKvO5ndkHlIzUvtSHnZQyfIp0xavpudMXr3HFiRZuYnad76YcYM91MgwcoB91Bx4uVZ8AvoBFftNHvZB0M/tCAJJTeCWexMVi1gwYNOWoOUJqvh9y1MqtGZyCLCHyrk9EjTucALeXIVQaDu7h9ozLeUoFOiqwDOqPdTcyw+IWp5CI3trpwJ67AZq5UR+oUFhHzUjtb8gPnctQBcIdEaeumttosrJA+xxLeDf4MSo7XI/pyaimpR3SJuonLDEY4fnYZCayXVjlnkjlYdD6GHwlNpwxpaVOGwJg5Ha10Q7qDXYrwZTPcBzKnDWF3js/tqgAV4FmJ9geEqNE3X1/agHVMLJj7RuoJp/+AD6KbRr8+BQqQT/MsWnrSm1UgGJ1OF83MBQG1UOfL7FWlIz5vefU2mShgU1P1NsDviDnCO1PIGiE0H311yUusFf6Se4Ih4tbllrHgykJi7h2UR1I2H72TMSjtS6Y3wdZ5hNo3aTsvHd89Y4x26g4sydh/XADiom3XavXVbrrKdUtybcRi0gJ8OYy9iyfqVVMa64N1HxZ46lmBL27At0tyEVUluo/OP8iUuzdmyPR+qmXRztOLmCcdOO82BEmrfJsXbsjoG/kxWpEGTLTv5lmzRQv3ZQpWYk0k7me0uarFE9Y6ycjt9ExYG7UwvsSRdTzXjA9XB+unilBjht5VC5hG0DFIlHt7HcLm3KbHOB9LGC2bApEFnxFz8LlQxuofbIOqh/uMJ1C/ULx/8c6PfDtuTg/6GasCNmcx+1ywbqnx6nWHmOa4MdVD01ghY2abU3ptaw7XQnyFfAU90UrlYFIZUteWJpfUWY8aev9zXMQfefVN7ZAKn7HEB08LObGQ7v+htU2BkA0nYNrP8GdWuw/jepO5aC/xYV/oK7/reo8W8EwV+ibpqwH1D/D8wcnFnM/SyEAAAAAElFTkSuQmCC" alt="Le Grand Taxi">
+      <img class="wordmark" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAlgAAADFAgMAAAD1b2T7AAAAIGNIUk0AAHomAACAhAAA+gAAAIDoAAB1MAAA6mAAADqYAAAXcJy6UTwAAAAJUExURfPv6fPv6f///3Kb0Y8AAAABdFJOUwBA5thmAAAAAWJLR0QCZgt8ZAAAAAd0SU1FB+oIDQ82Ov1dDqIAAAAldEVYdGRhdGU6Y3JlYXRlADIwMjYtMDgtMTNUMTU6NTQ6NTgrMDA6MDBaMUAYAAAAJXRFWHRkYXRlOm1vZGlmeQAyMDI2LTA4LTEzVDE1OjU0OjU4KzAwOjAwK2z4pAAAACh0RVh0ZGF0ZTp0aW1lc3RhbXAAMjAyNi0wOC0xM1QxNTo1NDo1OCswMDowMHx52XsAAAdPSURBVHja7dxLEvIoEABgWPR+NtyHuQFTRd//KjO/CdAvjEQFpkpWJkH4JA0hLx0iZkcT8pQcT4FsO9YAyx9V5sjLrou+VE2LLJhBltfbOCursgQrPWed2QdZoAmchaqsxJfzBSvfYRkEwSKN4y0WXrDwBssbG6H7BS93K3P3WGmcJQi5t+4dVh5nhWsWqh/RibUeC8dZ+AFWvmLFUZavNfdji8R8MFlIlkxW6rFcJ0H7uaEKoFJA/JAgnXyZFkV/dR5lBfJr66fGOlyJFWWwUlvirOIaZdFSgQ6npAFIcSoOrlhne8c7rEZIihVQDOMWK7clyfJ3WJ41BpCIinWdYP1jNV+fdYRJGmPx0PFkBhHrOvJt6LFinwXnLx9mxbqYNctJ1t+sOL5XLZa7wQrmti7rT/ZIV/gXWKGOi0OsrNZes9guRjXVYywYZ/FuZbJoFY+SgsFqI1+HFYdZUa1VrEhLMlmxz/IzWPmxtbRwZaU+yw2zvL2px/KKVacBfGLMWeHxhe+yUpu+FMhXWLojdllgs9ooY7NglAXjrMjL+1NAHZN9n5VHWekFFhdKli8xP5OFnOV0J6jH+w7L91ktvcFCm1VPFt9hRVH/BcvbrERrDF9gRacSXU16RakVJKvE/BMW3mMBHa5fYLH5aIn5DsuNssI1q42VtZW8ZJVM81i18wsWKhbOZKFgxVoNZYXJLPaVQFmRss6Yn8CiieQWX3MtqOjRcioLu6wz5ueysmSV2OcsnMw6BW1c0KxHzMdPsVr5z1hRssjAhW2EvcNyZnqNpTJr1hHz4wefN1hJZSYllsoeMTh+qL5i+T4rksyqDSkEP8kS15EVq24PVsQxVpzIii+x4AkLRln+mqWuGfGQKzmOmO+zklY8Z+FzFr7G4uexnBXwvdPXpyxxF0acsNZd/AmWuAZBWdHVixovsaDPOkoZZaUui20GwRL3vfqsm1dsnrDC6yz/SVZgmU1WJlmfsFyXBUfmURb/XYwFZLNild2c2faPXDsFFvOKJc9dn7GgxzrXDrNK9HRYscNKnOU7LH+D5ZFuBLROMVLL6WTOF1jhLGOcFUkJnNVinh+nANuEhs6pP3TPh909raeq1yxvsILJCrdYgTRX0KzWFetu47uUVAYWC+pgovrLM1b7GrnT2lgt5jnLGSzPWf/N7BMdzFR/ET2INWW7Vw34lBXoSNIOpn2W7LS3WKyExmpdUbDKIi2vz4qjLDUcRc2q5xAiJpNghS7LDbPAKIGwAi1VfE2yoMfK4yxvbCQsODneYGXB8j1WHGdZ59ySFfX9jiGWu8EKugTCKkMsiC+W1mOrO6x8h+VFbs4qVQGyYctmBZsV77DYZvcqqwxcaB4pg1HfKAtkY6nHM1ANWzbLm6x4j0W2O82Co2TFCmhMVyxWcjdZIEugrDPm8S6LHwOesJJksWm4ycr6cA8WKyiWrmwgwZMSUIm2SEHtvy0SvL0vvsfK75fz4eQ3DS7cM7jC/yW4/lpNqiy2F7foAF4O17BHB0DRFzfpAIE3F2zCAt5c2/RLNsEI27ACmaTAPoNrnSdGjxsdiuw7BevT5fx2TQLOiqs9Z/Jb7kNx4pdWa2pie3E1hqQtG4tF12oKS2HHxnJtN652iOT3GrNa2rCtfumXfumXfumXfumXfumXFiW/ds5uPsnizKePqhKwvU/wJfozFr8D3ZRhHSugvNXL38FN61jimWT2NFRcw0LNYo/6lZUrWK1OICxYx/KCRbti3aHrWU40ZFrDAnnBCJE9KRM3YbWu6JezyMDVYr59ms8KksXbqL17sYIlXwJLZVPL9CXWmbhB/jdNWZPYhwmsYLMiz1FfrItrWF6zSqST8X4ZK9kschN2Kgs0q+y8sJj1Nx8hSqgT7XRW6LAye7drCct64DurqcRy1hHzpCPOZz3qFrUe7UQifgkr91lpEet4AhhErY8+iItZST1aHcrRPJIVM1lgssoYy/8hbDKL/OOEYLH3QWaygsnyO7BcdxKWVrHQZgUx21nEktXKmfRkVgkqWS3swZIjhOcRv4KVuqzEvjSRVThyhJCXcRawosUKS1m1OnOEWMpyFmttbCFl0XqXs8xrH2sHCM9YrXEWD6eNJQautcfEhtmUJQautRObVpt+SX/hNLCeSogIXzyX35TFVTzC2Zo9WI9wpzE/lSWvPRfEcSiiMb8Fa/GlERAs9s8Y6y4k9VhHOwEJt6ksMT6w9YndTN+CdXpWsaRK/OUIifkdWCXWQ2vAtazEWLCGxWcNAentsIW3ojgLKqu2G+KKG3cNUpZy0baTx6/ffb1gec0KS1i8rvrgSov09mkdq57Ktjaa8sCBYpFxvSxGp/6zLG3HmvIwi2R5wToHrtmP/lisLDYk498DJ7MA9a2LzB8rq1Ouyaxks2Y+hHfFOmMNUZxrpLksWdXB8or15Qc8r1jHgFHDqeax7nJ8kYUWK9KOyGeEE1lqCzs7bF1xLou/Mw2Fleqq0hVB/oSL9C/ApEV8EWhCQAAAAABJRU5ErkJggg==" alt="">
+    </div>
+    <div class="hp-navright">
+      <a class="hp-phone" href="tel:+31685639077">06 85 63 90 77</a>
+      <a class="hp-btn" href="#reserveren-2">Reserveer</a>
+    </div>
+  </div>
+
+  <div class="hp-hero">
+    <img class="hp-hero-mark" src="data:image/png;base64,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" alt="">
+    <div class="hp-hero-inner">
+      <span class="hp-eyebrow">Schiphol &middot; vaste prijs</span>
+      <h1 class="hp-h1">GEEN METER.<br>&Eacute;&Eacute;N PRIJS.</h1>
+      <p class="hp-dek">Michell rijdt je zelf naar Schiphol. Geen callcenter.</p>
+      <div class="hp-hero-actions">
+        <a class="hp-btn" href="#reserveren-2">Bereken je prijs</a>
+        <a class="hp-btn ghost" href="tel:+31685639077">Bel Michell</a>
+      </div>
+      <div class="hp-process">
+        <span>Boek je rit</span>
+        <span class="arrow">&rarr;</span>
+        <span><b>Michell</b> bevestigt persoonlijk</span>
+        <span class="arrow">&rarr;</span>
+        <span>vaste prijs, geen verrassingen</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="hp-section" id="reserveren-2">
+    <div class="hp-inner">
+      <div class="hp-quote">
+        <div class="hp-quote-row">
+          <div class="hp-field"><label>Ophaaladres</label><input type="text" placeholder="Straat, huisnummer, plaats"></div>
+          <div class="hp-field"><label>Bestemming</label><input type="text" placeholder="Schiphol Airport"></div>
+        </div>
+        <div class="hp-quote-row">
+          <div class="hp-field"><label>Datum</label><input type="text" placeholder="dd-mm-jjjj"></div>
+          <div class="hp-field"><label>Tijd</label><input type="text" placeholder="uu:mm"></div>
+        </div>
+        <div class="hp-quote-result">
+          <span style="font-size:.85rem;color:var(--text-soft);">Vaste prijs</span>
+          <span class="amt">&euro; 39,&ndash;</span>
+        </div>
+        <a class="hp-btn" href="#" style="text-align:center;">Reserveer</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="hp-section">
+    <div class="hp-inner">
+      <span class="hp-section-label">Tarieven</span>
+      <div class="hp-prices">
+        <div class="hp-price-row"><span class="city">Amsterdam</span><span class="amt">&euro; 39</span></div>
+        <div class="hp-price-row"><span class="city">Rotterdam</span><span class="amt">&euro; 69</span></div>
+        <div class="hp-price-row"><span class="city">Utrecht</span><span class="amt">&euro; 59</span></div>
+        <div class="hp-price-row"><span class="city">Almere</span><span class="amt">&euro; 49</span></div>
+      </div>
+      <p class="hp-price-note">Andere bestemming: &euro; 2,15 per km + &euro; 0,40 per minuut, ook vooraf berekend.</p>
+    </div>
+  </div>
+
+  <div class="hp-footer">
+    <div class="hp-footer-inner">
+      <div class="hp-footer-meta">
+        <strong style="color:var(--text)">Le Grand Taxi</strong><br>
+        Geldershoofd 116, Amsterdam &middot; 06 85 63 90 77<br>
+        KVK 91578388 &middot; BTW NL004905641B18
+      </div>
+      <div class="hp-footer-cta">
+        <a class="hp-btn ghost" href="tel:+31685639077">Bel</a>
+        <a class="hp-btn" href="#">WhatsApp</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+</body>
+</html>
