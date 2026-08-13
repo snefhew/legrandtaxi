@@ -269,6 +269,37 @@
   .price-display .price-amt.price-formula{ font-size:.85rem; font-family:var(--font-body); font-weight:600; }
   #modalFooter .btn{ flex-shrink:0; }
 
+  /* ---- smart pricing: fixed vs estimated price treatment ---- */
+  .price-tag{
+    display:inline-block; font-size:.62rem; letter-spacing:.08em; text-transform:uppercase;
+    font-family:var(--font-mono); font-weight:600; padding:.15rem .55rem; border-radius:var(--radius-pill);
+    margin-bottom:.3rem; transition:background .15s ease, border-color .15s ease, color .15s ease;
+  }
+  .price-tag.tag-fixed{ background:var(--ink-fill); color:var(--text); border:1px solid var(--ink-fill); }
+  .price-tag.tag-estimate{ background:transparent; color:var(--text-soft); border:1px dashed var(--line-strong); }
+  .price-tag.tag-loading{ background:transparent; color:var(--text-soft); border:1px solid var(--line); }
+  .price-display .price-amt.price-loading{
+    font-size:1rem; font-family:var(--font-body); font-weight:600; color:var(--text-soft);
+    animation:price-pulse 1.15s ease-in-out infinite;
+  }
+  @keyframes price-pulse{ 0%,100%{ opacity:.4; } 50%{ opacity:1; } }
+  .price-meta{ font-size:.72rem; color:var(--text-soft); font-family:var(--font-mono); min-height:1em; }
+  .price-meta.is-estimate{ color:var(--ink-text); }
+
+  .geo-status{
+    font-size:.78rem; margin:.4rem .1rem 0; font-family:var(--font-mono); color:var(--text-soft);
+    display:flex; align-items:center; gap:.4rem; min-height:1.1em;
+  }
+  .geo-status.is-pending{ opacity:.55; }
+  .geo-status.is-loading{ color:var(--text-soft); }
+  .geo-status.is-loading::before{
+    content:''; width:6px; height:6px; border-radius:50%; background:var(--ink-fill); flex-shrink:0;
+    animation:price-pulse 1s ease-in-out infinite;
+  }
+  .geo-status.is-ok{ color:var(--text-soft); }
+  .geo-status.is-ok::before{ content:'✓'; color:var(--ink-text); font-weight:700; flex-shrink:0; }
+  .geo-status.is-fail{ color:var(--ink-text); }
+
   #confirmView{ padding:.4rem .1rem 1rem; }
   .confirm-badge{
     width:52px; height:52px; border-radius:var(--radius-pill); background:var(--ink-fill); color:var(--text);
@@ -457,16 +488,18 @@
         <div class="field-group" id="otherDestGroup" hidden>
           <label for="otherDest">Naar welke plaats?</label>
           <input type="text" id="otherDest" placeholder="Adres of plaatsnaam">
+          <p class="geo-status" id="otherGeoStatus" aria-live="polite"></p>
           <div class="field-row" style="margin-top:.5rem;">
             <div class="field-group" style="margin-bottom:0;"><label for="otherKm">Afstand (km)</label><input type="number" id="otherKm" min="0" step="1" inputmode="numeric" placeholder="bijv. 25"></div>
             <div class="field-group" style="margin-bottom:0;"><label for="otherMin">Reistijd (min)</label><input type="number" id="otherMin" min="0" step="1" inputmode="numeric" placeholder="bijv. 30"></div>
           </div>
-          <p class="field-hint">Weet je dit niet precies? Laat leeg, Michell bevestigt de exacte prijs.</p>
+          <p class="field-hint" id="otherFieldHint">Weet je dit niet precies? Laat leeg, Michell bevestigt de exacte prijs.</p>
         </div>
 
         <div class="field-group" id="pickupGroup">
           <label for="ophaaladres">Ophaaladres</label>
           <input type="text" id="ophaaladres" placeholder="Straat, huisnummer, plaats" autocomplete="street-address" autocapitalize="words">
+          <p class="geo-status" id="pickupGeoStatus" aria-live="polite"></p>
         </div>
 
         <div class="field-group" id="schipholFixed" hidden>
@@ -516,8 +549,9 @@
 
     <div class="modal-footer" id="modalFooter">
       <div class="price-display">
-        <span class="price-label">Vaste prijs</span>
+        <span class="price-tag tag-fixed" id="priceTag">Vaste prijs</span>
         <span class="price-amt" id="priceAmt">&ndash;</span>
+        <span class="price-meta" id="priceMeta"></span>
       </div>
       <button class="btn" id="reserveBtn" type="button" disabled>Reserveer</button>
     </div>
@@ -531,6 +565,117 @@
   var RATE_PER_MIN = 0.40;
   var PHONE = "31685639077"; // Michell, international format, no +, no leading 0
 
+  /* ============================================================
+     SMART PRICING ENGINE
+     PDOK Locatieserver (Dutch national geocoder, free, no API key,
+     CORS-enabled) resolves any NL address to coordinates. Distance
+     from Schiphol is computed via haversine (straight-line), then
+     run through a formula calibrated by least-squares regression
+     against the 4 advertised anchor prices:
+
+       price(km) = PRICE_A + PRICE_B * km
+
+     Calibration inputs (haversine distance from Schiphol to each
+     city's PDOK woonplaats-centroid vs. its advertised price):
+       Amsterdam  11.60 km -> €39
+       Almere     31.41 km -> €49
+       Utrecht    33.24 km -> €59
+       Rotterdam  47.24 km -> €69
+     Least-squares fit: PRICE_A = 27.98, PRICE_B = 0.843 (R^2 = 0.92).
+     Residuals were +1.24 / -5.45 / +3.01 / +1.21 respectively -
+     Almere prices a little below the line (short, easy highway hop)
+     and Utrecht a little above it (more complex routing than its
+     raw distance suggests), which is expected from fitting a
+     straight line through only 4 points.
+     ============================================================ */
+  var SCHIPHOL_LAT = 52.3105, SCHIPHOL_LON = 4.7683;
+  var PRICE_A = 27.98;
+  var PRICE_B = 0.843;
+  var MIN_FARE = 25; // floor: nothing prices below this, even a few km from Schiphol
+  var EXACT_MATCH_RADIUS_KM = 6; // geocoded point this close to an anchor -> flat rate applies
+
+  var CITY_ANCHORS = [
+    { id: 'cityAms', name: 'amsterdam', price: 39, lat: 52.37344272, lon: 4.90454379 },
+    { id: 'cityRot', name: 'rotterdam', price: 69, lat: 51.92248806, lon: 4.48653571 },
+    { id: 'cityUtr', name: 'utrecht',   price: 59, lat: 52.0886922,  lon: 5.09520363 },
+    { id: 'cityAlm', name: 'almere',    price: 49, lat: 52.40247126, lon: 5.20565106 }
+  ];
+
+  var PDOK_URL = 'https://api.pdok.nl/bzk/locatieserver/search/v3_1/free';
+
+  function haversineKm(lat1, lon1, lat2, lon2){
+    var R = 6371;
+    var p1 = lat1 * Math.PI / 180, p2 = lat2 * Math.PI / 180;
+    var dphi = (lat2 - lat1) * Math.PI / 180;
+    var dlambda = (lon2 - lon1) * Math.PI / 180;
+    var x = Math.sin(dphi / 2) * Math.sin(dphi / 2) + Math.cos(p1) * Math.cos(p2) * Math.sin(dlambda / 2) * Math.sin(dlambda / 2);
+    return 2 * R * Math.asin(Math.sqrt(x));
+  }
+
+  function estimateFromDistance(km){
+    return Math.max(MIN_FARE, PRICE_A + PRICE_B * km);
+  }
+
+  function findExactCity(lat, lon, woonplaatsnaam){
+    var norm = woonplaatsnaam ? stripAccents(woonplaatsnaam.toLowerCase()) : '';
+    for (var i = 0; i < CITY_ANCHORS.length; i++){
+      var c = CITY_ANCHORS[i];
+      if (norm === c.name) return c;
+      if (haversineKm(lat, lon, c.lat, c.lon) <= EXACT_MATCH_RADIUS_KM) return c;
+    }
+    return null;
+  }
+
+  var geocodeCache = {};
+  function geocodeAddress(query, cb){
+    query = (query || '').trim();
+    if (query.length < 3){ cb(null); return; }
+    if (Object.prototype.hasOwnProperty.call(geocodeCache, query)){ cb(geocodeCache[query]); return; }
+    var controller = (typeof AbortController !== 'undefined') ? new AbortController() : null;
+    var timer = setTimeout(function(){ if (controller) controller.abort(); }, 6000);
+    // exclude type:gemeente - its centroid is a municipality-boundary center
+    // (e.g. skewed toward Rotterdam's harbour), not a usable pickup/dropoff point
+    var url = PDOK_URL + '?q=' + encodeURIComponent(query) + '&rows=1&fq=' + encodeURIComponent('type:(woonplaats OR weg OR adres OR postcode)');
+    fetch(url, controller ? { signal: controller.signal } : {})
+      .then(function(res){
+        if (!res.ok) throw new Error('PDOK HTTP ' + res.status);
+        return res.json();
+      })
+      .then(function(data){
+        clearTimeout(timer);
+        var docs = data && data.response && data.response.docs;
+        if (!docs || !docs.length){ geocodeCache[query] = null; cb(null); return; }
+        var doc = docs[0];
+        var m = /POINT\(([-0-9.]+) ([-0-9.]+)\)/.exec(doc.centroide_ll || '');
+        if (!m){ geocodeCache[query] = null; cb(null); return; }
+        var lon = parseFloat(m[1]), lat = parseFloat(m[2]);
+        var distanceKm = haversineKm(SCHIPHOL_LAT, SCHIPHOL_LON, lat, lon);
+        var result = {
+          lat: lat, lon: lon,
+          label: doc.weergavenaam || query,
+          woonplaats: doc.woonplaatsnaam || '',
+          distanceKm: distanceKm,
+          exactCity: findExactCity(lat, lon, doc.woonplaatsnaam),
+          estimate: estimateFromDistance(distanceKm)
+        };
+        geocodeCache[query] = result;
+        cb(result);
+      })
+      .catch(function(){
+        clearTimeout(timer);
+        cb(null, true);
+      });
+  }
+
+  function debounce(fn, wait){
+    var t;
+    return function(){
+      var args = arguments, ctx = this;
+      clearTimeout(t);
+      t = setTimeout(function(){ fn.apply(ctx, args); }, wait);
+    };
+  }
+
   var dialog = document.getElementById('bookingModal');
   var triggers = document.querySelectorAll('[data-open-modal]');
   var closeBtn = dialog.querySelector('.modal-close');
@@ -543,12 +688,17 @@
   var otherDestInput = document.getElementById('otherDest');
   var otherKmInput = document.getElementById('otherKm');
   var otherMinInput = document.getElementById('otherMin');
+  var otherFieldHint = document.getElementById('otherFieldHint');
+  var otherGeoStatus = document.getElementById('otherGeoStatus');
   var ophaaladresInput = document.getElementById('ophaaladres');
+  var pickupGeoStatus = document.getElementById('pickupGeoStatus');
   var datumInput = document.getElementById('datum');
   var tijdInput = document.getElementById('tijd');
   var naamInput = document.getElementById('naam');
   var telefoonInput = document.getElementById('telefoon');
   var priceAmt = document.getElementById('priceAmt');
+  var priceTag = document.getElementById('priceTag');
+  var priceMeta = document.getElementById('priceMeta');
   var reserveBtn = document.getElementById('reserveBtn');
   var formView = document.getElementById('formView');
   var confirmView = document.getElementById('confirmView');
@@ -560,6 +710,23 @@
   var waSendBtn = document.getElementById('waSendBtn');
 
   var lastTrigger = null;
+  var cityManuallySet = false;
+  var currentPriceInfo = { type: 'empty' };
+
+  // live geocode state for the two free-text fields
+  // status: idle | pending (debounce running) | loading (fetch in flight) | done | failed
+  var pickupGeo = { status: 'idle', result: null };
+  var otherGeo = { status: 'idle', result: null };
+
+  var defaultOtherHint = 'Weet je dit niet precies? Laat leeg, Michell bevestigt de exacte prijs.';
+  var fallbackOtherHint = 'We konden dit adres niet automatisch vinden — vul de afstand handmatig in, Michell bevestigt de exacte prijs.';
+
+  var DIACRITICS_RE = new RegExp('[' + String.fromCharCode(768) + '-' + String.fromCharCode(879) + ']', 'g');
+  function stripAccents(s){
+    return s.normalize ? s.normalize('NFD').replace(DIACRITICS_RE, '') : s;
+  }
+
+  function capitalize(s){ return s ? s.charAt(0).toUpperCase() + s.slice(1) : s; }
 
   function euro(n){
     if (Math.abs(n - Math.round(n)) < 0.005) {
@@ -572,8 +739,235 @@
     return (km * RATE_PER_KM) + (min * RATE_PER_MIN);
   }
 
+  function currentDirection(){
+    return dialog.querySelector('input[name="direction"]:checked').value;
+  }
+
+  function syncAutoChip(id){
+    for (var x = 0; x < cityRadios.length; x++){ cityRadios[x].checked = (cityRadios[x].id === id); }
+  }
+  function clearAutoChip(){
+    for (var x = 0; x < cityRadios.length; x++){ cityRadios[x].checked = false; }
+  }
+
+  // ---- debounced geocoding for the pickup address field ----
+  var runPickupGeocode = debounce(function(){
+    var val = ophaaladresInput.value.trim();
+    if (val.length < 3){
+      pickupGeo = { status: 'idle', result: null };
+      renderAll();
+      return;
+    }
+    pickupGeo = { status: 'loading', result: null };
+    renderAll();
+    geocodeAddress(val, function(result, failed){
+      if (ophaaladresInput.value.trim() !== val) return; // stale response, address changed since
+      pickupGeo = result ? { status: 'done', result: result } : { status: 'failed', result: null, error: !!failed };
+      renderAll();
+    });
+  }, 450);
+
+  // ---- debounced geocoding for the "Overig" destination field ----
+  var runOtherGeocode = debounce(function(){
+    var val = otherDestInput.value.trim();
+    if (val.length < 3){
+      otherGeo = { status: 'idle', result: null };
+      renderAll();
+      return;
+    }
+    otherGeo = { status: 'loading', result: null };
+    renderAll();
+    geocodeAddress(val, function(result, failed){
+      if (otherDestInput.value.trim() !== val) return;
+      otherGeo = result ? { status: 'done', result: result } : { status: 'failed', result: null, error: !!failed };
+      renderAll();
+    });
+  }, 450);
+
+  function setPriceTag(text, cls){
+    priceTag.textContent = text;
+    priceTag.className = 'price-tag ' + cls;
+  }
+
+  function renderPickupStatus(){
+    if (!pickupGeoStatus) return;
+    if (pickupGeo.status === 'pending'){
+      pickupGeoStatus.textContent = '…';
+      pickupGeoStatus.className = 'geo-status is-pending';
+    } else if (pickupGeo.status === 'loading'){
+      pickupGeoStatus.textContent = 'Adres opzoeken…';
+      pickupGeoStatus.className = 'geo-status is-loading';
+    } else if (pickupGeo.status === 'done' && pickupGeo.result){
+      var r = pickupGeo.result;
+      pickupGeoStatus.textContent = r.exactCity
+        ? 'Herkend als ' + capitalize(r.exactCity.name) + ' — vaste prijs van toepassing'
+        : 'Herkend: ' + r.label + ' (~' + Math.round(r.distanceKm) + ' km van Schiphol)';
+      pickupGeoStatus.className = 'geo-status is-ok';
+    } else if (pickupGeo.status === 'failed'){
+      pickupGeoStatus.textContent = 'Adres niet automatisch gevonden — kies hieronder een stad, of "Overig" voor handmatige invoer.';
+      pickupGeoStatus.className = 'geo-status is-fail';
+    } else {
+      pickupGeoStatus.textContent = '';
+      pickupGeoStatus.className = 'geo-status';
+    }
+  }
+
+  function otherPriceInfo(){
+    var km = parseFloat(otherKmInput.value);
+    var min = parseFloat(otherMinInput.value);
+    if (km >= 0 && min >= 0 && !isNaN(km) && !isNaN(min)){
+      return { type: 'manual', amount: calcOtherPrice(km, min) };
+    }
+    if (otherGeo.status === 'loading') return { type: 'loading' };
+    if (otherGeo.status === 'pending') return currentPriceInfo;
+    if (otherGeo.status === 'done' && otherGeo.result){
+      var r = otherGeo.result;
+      return r.exactCity
+        ? { type: 'fixed', amount: r.exactCity.price, city: capitalize(r.exactCity.name) }
+        : { type: 'estimate', amount: r.estimate, distanceKm: r.distanceKm, label: r.label };
+    }
+    return { type: 'formula' };
+  }
+
+  function renderOtherStatus(info){
+    if (!otherGeoStatus) return;
+    if (info.type === 'manual'){
+      otherGeoStatus.textContent = 'Handmatige invoer gebruikt.';
+      otherGeoStatus.className = 'geo-status is-ok';
+      otherFieldHint.textContent = defaultOtherHint;
+      return;
+    }
+    if (otherGeo.status === 'loading'){
+      otherGeoStatus.textContent = 'Adres opzoeken…';
+      otherGeoStatus.className = 'geo-status is-loading';
+      otherFieldHint.textContent = defaultOtherHint;
+    } else if (otherGeo.status === 'pending'){
+      otherGeoStatus.textContent = '…';
+      otherGeoStatus.className = 'geo-status is-pending';
+    } else if (otherGeo.status === 'done' && otherGeo.result){
+      var r = otherGeo.result;
+      otherGeoStatus.textContent = r.exactCity
+        ? 'Herkend als ' + capitalize(r.exactCity.name) + ' — vaste prijs van toepassing'
+        : 'Herkend: ' + r.label + ' (~' + Math.round(r.distanceKm) + ' km van Schiphol)';
+      otherGeoStatus.className = 'geo-status is-ok';
+      otherFieldHint.textContent = defaultOtherHint;
+    } else if (otherGeo.status === 'failed'){
+      otherGeoStatus.textContent = 'Adres niet automatisch gevonden.';
+      otherGeoStatus.className = 'geo-status is-fail';
+      otherFieldHint.textContent = fallbackOtherHint;
+    } else {
+      otherGeoStatus.textContent = '';
+      otherGeoStatus.className = 'geo-status';
+      otherFieldHint.textContent = defaultOtherHint;
+    }
+  }
+
+  function applyPriceInfo(info){
+    if (!info) info = { type: 'empty' };
+    switch (info.type){
+      case 'fixed':
+        priceAmt.textContent = euro(info.amount);
+        priceAmt.className = 'price-amt';
+        setPriceTag('Vaste prijs', 'tag-fixed');
+        priceMeta.textContent = info.city || '';
+        priceMeta.className = 'price-meta';
+        break;
+      case 'estimate':
+        priceAmt.textContent = euro(info.amount);
+        priceAmt.className = 'price-amt';
+        setPriceTag('Geschatte prijs', 'tag-estimate');
+        priceMeta.textContent = '~' + Math.round(info.distanceKm) + ' km van Schiphol';
+        priceMeta.className = 'price-meta is-estimate';
+        break;
+      case 'manual':
+        priceAmt.textContent = euro(info.amount);
+        priceAmt.className = 'price-amt';
+        setPriceTag('Geschatte prijs', 'tag-estimate');
+        priceMeta.textContent = 'Handmatige invoer';
+        priceMeta.className = 'price-meta is-estimate';
+        break;
+      case 'loading':
+        priceAmt.textContent = 'Bezig met berekenen…';
+        priceAmt.className = 'price-amt price-loading';
+        setPriceTag('Even geduld', 'tag-loading');
+        priceMeta.textContent = '';
+        priceMeta.className = 'price-meta';
+        break;
+      case 'formula':
+        priceAmt.textContent = '€2,15/km + €0,40/min';
+        priceAmt.className = 'price-amt price-formula';
+        setPriceTag('Geschatte prijs', 'tag-estimate');
+        priceMeta.textContent = 'Vul afstand + reistijd in voor een schatting';
+        priceMeta.className = 'price-meta';
+        break;
+      case 'needs-manual':
+        priceAmt.textContent = '–';
+        priceAmt.className = 'price-amt';
+        setPriceTag('Prijs onbekend', 'tag-loading');
+        priceMeta.textContent = 'Kies hieronder een stad, of "Overig"';
+        priceMeta.className = 'price-meta';
+        break;
+      default:
+        priceAmt.textContent = '–';
+        priceAmt.className = 'price-amt';
+        setPriceTag('Vaste prijs', 'tag-fixed');
+        priceMeta.textContent = '';
+        priceMeta.className = 'price-meta';
+    }
+    currentPriceInfo = info;
+  }
+
+  function renderAll(){
+    renderPickupStatus();
+    var dir = currentDirection();
+    var cityChecked = dialog.querySelector('input[name="city"]:checked');
+    var priceInfo;
+
+    if (dir === 'naar'){
+      if (cityManuallySet && cityChecked && cityChecked.id !== 'cityOther'){
+        priceInfo = { type: 'fixed', amount: Number(cityChecked.dataset.price), city: cityChecked.dataset.city };
+      } else if (cityManuallySet && cityChecked && cityChecked.id === 'cityOther'){
+        priceInfo = otherPriceInfo();
+      } else if (pickupGeo.status === 'loading'){
+        priceInfo = { type: 'loading' };
+      } else if (pickupGeo.status === 'pending'){
+        priceInfo = currentPriceInfo;
+      } else if (pickupGeo.status === 'done' && pickupGeo.result){
+        var pr = pickupGeo.result;
+        if (pr.exactCity){
+          syncAutoChip(pr.exactCity.id);
+          priceInfo = { type: 'fixed', amount: pr.exactCity.price, city: capitalize(pr.exactCity.name) };
+        } else {
+          clearAutoChip();
+          priceInfo = { type: 'estimate', amount: pr.estimate, distanceKm: pr.distanceKm, label: pr.label };
+        }
+      } else if (pickupGeo.status === 'failed'){
+        clearAutoChip();
+        priceInfo = { type: 'needs-manual' };
+      } else {
+        priceInfo = { type: 'empty' };
+      }
+      otherDestGroup.hidden = !(cityManuallySet && cityChecked && cityChecked.id === 'cityOther');
+    } else {
+      if (!cityChecked){
+        priceInfo = { type: 'empty' };
+        otherDestGroup.hidden = true;
+      } else if (cityChecked.id !== 'cityOther'){
+        priceInfo = { type: 'fixed', amount: Number(cityChecked.dataset.price), city: cityChecked.dataset.city };
+        otherDestGroup.hidden = true;
+      } else {
+        otherDestGroup.hidden = false;
+        priceInfo = otherPriceInfo();
+        renderOtherStatus(priceInfo);
+      }
+    }
+
+    applyPriceInfo(priceInfo);
+    validateForm();
+  }
+
   function updateDirection(){
-    var dir = dialog.querySelector('input[name="direction"]:checked').value;
+    var dir = currentDirection();
     if(dir === 'vanaf'){
       pickupGroup.hidden = true;
       schipholFixed.hidden = false;
@@ -583,52 +977,31 @@
       schipholFixed.hidden = true;
       chipGroupLabel.textContent = 'Ophaalstad';
     }
-    validateForm();
-  }
-
-  function updateOtherPrice(){
-    var checked = dialog.querySelector('input[name="city"]:checked');
-    if(!checked || checked.id !== 'cityOther') return;
-    var km = parseFloat(otherKmInput.value);
-    var min = parseFloat(otherMinInput.value);
-    if(km >= 0 && min >= 0 && !isNaN(km) && !isNaN(min)){
-      priceAmt.textContent = euro(calcOtherPrice(km, min));
-      priceAmt.classList.remove('price-formula');
-    } else {
-      priceAmt.textContent = '€2,15/km + €0,40/min';
-      priceAmt.classList.add('price-formula');
-    }
-  }
-
-  function updateCitySelection(){
-    var checked = dialog.querySelector('input[name="city"]:checked');
-    if(!checked){
-      otherDestGroup.hidden = true;
-      priceAmt.textContent = '–';
-      priceAmt.classList.remove('price-formula');
-      validateForm();
-      return;
-    }
-    if(checked.id === 'cityOther'){
-      otherDestGroup.hidden = false;
-      updateOtherPrice();
-    } else {
-      otherDestGroup.hidden = true;
-      priceAmt.textContent = euro(Number(checked.dataset.price));
-      priceAmt.classList.remove('price-formula');
-    }
-    validateForm();
+    renderAll();
   }
 
   function validateForm(){
-    var dir = dialog.querySelector('input[name="direction"]:checked').value;
+    var dir = currentDirection();
     var cityChecked = dialog.querySelector('input[name="city"]:checked');
     var datumOk = !!datumInput.value;
     var tijdOk = !!tijdInput.value;
     var addressOk = dir === 'vanaf' ? true : ophaaladresInput.value.trim().length > 3;
-    var destOk = !!cityChecked;
-    if(cityChecked && cityChecked.id === 'cityOther'){
-      destOk = otherDestInput.value.trim().length > 2;
+    var destOk;
+    if (dir === 'naar'){
+      if (cityManuallySet){
+        // user explicitly picked a chip (fixed city or Overig) - trust that override,
+        // same lenient rule as before (Overig may still be unresolved, Michell confirms)
+        destOk = addressOk;
+      } else {
+        // auto/geocoded path: require an actual resolved price, never let a dead
+        // "-" price go to WhatsApp - if geocoding failed, the user must pick a chip
+        destOk = addressOk && (currentPriceInfo.type === 'fixed' || currentPriceInfo.type === 'estimate');
+      }
+    } else {
+      destOk = !!cityChecked;
+      if (cityChecked && cityChecked.id === 'cityOther'){
+        destOk = otherDestInput.value.trim().length > 2;
+      }
     }
     var naamOk = naamInput.value.trim().length > 1;
     var telOk = telefoonInput.value.trim().length > 6;
@@ -667,15 +1040,32 @@
   });
 
   for (var j = 0; j < dirRadios.length; j++){ dirRadios[j].addEventListener('change', updateDirection); }
-  for (var k = 0; k < cityRadios.length; k++){ cityRadios[k].addEventListener('change', updateCitySelection); }
-  otherDestInput.addEventListener('input', validateForm);
-  otherKmInput.addEventListener('input', function(){ updateOtherPrice(); });
-  otherMinInput.addEventListener('input', function(){ updateOtherPrice(); });
-  ophaaladresInput.addEventListener('input', validateForm);
+  for (var k = 0; k < cityRadios.length; k++){
+    cityRadios[k].addEventListener('change', function(){
+      cityManuallySet = true;
+      renderAll();
+    });
+  }
+  otherDestInput.addEventListener('input', function(){
+    otherGeo = { status: 'pending', result: null };
+    renderAll();
+    runOtherGeocode();
+  });
+  otherKmInput.addEventListener('input', function(){ renderAll(); });
+  otherMinInput.addEventListener('input', function(){ renderAll(); });
+  ophaaladresInput.addEventListener('input', function(){
+    pickupGeo = { status: 'pending', result: null };
+    renderAll();
+    runPickupGeocode();
+  });
   datumInput.addEventListener('input', validateForm);
   tijdInput.addEventListener('input', validateForm);
   naamInput.addEventListener('input', validateForm);
   telefoonInput.addEventListener('input', validateForm);
+
+  function priceMessageText(){
+    return priceTag.textContent + ': ' + priceAmt.textContent;
+  }
 
   function buildWaUrl(d){
     var lines = [
@@ -696,18 +1086,24 @@
 
   reserveBtn.addEventListener('click', function(){
     if (reserveBtn.disabled) return;
-    var dir = dialog.querySelector('input[name="direction"]:checked').value;
+    var dir = currentDirection();
     var cityChecked = dialog.querySelector('input[name="city"]:checked');
-    var cityName = cityChecked.id === 'cityOther'
-      ? (otherDestInput.value.trim() || 'opgegeven bestemming')
-      : cityChecked.dataset.city;
-    var from = dir === 'naar' ? ophaaladresInput.value.trim() : 'Schiphol Airport';
-    var to = dir === 'naar' ? 'Schiphol Airport' : cityName;
+    var from, to;
+    if (dir === 'naar'){
+      from = ophaaladresInput.value.trim();
+      to = 'Schiphol Airport';
+    } else {
+      from = 'Schiphol Airport';
+      to = cityChecked
+        ? (cityChecked.id === 'cityOther' ? (otherDestInput.value.trim() || 'opgegeven bestemming') : cityChecked.dataset.city)
+        : 'opgegeven bestemming';
+    }
     var when = formatDate(datumInput.value) + ' om ' + tijdInput.value;
+    var priceText = priceMessageText();
 
     summaryRoute.textContent = from + ' → ' + to;
     summaryWhen.textContent = when;
-    summaryPrice.textContent = priceAmt.textContent;
+    summaryPrice.textContent = priceText;
 
     waSendBtn.href = buildWaUrl({
       naam: naamInput.value.trim(),
@@ -715,7 +1111,7 @@
       from: from,
       to: to,
       when: when,
-      price: priceAmt.textContent
+      price: priceText
     });
 
     formView.hidden = true;
@@ -728,6 +1124,9 @@
     var radios = dialog.querySelectorAll('input[type="radio"]');
     for (var r = 0; r < radios.length; r++){ radios[r].checked = false; }
     document.getElementById('dirNaar').checked = true;
+    cityManuallySet = false;
+    pickupGeo = { status: 'idle', result: null };
+    otherGeo = { status: 'idle', result: null };
     ophaaladresInput.value = '';
     otherDestInput.value = '';
     otherKmInput.value = '';
@@ -737,7 +1136,6 @@
     naamInput.value = '';
     telefoonInput.value = '';
     updateDirection();
-    updateCitySelection();
     formView.hidden = false;
     modalFooter.hidden = false;
     confirmView.hidden = true;
@@ -745,7 +1143,6 @@
   });
 
   updateDirection();
-  updateCitySelection();
 })();
 </script>
 </body>
