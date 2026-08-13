@@ -1,0 +1,282 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Le Grand Taxi — reservation flow prototype (research)</title>
+<style>
+  *{box-sizing:border-box;}
+  body{
+    margin:0; background:#0a0a0a; color:#eee;
+    font-family:-apple-system,"Segoe UI",Roboto,sans-serif;
+    line-height:1.5;
+  }
+  .wrap{ max-width:760px; margin:0 auto; padding:2rem 1.4rem 4rem; }
+  h1{ font-size:1.5rem; margin:0 0 .3rem; }
+  .sub{ color:#999; font-size:.9rem; margin:0 0 2rem; }
+  .banner{
+    background:#1a2e1a; border:1px solid #2e5a2e; color:#bfe6bf;
+    border-radius:8px; padding:.9rem 1.1rem; font-size:.85rem; margin-bottom:2rem;
+  }
+  .banner b{ color:#dfffdf; }
+  section{
+    background:#121212; border:1px solid #262626; border-radius:10px;
+    padding:1.4rem 1.4rem 1.6rem; margin-bottom:1.6rem;
+  }
+  h2{ font-size:1.05rem; margin:0 0 .2rem; display:flex; align-items:center; gap:.5rem; }
+  .tag{
+    font-size:.65rem; text-transform:uppercase; letter-spacing:.06em;
+    padding:.2rem .5rem; border-radius:99px; font-weight:600;
+  }
+  .tag.primary{ background:#1f4d2e; color:#8fe0a8; }
+  .tag.secondary{ background:#3a3018; color:#e0c98f; }
+  .tag.todo{ background:#4d1f1f; color:#e08f8f; }
+  p.desc{ color:#aaa; font-size:.85rem; margin:.4rem 0 1.1rem; }
+  label{ display:block; font-size:.72rem; text-transform:uppercase; letter-spacing:.05em; color:#888; margin:.7rem 0 .25rem; }
+  input, textarea{
+    width:100%; background:#1a1a1a; border:1px solid #333; border-radius:5px;
+    color:#eee; padding:.55rem .7rem; font-size:.9rem; font-family:inherit;
+  }
+  .row{ display:grid; grid-template-columns:1fr 1fr; gap:.8rem; }
+  @media (max-width:520px){ .row{ grid-template-columns:1fr; } }
+  .btn{
+    display:inline-block; text-decoration:none; font-weight:600; font-size:.9rem;
+    padding:.7rem 1.3rem; border-radius:6px; cursor:pointer; border:1px solid transparent;
+    margin-top:1rem;
+  }
+  .btn.wa{ background:#25d366; color:#062b13; }
+  .btn.wa:hover{ background:#2ee076; }
+  .btn.cal{ background:transparent; color:#8fb3e0; border-color:#3a5a8a; font-size:.8rem; padding:.5rem 1rem; }
+  .btn.cal:hover{ background:#132030; }
+  .btn.form{ background:#3a3018; color:#e0c98f; border:1px solid #5a4a28; }
+  code, pre{
+    font-family:ui-monospace,"SF Mono",Consolas,monospace; font-size:.78rem;
+    background:#0d0d0d; border:1px solid #262626; border-radius:6px;
+  }
+  pre{ padding:.9rem 1rem; overflow-x:auto; color:#9fdc9f; white-space:pre-wrap; word-break:break-word; }
+  code.inline{ padding:.1rem .35rem; color:#e0c98f; }
+  .live-url{
+    font-family:ui-monospace,"SF Mono",Consolas,monospace; font-size:.76rem;
+    color:#7fb0ff; word-break:break-all; background:#0d0d0d; border:1px solid #262626;
+    border-radius:6px; padding:.7rem .9rem; margin-top:.6rem;
+  }
+  .checklist{ list-style:none; padding:0; margin:0; }
+  .checklist li{
+    padding:.6rem .8rem; background:#1a1a1a; border:1px solid #333; border-radius:6px;
+    margin-bottom:.5rem; font-size:.85rem;
+  }
+  .checklist li b{ color:#e08f8f; }
+  .checklist li.done{ opacity:.6; }
+  .checklist li.done b{ color:#8fe0a8; }
+  footer{ color:#666; font-size:.78rem; margin-top:2.5rem; text-align:center; }
+  .hp{ display:none; }
+  .honeypot{ position:absolute; left:-9999px; opacity:0; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1>Le Grand Taxi — reservation flow prototype</h1>
+  <p class="sub">Research prototype for the "Reserveer" button. Not linked from the live site. Sample data below — edit the fields and watch the WhatsApp link and Google Calendar link update live.</p>
+
+  <div class="banner">
+    <b>What works right now, with zero setup:</b> the WhatsApp button below is fully functional — click it and it will genuinely try to open a WhatsApp chat with Michell's real number (+31 6 85 63 90 77) with your edited booking details pre-filled. The Google Calendar link also works for real, right now. The fallback email form at the bottom needs one thing from a human before it goes live — see the checklist.
+  </div>
+
+  <section>
+    <h2>Sample booking <span class="tag primary">edit me</span></h2>
+    <p class="desc">This simulates what the customer fills in on the existing booking form (Ophaaladres / Bestemming / Datum / Tijd / vaste prijs fields already on the site).</p>
+    <div class="row">
+      <div>
+        <label>Ophaaladres</label>
+        <input id="pickup" value="Hoofdstraat 12, Amsterdam">
+      </div>
+      <div>
+        <label>Bestemming</label>
+        <input id="dest" value="Schiphol Airport">
+      </div>
+    </div>
+    <div class="row">
+      <div>
+        <label>Datum</label>
+        <input id="date" value="20-08-2026" placeholder="dd-mm-jjjj">
+      </div>
+      <div>
+        <label>Tijd</label>
+        <input id="time" value="14:30" placeholder="uu:mm">
+      </div>
+    </div>
+    <div class="row">
+      <div>
+        <label>Vaste prijs</label>
+        <input id="price" value="€ 39,-">
+      </div>
+      <div>
+        <label>Naam (optioneel veld, aanbevolen)</label>
+        <input id="name" value="Sanne de Vries">
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>1. WhatsApp deep link <span class="tag primary">primary flow</span></h2>
+    <p class="desc">This is what the main "Reserveer" button should point to. It's a plain <code class="inline">wa.me</code> URL — no backend, no account, no API key. It just opens WhatsApp with the message pre-typed; the customer still presses Send themselves.</p>
+    <div class="live-url" id="waUrlPreview"></div>
+    <a class="btn wa" id="waBtn" href="#" target="_blank" rel="noopener">Open WhatsApp naar Michell &rarr;</a>
+    <p class="desc" style="margin-top:1.1rem;">Number format used: Michell's <code class="inline">06 85 63 90 77</code> becomes <code class="inline">31685639077</code> for the URL (international format, no leading <code class="inline">+</code>, no <code class="inline">00</code>, no leading trunk <code class="inline">0</code>). The message text is built with <code class="inline">encodeURIComponent()</code> so line breaks, <code class="inline">€</code>, and accented characters survive correctly.</p>
+    <pre id="waCode"></pre>
+  </section>
+
+  <section>
+    <h2>2. Google Calendar "add event" link <span class="tag secondary">included in the message</span></h2>
+    <p class="desc">Built entirely from a URL — no Google account, no OAuth, no API key. Included as a real tappable link inside the WhatsApp message (and inside the fallback email) so once Michell accepts a booking, he's one tap from having it on his agenda.</p>
+    <div class="live-url" id="calUrlPreview"></div>
+    <a class="btn cal" id="calBtn" href="#" target="_blank" rel="noopener">Voorbeeld: open in Google Calendar &rarr;</a>
+  </section>
+
+  <section>
+    <h2>3. Fallback: form-to-email (Web3Forms) <span class="tag todo">needs 1 setup step</span></h2>
+    <p class="desc">
+      For customers without WhatsApp. This is a genuine, static, no-JavaScript-required HTML <code class="inline">&lt;form&gt;</code> — it works exactly like this on GitHub Pages with no build step and no server.
+      It currently points at a <b>placeholder</b> access key (<code class="inline">YOUR_WEB3FORMS_ACCESS_KEY</code>) so it will not actually deliver until a human replaces that key — see the checklist below.
+      A honeypot field is included to cut down obvious bot spam.
+    </p>
+    <form action="https://api.web3forms.com/submit" method="POST" target="_blank">
+      <input type="hidden" name="access_key" value="YOUR_WEB3FORMS_ACCESS_KEY">
+      <input type="hidden" name="subject" value="Nieuwe boeking — Le Grand Taxi">
+      <input type="hidden" name="from_name" value="Le Grand Taxi website">
+      <!-- honeypot: real users never see/fill this; bots often do -->
+      <input class="honeypot" type="text" name="botcheck" tabindex="-1" autocomplete="off">
+      <label>Naam</label>
+      <input type="text" name="Naam" required value="Sanne de Vries">
+      <label>Telefoonnummer (voor Michell om terug te bellen)</label>
+      <input type="tel" name="Telefoon" required value="06 12 34 56 78">
+      <div class="row">
+        <div>
+          <label>Ophaaladres</label>
+          <input type="text" name="Ophaaladres" required value="Hoofdstraat 12, Amsterdam">
+        </div>
+        <div>
+          <label>Bestemming</label>
+          <input type="text" name="Bestemming" required value="Schiphol Airport">
+        </div>
+      </div>
+      <div class="row">
+        <div>
+          <label>Datum</label>
+          <input type="text" name="Datum" required value="20-08-2026">
+        </div>
+        <div>
+          <label>Tijd</label>
+          <input type="text" name="Tijd" required value="14:30">
+        </div>
+      </div>
+      <input type="hidden" name="replyto" value="">
+      <button class="btn form" type="submit">Verstuur boekingsaanvraag (demo — inactief tot key is ingesteld)</button>
+    </form>
+  </section>
+
+  <section>
+    <h2>What a human still needs to do</h2>
+    <ul class="checklist">
+      <li class="done"><b>WhatsApp button:</b> nothing — it already works with Michell's real number. No account, no signup, no cost.</li>
+      <li class="done"><b>Google Calendar link:</b> nothing — it's a plain URL, works immediately.</li>
+      <li><b>Fallback form:</b> go to <code class="inline">web3forms.com</code>, enter an email address (Michell's), and copy the free access key it emails you. Paste that key into the <code class="inline">value="YOUR_WEB3FORMS_ACCESS_KEY"</code> hidden field above (and later in the real site's form). No account password needed beyond the emailed key — takes about 2 minutes. (Formspree is an equally valid alternative if a fuller dashboard/account is preferred instead of a bare access key.)</li>
+      <li><b>Confirmation email:</b> in the Web3Forms (or Formspree) dashboard, turn on the "auto-response to submitter" option and write a short Dutch confirmation message, so the customer gets an immediate "we hebben je aanvraag ontvangen" email even before Michell replies.</li>
+      <li><b>Wiring into the real site:</b> once the access key is set, this exact WhatsApp + Google Calendar + fallback-form pattern can be dropped into the live <code class="inline">index.html</code> reservation sections (replacing the current <code class="inline">href="#"</code> Reserveer buttons) — deliberately not done here per the research-only scope of this task.</li>
+    </ul>
+  </section>
+
+  <footer>Research prototype — Le Grand Taxi reservation flow. Does not modify the live site.</footer>
+</div>
+
+<script>
+  const PHONE = "31685639077"; // Michell — international format, no +, no leading 0
+
+  function els(){
+    return {
+      pickup: document.getElementById('pickup').value.trim(),
+      dest: document.getElementById('dest').value.trim(),
+      date: document.getElementById('date').value.trim(),
+      time: document.getElementById('time').value.trim(),
+      price: document.getElementById('price').value.trim(),
+      name: document.getElementById('name').value.trim(),
+    };
+  }
+
+  // Parse dd-mm-jjjj + uu:mm into a Date for the calendar link (assumes Europe/Amsterdam local time)
+  function parseDutchDateTime(dateStr, timeStr){
+    const dm = dateStr.match(/(\d{1,2})-(\d{1,2})-(\d{4})/);
+    const tm = timeStr.match(/(\d{1,2}):(\d{2})/);
+    if(!dm || !tm) return null;
+    const [, d, m, y] = dm;
+    const [, hh, mm] = tm;
+    return new Date(+y, +m - 1, +d, +hh, +mm);
+  }
+
+  function fmtGCal(dt){
+    // floating local time, no Z suffix -> renders in viewer's own calendar timezone
+    const pad = n => String(n).padStart(2, '0');
+    return `${dt.getFullYear()}${pad(dt.getMonth()+1)}${pad(dt.getDate())}T${pad(dt.getHours())}${pad(dt.getMinutes())}00`;
+  }
+
+  function buildWaUrl(d){
+    const lines = [
+      `Hallo Michell! Ik wil graag een taxi reserveren:`,
+      ``,
+      `👤 Naam: ${d.name || '-'}`,
+      `📍 Ophalen: ${d.pickup || '-'}`,
+      `🎯 Bestemming: ${d.dest || '-'}`,
+      `📅 Datum: ${d.date || '-'}`,
+      `🕐 Tijd: ${d.time || '-'}`,
+      `💶 Vaste prijs: ${d.price || '-'}`,
+      ``,
+      `Kun je dit bevestigen? Bedankt!`,
+    ];
+    const text = lines.join('\n');
+    const url = `https://wa.me/${PHONE}?text=${encodeURIComponent(text)}`;
+    return { url, text };
+  }
+
+  function buildCalUrl(d){
+    const start = parseDutchDateTime(d.date, d.time);
+    if(!start) return null;
+    const end = new Date(start.getTime() + 45*60000); // assume 45 min transfer
+    const dates = `${fmtGCal(start)}/${fmtGCal(end)}`;
+    const params = new URLSearchParams({
+      action: 'TEMPLATE',
+      text: `Taxi naar Schiphol — Le Grand Taxi (${d.name || 'klant'})`,
+      dates,
+      details: `Ophalen: ${d.pickup}\nBestemming: ${d.dest}\nVaste prijs: ${d.price}\nKlant: ${d.name}`,
+      location: d.pickup,
+    });
+    return `https://calendar.google.com/calendar/render?${params.toString()}`;
+  }
+
+  function render(){
+    const d = els();
+    const { url, text } = buildWaUrl(d);
+    document.getElementById('waUrlPreview').textContent = url;
+    document.getElementById('waBtn').href = url;
+    document.getElementById('waCode').textContent =
+`const PHONE = "31685639077"; // international format, no +, no leading 0
+const message = \`${text.replace(/`/g,'\\`')}\`;
+const waUrl = \`https://wa.me/\${PHONE}?text=\${encodeURIComponent(message)}\`;`;
+
+    const calUrl = buildCalUrl(d);
+    if(calUrl){
+      document.getElementById('calUrlPreview').textContent = calUrl;
+      document.getElementById('calBtn').href = calUrl;
+    } else {
+      document.getElementById('calUrlPreview').textContent = '(vul een geldige datum dd-mm-jjjj en tijd uu:mm in om de kalenderlink te zien)';
+      document.getElementById('calBtn').removeAttribute('href');
+    }
+  }
+
+  ['pickup','dest','date','time','price','name'].forEach(id => {
+    document.getElementById(id).addEventListener('input', render);
+  });
+  render();
+</script>
+</body>
+</html>

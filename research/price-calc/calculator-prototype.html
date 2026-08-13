@@ -1,0 +1,411 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Le Grand Taxi — prijscalculator (prototype)</title>
+<style>
+  :root{
+    --bg:#10181a; --bg-2:#0b1213; --card:#16211f; --input-bg:#0c1315;
+    --text:#ece7dc; --text-soft:#9fada8;
+    --line:rgba(236,231,220,0.14); --line-strong:rgba(236,231,220,0.3);
+    --accent:#c9a24b; --accent-text:#d3ac57; --on-accent:#14201f;
+    --ok:#6fae7f; --warn:#c98b4b; --err:#c9564a;
+    --font-display: Georgia,"Iowan Old Style",serif;
+    --font-body: -apple-system,"Segoe UI",Roboto,sans-serif;
+    --font-mono: ui-monospace,"SF Mono",Consolas,monospace;
+  }
+  *{box-sizing:border-box;}
+  body{
+    background:var(--bg); color:var(--text); font-family:var(--font-body);
+    margin:0; padding:2.2rem 1.2rem 4rem; line-height:1.5;
+  }
+  .wrap{ max-width:640px; margin:0 auto; }
+  .banner{
+    background:var(--bg-2); border:1px solid var(--line-strong); border-radius:4px;
+    padding:.8rem 1rem; margin-bottom:1.8rem; font-size:.8rem; color:var(--text-soft);
+    font-family:var(--font-mono); line-height:1.6;
+  }
+  .banner b{ color:var(--accent-text); }
+  .eyebrow{
+    font-family:var(--font-mono); font-size:.7rem; letter-spacing:.12em; text-transform:uppercase;
+    color:var(--accent-text); margin:0 0 .6rem; display:block;
+  }
+  h1{
+    font-family:var(--font-display); font-weight:600; letter-spacing:-.01em; line-height:1.05;
+    font-size:2rem; margin:0 0 .5rem;
+  }
+  .dek{ color:var(--text-soft); font-size:1rem; max-width:46ch; margin:0 0 2rem; }
+  .card{
+    background:var(--card); border:1px solid var(--line); border-radius:8px;
+    padding:1.4rem; margin-bottom:1.4rem;
+  }
+  .section-label{
+    font-family:var(--font-mono); font-size:.68rem; letter-spacing:.1em; text-transform:uppercase;
+    color:var(--accent-text); margin:0 0 .9rem; display:block;
+  }
+  .dest-grid{ display:grid; grid-template-columns:repeat(2,1fr); gap:.6rem; }
+  @media (max-width:420px){ .dest-grid{ grid-template-columns:1fr; } }
+  .dest-btn{
+    background:var(--input-bg); border:1px solid var(--line); border-radius:4px;
+    color:var(--text); padding:.75rem .8rem; font-size:.92rem; font-family:var(--font-body);
+    text-align:left; cursor:pointer; display:flex; justify-content:space-between; align-items:baseline;
+    transition:border-color .15s, background .15s;
+  }
+  .dest-btn:hover{ border-color:var(--line-strong); }
+  .dest-btn .amt{ font-family:var(--font-display); font-weight:600; color:var(--text-soft); font-size:.95rem; }
+  .dest-btn.active{ border-color:var(--accent); background:rgba(201,162,75,0.08); }
+  .dest-btn.active .amt{ color:var(--accent-text); }
+  .dest-btn.other{ grid-column:1 / -1; }
+
+  .result{
+    display:none; margin-top:1.2rem; padding-top:1.1rem; border-top:1px solid var(--line);
+  }
+  .result.show{ display:block; }
+  .result-row{ display:flex; justify-content:space-between; align-items:baseline; }
+  .result-row .label{ font-size:.85rem; color:var(--text-soft); }
+  .result-row .amt{
+    font-family:var(--font-display); font-size:1.8rem; font-weight:600;
+    color:var(--accent-text); font-variant-numeric:tabular-nums;
+  }
+  .result-note{ font-size:.78rem; color:var(--text-soft); margin-top:.4rem; }
+
+  .other-panel{ display:none; margin-top:1.2rem; padding-top:1.2rem; border-top:1px solid var(--line); }
+  .other-panel.show{ display:block; }
+
+  .mode-toggle{ display:flex; gap:.5rem; margin-bottom:1rem; }
+  .mode-btn{
+    flex:1; background:var(--input-bg); border:1px solid var(--line); border-radius:4px;
+    color:var(--text-soft); padding:.55rem .6rem; font-size:.8rem; font-family:var(--font-mono);
+    letter-spacing:.03em; cursor:pointer; text-align:center;
+  }
+  .mode-btn.active{ border-color:var(--accent); color:var(--accent-text); background:rgba(201,162,75,0.08); }
+
+  .field{ display:flex; flex-direction:column; gap:.3rem; margin-bottom:.8rem; }
+  .field label{
+    font-size:.66rem; letter-spacing:.06em; text-transform:uppercase; color:var(--text-soft);
+    font-family:var(--font-mono);
+  }
+  .field input{
+    background:var(--input-bg); border:1px solid var(--line); border-radius:4px; color:var(--text);
+    padding:.6rem .7rem; font-size:.92rem; font-family:var(--font-body); width:100%;
+  }
+  .field input:focus{ outline:none; border-color:var(--accent); }
+  .row2{ display:grid; grid-template-columns:1fr 1fr; gap:.7rem; }
+  @media (max-width:420px){ .row2{ grid-template-columns:1fr; } }
+
+  .hint{ font-size:.78rem; color:var(--text-soft); margin:.2rem 0 1rem; }
+  .btn{
+    font-family:var(--font-body); font-size:.85rem; font-weight:600; padding:.65rem 1.1rem;
+    border-radius:4px; border:1px solid var(--accent); background:var(--accent); color:var(--on-accent);
+    cursor:pointer;
+  }
+  .btn.ghost{ background:transparent; color:var(--text); border-color:var(--line-strong); }
+  .btn:disabled{ opacity:.5; cursor:not-allowed; }
+
+  .status{ font-size:.8rem; margin-top:.7rem; font-family:var(--font-mono); }
+  .status.ok{ color:var(--ok); }
+  .status.warn{ color:var(--warn); }
+  .status.err{ color:var(--err); }
+
+  .formula{
+    font-family:var(--font-mono); font-size:.78rem; color:var(--text-soft);
+    background:var(--input-bg); border:1px solid var(--line); border-radius:4px;
+    padding:.6rem .8rem; margin-top:.9rem;
+  }
+  .api-block{ margin-top:1rem; padding-top:1rem; border-top:1px dashed var(--line); }
+  .api-block summary{ cursor:pointer; font-size:.8rem; color:var(--text-soft); font-family:var(--font-mono); }
+  .api-block .field{ margin-top:.8rem; }
+  footer{ margin-top:2rem; font-size:.78rem; color:var(--text-soft); line-height:1.7; }
+  footer a{ color:var(--accent-text); }
+  code{ font-family:var(--font-mono); background:var(--input-bg); padding:.05rem .3rem; border-radius:3px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="banner">
+    <b>RESEARCH PROTOTYPE</b> — staat los van de live site (<code>index.html</code>). Niet gekoppeld,
+    niet gepubliceerd. Doel: bewijzen dat een écht werkende calculator met deze vaste-prijs-structuur
+    kan zonder backend of betaalde API's.
+  </div>
+
+  <span class="eyebrow">Schiphol · vaste prijs</span>
+  <h1>Bereken je prijs</h1>
+  <p class="dek">Kies je bestemming. Voor Amsterdam, Rotterdam, Utrecht en Almere geldt een vaste
+    prijs — geen berekening nodig, alleen een opzoeking. Voor andere bestemmingen gebruiken we
+    €2,15 per km + €0,40 per minuut.</p>
+
+  <div class="card">
+    <span class="section-label">Bestemming (Schiphol ↔ ...)</span>
+    <div class="dest-grid" id="destGrid">
+      <button class="dest-btn" data-city="amsterdam"><span>Amsterdam</span><span class="amt">€ 39</span></button>
+      <button class="dest-btn" data-city="rotterdam"><span>Rotterdam</span><span class="amt">€ 69</span></button>
+      <button class="dest-btn" data-city="utrecht"><span>Utrecht</span><span class="amt">€ 59</span></button>
+      <button class="dest-btn" data-city="almere"><span>Almere</span><span class="amt">€ 49</span></button>
+      <button class="dest-btn other" data-city="other"><span>Andere bestemming</span><span class="amt">€2,15/km + €0,40/min</span></button>
+    </div>
+
+    <!-- Fixed-city instant result: pure lookup, no math -->
+    <div class="result" id="fixedResult">
+      <div class="result-row">
+        <span class="label" id="fixedLabel">Vaste prijs</span>
+        <span class="amt" id="fixedAmt">€ 0</span>
+      </div>
+      <div class="result-note">Vast, vooraf afgesproken tarief. Wordt direct getoond zodra je een
+        bestemming kiest — er wordt niets berekend.</div>
+    </div>
+
+    <!-- Other-destination panel -->
+    <div class="other-panel" id="otherPanel">
+      <div class="mode-toggle">
+        <button class="mode-btn active" id="modeManualBtn" type="button">Handmatig invoeren</button>
+        <button class="mode-btn" id="modeAutoBtn" type="button">Automatisch schatten (optioneel)</button>
+      </div>
+
+      <!-- Manual km/min entry — zero dependencies, always works -->
+      <div id="manualBlock">
+        <div class="row2">
+          <div class="field">
+            <label for="kmInput">Afstand Schiphol ↔ bestemming (km)</label>
+            <input type="number" id="kmInput" min="0" step="0.1" placeholder="bv. 25">
+          </div>
+          <div class="field">
+            <label for="minInput">Reistijd (minuten)</label>
+            <input type="number" id="minInput" min="0" step="1" placeholder="bv. 30">
+          </div>
+        </div>
+        <div class="hint">Vul de geschatte afstand en rijtijd in (bv. via Google Maps route-info),
+          of laat de klant dit zelf invullen op basis van hun adres.</div>
+      </div>
+
+      <!-- Optional free auto-estimate via OpenRouteService -->
+      <div id="autoBlock" style="display:none;">
+        <div class="field">
+          <label for="addrInput">Adres van de bestemming</label>
+          <input type="text" id="addrInput" placeholder="Straat, huisnummer, plaats">
+        </div>
+        <button class="btn ghost" id="estimateBtn" type="button">Schat route (Schiphol ↔ adres)</button>
+        <div class="status" id="autoStatus"></div>
+
+        <details class="api-block">
+          <summary>Instellingen: gratis OpenRouteService API-sleutel</summary>
+          <p class="hint" style="margin-top:.6rem;">
+            Deze functie gebruikt <a href="https://openrouteservice.org/" target="_blank" rel="noopener">OpenRouteService</a>
+            (gratis tier: ~2.500 aanvragen/dag, 40.000/maand — geen creditcard nodig).
+            Maak een gratis account, kopieer je API-sleutel en plak hem hieronder. De sleutel wordt
+            <b>alleen lokaal in je browser</b> bewaard (localStorage) en rechtstreeks naar
+            OpenRouteService gestuurd — nooit naar een server van Le Grand Taxi. Er staat geen
+            sleutel hardcoded in deze prototype-code.
+          </p>
+          <div class="field">
+            <label for="orsKeyInput">OpenRouteService API-sleutel (optioneel)</label>
+            <input type="password" id="orsKeyInput" placeholder="plak hier je gratis ORS-sleutel">
+          </div>
+        </details>
+      </div>
+
+      <div class="result show" style="margin-top:1.2rem;" id="otherResult">
+        <div class="result-row">
+          <span class="label">Geschatte prijs</span>
+          <span class="amt" id="otherAmt">€ 0,00</span>
+        </div>
+        <div class="formula" id="otherFormula">25 km × €2,15 + 30 min × €0,40 = € 0,00</div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <b>Michell</b> · 06 85 63 90 77 ·
+    Tarieven: Amsterdam €39, Rotterdam €69, Utrecht €59, Almere €49 (vaste prijs),
+    overig €2,15/km + €0,40/min.<br><br>
+    Dit is een losstaand onderzoeksprototype, zie <code>RECOMMENDATION.md</code> in dezelfde map
+    voor de volledige afweging (v1 vs. later).
+  </footer>
+</div>
+
+<script>
+(function(){
+  'use strict';
+
+  // ---- Business constants (single source of truth) -------------------
+  var CITY_PRICES = { amsterdam: 39, rotterdam: 69, utrecht: 59, almere: 49 };
+  var CITY_LABELS = { amsterdam: 'Amsterdam', rotterdam: 'Rotterdam', utrecht: 'Utrecht', almere: 'Almere' };
+  var RATE_PER_KM = 2.15;
+  var RATE_PER_MIN = 0.40;
+  // Schiphol Airport coordinates, used as the fixed leg for the "other destination" route estimate.
+  var SCHIPHOL_LONLAT = [4.7639, 52.3086];
+
+  function fmtEUR(n){
+    return '€ ' + n.toLocaleString('nl-NL', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }
+
+  // ---- Pure calculation functions (unit-testable, no DOM) -------------
+  function lookupFixedPrice(city){
+    if (!(city in CITY_PRICES)) return null;
+    return CITY_PRICES[city];
+  }
+  function calcOtherPrice(km, min){
+    km = Number(km) || 0;
+    min = Number(min) || 0;
+    return km * RATE_PER_KM + min * RATE_PER_MIN;
+  }
+
+  // Lightweight self-test, logged to console only — proves the math is real, not hardcoded.
+  (function selfTest(){
+    var cases = [
+      { km: 25, min: 30, expect: 25*2.15 + 30*0.40 },   // 53.75 + 12 = 65.75
+      { km: 0,  min: 0,  expect: 0 },
+      { km: 10, min: 0,  expect: 21.5 },
+      { km: 100, min: 90, expect: 100*2.15 + 90*0.40 }  // 215 + 36 = 251
+    ];
+    cases.forEach(function(c){
+      var got = calcOtherPrice(c.km, c.min);
+      var ok = Math.abs(got - c.expect) < 0.001;
+      console[ok ? 'log' : 'error'](
+        '[calc self-test] km=' + c.km + ' min=' + c.min + ' -> ' + got.toFixed(2) +
+        (ok ? ' OK' : ' FAIL expected ' + c.expect.toFixed(2))
+      );
+    });
+    console.assert(lookupFixedPrice('rotterdam') === 69, 'fixed lookup rotterdam should be 69');
+    console.assert(lookupFixedPrice('nowhere') === null, 'unknown city should return null');
+  })();
+
+  // ---- DOM wiring -------------------------------------------------------
+  var destButtons = Array.prototype.slice.call(document.querySelectorAll('.dest-btn'));
+  var fixedResult = document.getElementById('fixedResult');
+  var fixedLabel = document.getElementById('fixedLabel');
+  var fixedAmt = document.getElementById('fixedAmt');
+  var otherPanel = document.getElementById('otherPanel');
+  var otherAmt = document.getElementById('otherAmt');
+  var otherFormula = document.getElementById('otherFormula');
+  var kmInput = document.getElementById('kmInput');
+  var minInput = document.getElementById('minInput');
+
+  function selectCity(city){
+    destButtons.forEach(function(b){ b.classList.toggle('active', b.dataset.city === city); });
+
+    if (city === 'other'){
+      fixedResult.classList.remove('show');
+      otherPanel.classList.add('show');
+      updateOtherResult();
+      return;
+    }
+
+    otherPanel.classList.remove('show');
+    var price = lookupFixedPrice(city);
+    if (price === null) { fixedResult.classList.remove('show'); return; }
+    fixedLabel.textContent = 'Vaste prijs — Schiphol ↔ ' + CITY_LABELS[city];
+    fixedAmt.textContent = '€ ' + price + ',–';
+    fixedResult.classList.add('show');
+  }
+
+  destButtons.forEach(function(btn){
+    btn.addEventListener('click', function(){ selectCity(btn.dataset.city); });
+  });
+
+  function updateOtherResult(){
+    var km = kmInput.value, min = minInput.value;
+    var price = calcOtherPrice(km, min);
+    otherAmt.textContent = fmtEUR(price);
+    otherFormula.textContent =
+      (Number(km) || 0) + ' km × €2,15 + ' + (Number(min) || 0) + ' min × €0,40 = ' + fmtEUR(price);
+  }
+  kmInput.addEventListener('input', updateOtherResult);
+  minInput.addEventListener('input', updateOtherResult);
+
+  // ---- Mode toggle: manual vs. optional free auto-estimate --------------
+  var modeManualBtn = document.getElementById('modeManualBtn');
+  var modeAutoBtn = document.getElementById('modeAutoBtn');
+  var manualBlock = document.getElementById('manualBlock');
+  var autoBlock = document.getElementById('autoBlock');
+
+  modeManualBtn.addEventListener('click', function(){
+    modeManualBtn.classList.add('active'); modeAutoBtn.classList.remove('active');
+    manualBlock.style.display = ''; autoBlock.style.display = 'none';
+  });
+  modeAutoBtn.addEventListener('click', function(){
+    modeAutoBtn.classList.add('active'); modeManualBtn.classList.remove('active');
+    manualBlock.style.display = 'none'; autoBlock.style.display = '';
+  });
+
+  // ---- Optional: free-tier OpenRouteService auto-estimate ---------------
+  // Uses OpenRouteService's free tier (Geocoding + Directions). No key is hardcoded here —
+  // the user pastes their own free key, stored only in this browser's localStorage.
+  var orsKeyInput = document.getElementById('orsKeyInput');
+  var addrInput = document.getElementById('addrInput');
+  var estimateBtn = document.getElementById('estimateBtn');
+  var autoStatus = document.getElementById('autoStatus');
+
+  var STORAGE_KEY = 'lgt_ors_api_key_prototype';
+  try {
+    var savedKey = localStorage.getItem(STORAGE_KEY);
+    if (savedKey) orsKeyInput.value = savedKey;
+  } catch (e) { /* localStorage unavailable, ignore */ }
+
+  orsKeyInput.addEventListener('change', function(){
+    try { localStorage.setItem(STORAGE_KEY, orsKeyInput.value.trim()); } catch (e) {}
+  });
+
+  function setStatus(msg, kind){
+    autoStatus.textContent = msg;
+    autoStatus.className = 'status' + (kind ? ' ' + kind : '');
+  }
+
+  function geocode(apiKey, text){
+    var url = 'https://api.openrouteservice.org/geocode/search?api_key=' + encodeURIComponent(apiKey) +
+      '&text=' + encodeURIComponent(text) + '&size=1&boundary.country=NL';
+    return fetch(url).then(function(res){
+      if (!res.ok) throw new Error('Geocoding mislukt (HTTP ' + res.status + ')');
+      return res.json();
+    }).then(function(data){
+      if (!data.features || !data.features.length) throw new Error('Adres niet gevonden');
+      return data.features[0].geometry.coordinates; // [lon, lat]
+    });
+  }
+
+  function route(apiKey, fromLonLat, toLonLat){
+    var url = 'https://api.openrouteservice.org/v2/directions/driving-car?api_key=' + encodeURIComponent(apiKey) +
+      '&start=' + fromLonLat[0] + ',' + fromLonLat[1] +
+      '&end=' + toLonLat[0] + ',' + toLonLat[1];
+    return fetch(url).then(function(res){
+      if (!res.ok) throw new Error('Route ophalen mislukt (HTTP ' + res.status + ')');
+      return res.json();
+    }).then(function(data){
+      var summary = data.features[0].properties.summary;
+      return { km: summary.distance / 1000, min: summary.duration / 60 };
+    });
+  }
+
+  estimateBtn.addEventListener('click', function(){
+    var apiKey = orsKeyInput.value.trim();
+    var addr = addrInput.value.trim();
+    if (!apiKey){ setStatus('Vul eerst een gratis OpenRouteService API-sleutel in (zie instellingen hieronder).', 'warn'); return; }
+    if (!addr){ setStatus('Vul een adres in.', 'warn'); return; }
+
+    estimateBtn.disabled = true;
+    setStatus('Adres opzoeken…', '');
+
+    geocode(apiKey, addr)
+      .then(function(destLonLat){
+        setStatus('Route berekenen…', '');
+        return route(apiKey, SCHIPHOL_LONLAT, destLonLat);
+      })
+      .then(function(result){
+        kmInput.value = result.km.toFixed(1);
+        minInput.value = Math.round(result.min);
+        updateOtherResult();
+        setStatus('Geschat: ' + result.km.toFixed(1) + ' km, ' + Math.round(result.min) + ' min (via OpenRouteService).', 'ok');
+      })
+      .catch(function(err){
+        setStatus('Kon niet automatisch schatten: ' + err.message + '. Vul handmatig in via de andere tab.', 'err');
+      })
+      .finally(function(){
+        estimateBtn.disabled = false;
+      });
+  });
+
+})();
+</script>
+</body>
+</html>

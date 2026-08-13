@@ -3,316 +3,612 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="data:,">
 <title>Le Grand Taxi — vaste prijs naar Schiphol</title>
 <style>
-  *{box-sizing:border-box;}
-  html{-webkit-text-size-adjust:100%;}
-  body{
-    margin:0;
-    background:#050505;
-    font-family:-apple-system,"Segoe UI",Roboto,sans-serif;
-    color:#eee;
+  :root{
+    /* layered dark-surface ramp, from research/design/DESIGN-SPEC.md */
+    --canvas:#0a0908; --surface-1:#141110; --surface-2:#1d1714; --surface-3:#28201b; --surface-image:#241512;
+    --ink-fill:#b3372c; --ink-text:#d9695c;
+    --text:#f3efe9; --text-soft:#a39d92;
+    --line:rgba(243,239,233,0.12); --line-strong:rgba(243,239,233,0.28);
+    --radius:12px; --radius-pill:999px;
+    --font-body:-apple-system,"Segoe UI",Roboto,sans-serif;
+    --font-display:-apple-system,"Segoe UI","Arial Black",sans-serif;
   }
+  *{box-sizing:border-box;}
+  [hidden]{ display:none !important; }
+  html{ -webkit-text-size-adjust:100%; }
+  body{
+    margin:0; background:var(--canvas); color:var(--text);
+    font-family:var(--font-body); line-height:1.5;
+  }
+  img{ max-width:100%; display:block; }
   @media (prefers-reduced-motion: reduce){
     *{animation-duration:0.001ms !important; transition-duration:0.001ms !important;}
   }
-  img{ max-width:100%; display:block; }
 
-  /* ============ SWITCHER SHELL (dev-only, remove for final single-theme launch) ============ */
-  .intro{ max-width:820px; margin:0 auto; padding:2rem 1.5rem .8rem; text-align:center; }
-  .intro .kicker{ font-size:.7rem; letter-spacing:.14em; text-transform:uppercase; color:#777; font-family:ui-monospace,"SF Mono",Consolas,monospace; }
-  .intro h1{ font-size:clamp(1.2rem,2.6vw,1.5rem); margin:.5rem 0 .3rem; font-weight:600; }
-  .intro p{ color:#888; font-size:.85rem; max-width:56ch; margin:0 auto; }
+  .inner{ max-width:1160px; margin:0 auto; padding:0 1.6rem; }
 
-  .switcher-bar{
-    position:sticky; top:0; z-index:50;
-    display:flex; justify-content:center; gap:.5rem;
-    padding:.9rem 1rem; background:rgba(5,5,5,0.9); backdrop-filter:blur(10px);
-    border-bottom:1px solid rgba(255,255,255,0.08);
-    margin-top:1rem;
+  /* ============ NAV ============ */
+  nav.site-nav{
+    position:sticky; top:0; z-index:40;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:1.1rem 1.6rem; max-width:1160px; margin:0 auto;
+    background:rgba(20,17,16,0.72); backdrop-filter:blur(10px);
   }
-  .switcher-bar label{
-    cursor:pointer; user-select:none; padding:.5rem .95rem; border-radius:3px;
-    border:1px solid rgba(255,255,255,0.16); font-size:.78rem; color:#bbb;
-  }
-  input.hp-radio{ position:absolute; opacity:0; width:1px; height:1px; overflow:hidden; }
-  input.hp-radio:focus-visible + label{ outline:2px solid #fff; outline-offset:2px; }
-  #hp-1:checked ~ .switcher-bar label[for="hp-1"],
-  #hp-2:checked ~ .switcher-bar label[for="hp-2"]{ background:#fff; color:#111; border-color:#fff; }
-  .hp{ display:none; }
-  #hp-1:checked ~ #panel-1, #hp-2:checked ~ #panel-2{ display:block; }
+  .brand{ display:flex; align-items:center; gap:.6rem; }
+  .brand img.icon{ height:26px; width:auto; }
+  .brand img.wordmark{ height:15px; width:auto; }
+  .navright{ display:flex; align-items:center; gap:1.1rem; }
+  .phone-link{ font-size:.85rem; color:var(--text-soft); text-decoration:none; font-variant-numeric:tabular-nums; }
+  .phone-link:hover{ color:var(--text); }
 
-  /* ============ SHARED STRUCTURE ============ */
-  .hp{ background:var(--bg); color:var(--text); font-family:var(--font-body); }
-  .hp-inner{ max-width:1160px; margin:0 auto; padding:0 1.6rem; }
-
-  .hp-nav{ display:flex; align-items:center; justify-content:space-between; padding:1.3rem 1.6rem; max-width:1160px; margin:0 auto; }
-  .hp-brand{ display:flex; align-items:center; gap:.6rem; }
-  .hp-brand img.icon{ height:28px; width:auto; }
-  .hp-brand img.wordmark{ height:16px; width:auto; }
-  .hp-navright{ display:flex; align-items:center; gap:1.1rem; }
-  .hp-phone{ font-size:.85rem; color:var(--text-soft); text-decoration:none; font-variant-numeric:tabular-nums; }
-  .hp-btn{
-    font-family:var(--font-body); font-size:.85rem; font-weight:600;
-    padding:.6rem 1.2rem; border-radius:var(--radius); border:1px solid transparent;
-    background:var(--accent); color:var(--on-accent); text-decoration:none; display:inline-block; cursor:pointer;
+  .btn{
+    font-family:var(--font-body); font-size:.88rem; font-weight:600;
+    padding:.75rem 1.3rem; border-radius:var(--radius); border:1px solid transparent;
+    background:var(--ink-fill); color:var(--text); text-decoration:none; display:inline-flex;
+    align-items:center; justify-content:center; cursor:pointer; min-height:48px;
+    transition:filter .15s ease, transform .1s ease;
   }
-  .hp-btn.ghost{ background:transparent; color:var(--text); border-color:var(--line-strong); }
+  .btn:hover{ filter:brightness(1.1); }
+  .btn:active{ transform:scale(.98); }
+  .btn.ghost{ background:transparent; color:var(--text); border-color:var(--line-strong); }
+  .btn:disabled{ opacity:.4; cursor:not-allowed; filter:none; }
+  .btn:focus-visible{ outline:2px solid var(--text); outline-offset:2px; }
+  .btn.block{ width:100%; }
 
-  .hp-hero{ position:relative; overflow:hidden; padding:clamp(2.2rem,6vw,4.5rem) 1.6rem clamp(2.5rem,6vw,4rem); }
-  .hp-hero-inner{ max-width:1160px; margin:0 auto; position:relative; z-index:2; }
-  .hp-hero-mark{
-    position:absolute; z-index:1; opacity:var(--mark-opacity,0.14);
-    right:-6%; top:50%; transform:translateY(-50%);
-    width:min(60vw,620px); pointer-events:none;
+  /* ============ HERO ============ */
+  .hero{ position:relative; overflow:hidden; padding:clamp(2.4rem,6vw,4.8rem) 1.6rem clamp(2.6rem,6vw,4.2rem); }
+  .hero-inner{ max-width:1160px; margin:0 auto; position:relative; z-index:2; }
+  .hero-mark{
+    position:absolute; z-index:1; opacity:0.18;
+    width:min(22vw,260px); right:-3%; bottom:-9%; top:auto; transform:none;
+    -webkit-mask-image:radial-gradient(circle at 65% 40%, #000 55%, transparent 85%);
+            mask-image:radial-gradient(circle at 65% 40%, #000 55%, transparent 85%);
+    pointer-events:none;
   }
-  .hp-eyebrow{ font-family:ui-monospace,"SF Mono",Consolas,monospace; font-size:.7rem; letter-spacing:.12em; text-transform:uppercase; color:var(--accent-text); margin:0 0 .9rem; display:block; }
-  .hp-h1{
-    font-family:var(--font-display); font-weight:var(--weight-display); letter-spacing:var(--tracking-display);
-    line-height:var(--leading-display); font-size:var(--size-display); text-wrap:balance;
-    margin:0 0 1rem; max-width:14ch; color:var(--text);
+  .eyebrow{ font-family:ui-monospace,"SF Mono",Consolas,monospace; font-size:.7rem; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-text); margin:0 0 .9rem; display:block; }
+  h1.hero-h1{
+    font-family:var(--font-display); font-weight:900; letter-spacing:-.02em; line-height:.96;
+    font-size:clamp(2.6rem,6.4vw,4.6rem); text-wrap:balance; margin:0 0 1rem; max-width:14ch;
   }
-  .hp-dek{ font-size:1.05rem; line-height:1.55; color:var(--text-soft); max-width:38ch; margin:0 0 1.6rem; }
-  .hp-hero-actions{ display:flex; gap:.7rem; flex-wrap:wrap; margin-bottom:2.4rem; }
+  .dek{ font-size:1.05rem; line-height:1.55; color:var(--text-soft); max-width:38ch; margin:0 0 1.6rem; }
+  .hero-actions{ display:flex; gap:.7rem; flex-wrap:wrap; margin-bottom:2.2rem; }
 
-  .hp-quote{
-    background:var(--card); border:1px solid var(--line); border-radius:var(--radius);
-    padding:1.2rem; display:flex; flex-direction:column; gap:.75rem; max-width:480px;
-  }
-  .hp-quote-row{ display:grid; grid-template-columns:1fr 1fr; gap:.6rem; }
-  @media (max-width:480px){ .hp-quote-row{ grid-template-columns:1fr; } }
-  .hp-field{ display:flex; flex-direction:column; gap:.3rem; }
-  .hp-field label{ font-size:.66rem; letter-spacing:.06em; text-transform:uppercase; color:var(--text-soft); font-family:ui-monospace,"SF Mono",Consolas,monospace; }
-  .hp-field input{ background:var(--input-bg); border:1px solid var(--line); border-radius:2px; color:var(--text); padding:.55rem .65rem; font-size:.9rem; font-family:var(--font-body); }
-  .hp-quote-result{ display:flex; align-items:baseline; justify-content:space-between; padding-top:.4rem; border-top:1px solid var(--line); }
-  .hp-quote-result .amt{ font-family:var(--font-display); font-size:1.5rem; font-weight:600; color:var(--accent-text); font-variant-numeric:tabular-nums; }
-
-  .hp-process{
+  .process{
     display:flex; flex-wrap:wrap; gap:.4rem 1.2rem; align-items:center;
     padding:1.1rem 0; border-top:1px solid var(--line); border-bottom:1px solid var(--line);
-    font-size:.88rem; color:var(--text-soft);
+    font-size:.88rem; color:var(--text-soft); max-width:640px;
   }
-  .hp-process b{ color:var(--text); font-weight:600; }
-  .hp-process .arrow{ color:var(--accent-text); }
+  .process b{ color:var(--text); font-weight:600; }
+  .process .arrow{ color:var(--ink-text); }
 
-  .hp-section{ padding:clamp(2rem,5vw,3.2rem) 1.6rem; }
-  .hp-section-label{ font-family:ui-monospace,"SF Mono",Consolas,monospace; font-size:.7rem; letter-spacing:.12em; text-transform:uppercase; color:var(--accent-text); margin-bottom:.7rem; display:block; }
+  /* ============ SECTIONS ============ */
+  .section{ padding:clamp(2.2rem,5vw,3.4rem) 1.6rem; }
+  .section-label{ font-family:ui-monospace,"SF Mono",Consolas,monospace; font-size:.7rem; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-text); margin-bottom:1rem; display:block; }
 
-  .hp-prices{ border-top:1px solid var(--line); }
-  .hp-price-row{ display:flex; justify-content:space-between; align-items:baseline; padding:.9rem 0; border-bottom:1px solid var(--line); }
-  .hp-price-row .city{ font-size:1rem; color:var(--text); }
-  .hp-price-row .amt{ font-family:var(--font-display); font-size:1.3rem; font-weight:600; font-variant-numeric:tabular-nums; }
-  .hp-price-note{ margin-top:1rem; font-size:.85rem; color:var(--text-soft); }
-
-  .hp-footer{ padding:2rem 1.6rem 2.4rem; background:var(--bg-2); border-top:1px solid var(--line); }
-  .hp-footer-inner{ max-width:1160px; margin:0 auto; display:flex; justify-content:space-between; align-items:flex-end; flex-wrap:wrap; gap:1.1rem; }
-  .hp-footer-meta{ font-size:.78rem; color:var(--text-soft); line-height:1.7; }
-  .hp-footer-cta{ display:flex; gap:.6rem; }
-
-  /* ============ VARIANT: NACHTBLAUW (warm teal + single gold accent) ============ */
-  .variant-nacht{
-    --bg:#10181a; --bg-2:#0b1213; --card:#16211f; --input-bg:#0c1315;
-    --text:#ece7dc; --text-soft:#9fada8;
-    --line:rgba(236,231,220,0.14); --line-strong:rgba(236,231,220,0.3);
-    --accent:#c9a24b; --accent-text:#d3ac57; --on-accent:#14201f;
-    --font-display: Georgia,"Iowan Old Style",serif;
-    --font-body: -apple-system,"Segoe UI",sans-serif;
-    --weight-display:600; --tracking-display:-0.01em; --leading-display:1.04;
-    --size-display:clamp(2.4rem,5.4vw,3.6rem);
-    --radius:4px; --mark-opacity:0.16;
+  .prices-card{
+    background:var(--surface-2); border-radius:var(--radius);
+    padding:1.6rem 2rem; max-width:560px;
   }
+  .price-row{ display:flex; justify-content:space-between; align-items:baseline; padding:.85rem 0; border-bottom:1px solid var(--line); }
+  .price-row:last-of-type{ border-bottom:none; }
+  .price-row .city{ font-size:1rem; }
+  .price-row .amt{ font-family:var(--font-display); font-size:1.25rem; font-weight:700; font-variant-numeric:tabular-nums; }
+  .price-note{ margin-top:1.2rem; font-size:.85rem; color:var(--text-soft); max-width:560px; }
 
-  /* ============ VARIANT: ZWART-ROOD (black + white, red as single functional signal) ============ */
-  .variant-rood{
-    --bg:#0a0a0a; --bg-2:#000; --card:#111; --input-bg:#000;
-    --text:#f3efe9; --text-soft:#9c9992;
-    --line:rgba(243,239,233,0.14); --line-strong:rgba(243,239,233,0.32);
-    --accent:#b3372c; --accent-text:#c9564a; --on-accent:#f3efe9;
-    --font-display: "Arial Black","Segoe UI",sans-serif;
-    --font-body: -apple-system,"Segoe UI",sans-serif;
-    --weight-display:900; --tracking-display:-0.015em; --leading-display:0.94;
-    --size-display:clamp(2.6rem,6.4vw,4.6rem);
-    --radius:2px; --mark-opacity:0.1;
+  footer.site-footer{ padding:2.2rem 1.6rem 2.6rem; background:var(--surface-1); border-top:1px solid var(--line); }
+  .footer-inner{ max-width:1160px; margin:0 auto; display:flex; justify-content:space-between; align-items:flex-end; flex-wrap:wrap; gap:1.1rem; }
+  .footer-meta{ font-size:.78rem; color:var(--text-soft); line-height:1.7; }
+  .footer-cta{ display:flex; gap:.6rem; }
+
+  /* ============ BOOKING MODAL ============ */
+  dialog#bookingModal{
+    padding:0; border:none; background:transparent; color:var(--text);
+    max-width:min(480px,92vw); width:100%; margin:auto;
+  }
+  dialog#bookingModal::backdrop{ background:rgba(0,0,0,.68); }
+  @media (prefers-reduced-motion: no-preference){
+    dialog#bookingModal[open]{ animation:modal-in .2s ease-out; }
+    dialog#bookingModal[open]::backdrop{ animation:backdrop-in .2s ease-out; }
+  }
+  @keyframes modal-in{ from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:translateY(0);} }
+  @keyframes backdrop-in{ from{opacity:0;} to{opacity:1;} }
+
+  .modal-shell{
+    background:var(--surface-2); border:1px solid var(--line); border-radius:var(--radius);
+    display:flex; flex-direction:column; max-height:88vh; overflow:hidden; position:relative;
+  }
+  .modal-close{
+    position:absolute; top:.9rem; right:.9rem; width:44px; height:44px; z-index:2;
+    border-radius:var(--radius); border:1px solid var(--line); background:var(--surface-1);
+    color:var(--text); font-size:1.3rem; line-height:1; cursor:pointer;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .modal-close:focus-visible{ outline:2px solid var(--text); outline-offset:2px; }
+
+  .modal-scroll{ overflow-y:auto; padding:1.7rem 1.5rem 1.2rem; }
+  .modal-scroll h2{ font-family:var(--font-display); font-weight:900; font-size:1.4rem; letter-spacing:-.01em; margin:0 .1rem .3rem; padding-right:2.4rem; }
+  .modal-sub{ font-size:.86rem; color:var(--text-soft); margin:0 .1rem 1.4rem; }
+
+  .field-group{ display:flex; flex-direction:column; gap:.4rem; margin-bottom:1.1rem; }
+  .field-row{ display:grid; grid-template-columns:1fr 1fr; gap:.7rem; }
+  .field-group label, .field-label{
+    font-size:.68rem; letter-spacing:.06em; text-transform:uppercase; color:var(--text-soft);
+    font-family:ui-monospace,"SF Mono",Consolas,monospace;
+  }
+  .field-group input[type="text"], .field-group input[type="date"],
+  .field-group input[type="time"], .field-group input[type="tel"], .field-group input[type="number"]{
+    background:var(--surface-1); border:1px solid var(--line); border-radius:var(--radius);
+    color:var(--text); padding:.8rem .85rem; font-size:16px; font-family:var(--font-body);
+    min-height:48px; width:100%;
+  }
+  .field-group input::placeholder{ color:#6b6864; }
+  .field-group input:focus-visible{ outline:2px solid var(--text); outline-offset:1px; border-color:var(--line-strong); background:var(--surface-3); }
+  .fixed-value{
+    background:var(--surface-1); border:1px dashed var(--line-strong); border-radius:var(--radius);
+    color:var(--text-soft); padding:.8rem .85rem; font-size:.95rem; min-height:48px; display:flex; align-items:center;
+  }
+  .field-hint{ font-size:.78rem; color:var(--text-soft); margin:.4rem .1rem 0; }
+
+  .vh-radio{ position:absolute; opacity:0; width:1px; height:1px; overflow:hidden; }
+
+  .segmented{ display:grid; grid-template-columns:1fr 1fr; gap:.5rem; margin-bottom:1.2rem; }
+  .segmented label{
+    text-align:center; padding:.75rem .6rem; border-radius:var(--radius); border:1px solid var(--line);
+    background:var(--surface-1); color:var(--text-soft); font-size:.85rem; font-weight:600; cursor:pointer;
+    min-height:48px; display:flex; align-items:center; justify-content:center;
+  }
+  .vh-radio:checked + label{ background:var(--ink-fill); color:var(--text); border-color:var(--ink-fill); }
+  .vh-radio:focus-visible + label{ outline:2px solid var(--text); outline-offset:2px; }
+
+  .chip-group{ display:grid; grid-template-columns:1fr 1fr; gap:.55rem; }
+  .chip{
+    display:flex; align-items:center; justify-content:space-between; gap:.5rem;
+    padding:.8rem .9rem; border-radius:var(--radius); border:1px solid var(--line);
+    background:var(--surface-1); cursor:pointer; min-height:48px;
+  }
+  .chip .chip-city{ font-size:.9rem; font-weight:600; color:var(--text); }
+  .chip .chip-price{ font-family:var(--font-display); font-weight:700; font-size:.88rem; color:var(--text-soft); font-variant-numeric:tabular-nums; }
+  .vh-radio:checked + .chip{ background:var(--ink-fill); border-color:var(--ink-fill); }
+  .vh-radio:checked + .chip .chip-city, .vh-radio:checked + .chip .chip-price{ color:var(--text); }
+  .vh-radio:focus-visible + .chip{ outline:2px solid var(--text); outline-offset:2px; }
+
+  .modal-footer{
+    display:flex; align-items:center; justify-content:space-between; gap:1rem;
+    padding:1rem 1.5rem; border-top:1px solid var(--line); background:var(--surface-2);
+  }
+  .price-display{ display:flex; flex-direction:column; gap:.1rem; }
+  .price-display .price-label{ font-size:.66rem; letter-spacing:.06em; text-transform:uppercase; color:var(--text-soft); font-family:ui-monospace,"SF Mono",Consolas,monospace; }
+  .price-display .price-amt{ font-family:var(--font-display); font-size:1.4rem; font-weight:700; color:var(--ink-text); font-variant-numeric:tabular-nums; }
+  .price-display .price-amt.price-formula{ font-size:.85rem; font-family:var(--font-body); font-weight:600; }
+  #modalFooter .btn{ flex-shrink:0; }
+
+  #confirmView{ padding:.4rem .1rem 1rem; }
+  .confirm-badge{
+    width:52px; height:52px; border-radius:50%; background:var(--ink-fill); color:var(--text);
+    display:flex; align-items:center; justify-content:center; font-size:1.5rem; margin-bottom:1rem;
+  }
+  #confirmView h2{ font-family:var(--font-display); font-weight:900; font-size:1.3rem; margin:0 0 .6rem; }
+  .confirm-summary{
+    background:var(--surface-1); border:1px solid var(--line); border-radius:var(--radius);
+    padding:1rem 1.1rem; margin:1rem 0; display:flex; flex-direction:column; gap:.5rem;
+  }
+  .confirm-summary .row{ display:flex; justify-content:space-between; font-size:.88rem; gap:1rem; }
+  .confirm-summary .row .k{ color:var(--text-soft); }
+  .confirm-summary .row .v{ text-align:right; font-weight:600; }
+  .confirm-micro{ font-size:.9rem; color:var(--text-soft); line-height:1.55; }
+  .confirm-micro strong{ color:var(--text); }
+  .confirm-actions{ display:flex; flex-direction:column; gap:.6rem; margin-top:1.3rem; }
+  .confirm-secondary{ text-align:center; font-size:.85rem; color:var(--text-soft); text-decoration:none; padding:.5rem; }
+  .confirm-secondary:hover{ color:var(--text); }
+
+  @media (max-width:640px){
+    dialog#bookingModal{
+      max-width:100vw; width:100%; height:auto; max-height:92vh;
+      margin:0; position:fixed; left:0; right:0; bottom:0; top:auto;
+    }
+    .modal-shell{ border-radius:var(--radius) var(--radius) 0 0; max-height:92vh; }
+    @media (prefers-reduced-motion: no-preference){
+      dialog#bookingModal[open]{ animation:sheet-in .22s ease-out; }
+    }
+    @keyframes sheet-in{ from{transform:translateY(100%);} to{transform:translateY(0);} }
+    .chip-group{ grid-template-columns:1fr 1fr; }
   }
 </style>
 </head>
 <body>
 
-<div class="intro">
-  <span class="kicker">Le Grand Taxi — ontwerp v2</span>
-  <h1>Twee richtingen, verfijnd</h1>
-  <p>Warmer, persoonlijker, minder tekst. Wissel met de tabs.</p>
-</div>
-
-<input class="hp-radio" type="radio" name="hp" id="hp-1" checked>
-<input class="hp-radio" type="radio" name="hp" id="hp-2">
-
-<nav class="switcher-bar">
-  <label for="hp-1">Nachtblauw</label>
-  <label for="hp-2">Zwart-Rood</label>
+<nav class="site-nav">
+  <div class="brand">
+    <img class="icon" src="data:image/png;base64,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" alt="Le Grand Taxi">
+    <img class="wordmark" src="data:image/png;base64,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" alt="">
+  </div>
+  <div class="navright">
+    <a class="phone-link" href="tel:+31685639077">06 85 63 90 77</a>
+    <button class="btn" type="button" data-open-modal>Reserveer</button>
+  </div>
 </nav>
 
-<!-- ============ PANEL 1 — NACHTBLAUW ============ -->
-<section class="hp variant-nacht" id="panel-1">
-  <div class="hp-nav">
-    <div class="hp-brand">
-      <img class="icon" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAVEAAAFhAgMAAAC0YnF8AAAAIGNIUk0AAHomAACAhAAA+gAAAIDoAAB1MAAA6mAAADqYAAAXcJy6UTwAAAAJUExURcmiS8miS////0nI5wUAAAABdFJOUwBA5thmAAAAAWJLR0QCZgt8ZAAAAAd0SU1FB+oIDQ83DVz7muwAAAAldEVYdGRhdGU6Y3JlYXRlADIwMjYtMDgtMTNUMTU6NTQ6MzgrMDA6MDCcXkmfAAAAJXRFWHRkYXRlOm1vZGlmeQAyMDI2LTA4LTEzVDE1OjU0OjM4KzAwOjAw7QPxIwAAACh0RVh0ZGF0ZTp0aW1lc3RhbXAAMjAyNi0wOC0xM1QxNTo1NToxMyswMDowMBX26EUAAA8NSURBVHja1ZzLjuQqD4BB+r2fxeF96EXvaQne/1X+Cr5iSHVSYY50WIymU8kX4wsX46oQnrSUHz2+bO1oZS8zNmx7xW3cdkKTUDfqAFrbL2w00H3CJkvdJewg6jY3GEVt9W+IukkF4KlbVOChW7xgEnWLYpPVZ9qk2GihpI6NCij6kvyY6pWZdphLFMDywQ4qWFGPf+MOJ0hGVOSl59Tovap06TcpoMh/d1CNAvh/8blrqQJU6sfUqApQv01PqSAKMIGbnjpsEgXoGJPhKVVDwIyuT6mqVjPL1KdUVWsy1PiQqmplgY8r8WHIiloJlNrXc6qqFdBFoZXnVKvWiq85qF/PqFathajpMdWqNeOVeoTrHSp4f4lCBcags96gzvORGivxJ3epcZjy5D1srNcHsRL15zo1DdOzuYTGOl7SqfEONQpBmzFWD4H7VDM/rYxVPqPqSH9qrNSFRmq5BGVbRaOCQ/xvNVZot6nAvYc8GSsfxoLS/20lekW9aUkspVSZp+LhT8ckeAh5h7q689AyRxZNrfeoq0Xpce2HqGSzRmuMizM3oAL+56/9GBzelOE6NaFPVU/9JmN1TPyE+pqWir+WmJpZ+eEGlcaQ7K8ldAGKjQN4YxMTaQzxb2IXEJOnepsaq78mLiBvukMFfLqsqIVnwk4tYR4w31NT8de+zdiCXnCHii4wGuu4BuQCHViPN+UboYXUNlHZBfDvgxpuUvPCBYhaUSPHiHjbXeOpYxW0Xg48JnxMPXpaiJrxQok8JlzbGC3c9ZDpi1wgHzoNxxo7h3aZGn+hAm63SmLqJcdCKkxrAXKsikY/FHLHBd5SI0v3ijQ21sdU41hIjTqAX3OBt1Qw1DvGWlGtY71oCam88HhOTR3d6VXU8SHVOtYxERYcu28Y6z21ixY7PdwxFlOtuuw4+BIt5qAKuEWNSyrvM6Iq4GJ6JM6ji3VXVglvZu+ss3O0PTPuWkl42c1fMxavsgzVumsRBdxSq1DLgooLYpy9b6kVqcVS2bGEatIZlzdwSE11ohbcE6Gt4i21IrVahz0MhYMUZR2NAi6qVanZUnnMRlGLrOivQimrHLVzDXM2h7sVFjXeVCvvNcx6SoOgsKjpplp5iZ64d12lFARopXBfAbqdyIYqFkw2T3ojiUFUSTv02YTcldOttxWA1CojCc4qSO1GKx8dRkbSGKcsbBA0zmTdVYDsjXWAkiAg+Uwe9nrjJ+gxOxPgpXTbA/ihGnhjYYIAO60JiNtUzIgXQ2VXle33DVuFoDOyRDwHAaUHP1GAWT0k6reGljmJuGWrYOeORAcCHATGVLfPHgZj2CCw/b+dckzWGkzF6UGg9w8JhrFjmAk0TX4/OzrEDlOPadfk3m+LOnqkCYKf9kBUY+fsQuuJqMYmfUgpElpPRPUn5BJaj0T1p/kHtVrqh+lxGKgcWtI+g7qTd08tn1IHFeC5S3rY/+DsZeaXJ/0fha12J/jslNAdjGkQfKzU3mBNfXr87ILgzv7yig5MaG2owWAdZAmtLRUz4IKgLPtz91VQEwdBtdsPaR/5GiVY44k/qfOVW9TyjmrD7460GKb1pERgGIDuULPOL3NHxiH4DrV3fkkdR+AbOojN7F/e9v+OfxE1r6he1OvCQjWLrF9EvS7sG+os6mU3oCAIC+oCetUNzoNgJerlM0kNAkdty3bNXqdBMIpa+M9LKoinQTCGlWAvpqJPgiBOXU/XVQCN0q2eOtmq3siYGXedjiS8U8FlFQC66xQEcaa26zl+ctcpCFI7FfYata2CYOmrssv/rZG7empcUvEM9YK5aOvu3XUZrfjyC4pld/XUdbS2iyWbEd21B0G2l9cNVfArld3VBYFVQDay19WZ+5LK7uoz59zpQSXL+oCpnbjrBJV0QrpirpTFXRdFH83lksmsv1JbXgWBqHWSv8Yr5kLH4hzepNaM76j6qnCBGg01z2qt8keW/1xwglhX7hqtqEmslsRc5RMqGFGT/j+KuRbU1Ewnyspdk4qq3pApw75czstttr7ZUY2vquNWetuKOoVif+5ruNPsD8HA+fhqplooYY3i3E05KKHJ8cE8w/mhKIdV8jbJa9ThoqhgnuObbwZS/F1lKICHRqU601AME1XdXG/UJPmwqeXjPh8xq6G4yMuye3e1ARDwZK4THDUtqBqK/rZiVYEyhcVIdDJr8CderXkOMTyb/FqZdqWDZB1L3pZYYJZIA7H8IirHpb+vcho9WrtBc4sn6wA2GUodLO4+ez6hZ728KK2uYyyg4RasQRkVFeQ46TjvAlKFp3oFlHHG09IfVQA/elBZFQ3P1uoogu14MsL6+CtGfGYk2pik5ufzNXYeKrKpAuD8BqAT4BHIm7haCMt2MUVWzI8kiFJhQTUmmwLQ1q6J1ORaSk0rqmaGfaxUW7YT1Tb9Ac16LKFGtZOxTO2aUMFRT1eO4whijJWCo6bKdWVfTIUTqurAG8uuugpqpkRHTWfU4qYCYLVaHy7UB08ddDm8Q5RjjfWKgWyomY9v0RkXVO8SdRRWjBXGhvfSV1jaOI+qrVXReRCWjfVnhOpE3PDgOluGagtUWGCUPB18U2pSavKi2mtZhykxlm8gR6oLqjWsWbSosGfUREYeqFZUELgXtpjj1IlaaP2iVLvoUR2a0+HEL436qaOicCtqdrrgP9gNihRW+MZrJ0sFMYfb8jhhq18aOCqsqGWIKutxWQaVVQruhJr4mWHoMjowwsLKWESNK6o/eTIGM+7/RtaRKpiGQYx467RFnSutfGCg/lhqXyiWyKH5+tMKC8a5ypIKXA/9Y7VZurapDLcvSOosbKbl2kTts4OnfnNlM1UOAVfQyGLtrb36AmNJzdgPDoBMQrGDWOca7YX2hoGKXpn6czVw7RSvxCZhF/Zqsu9aUFFMUGO1pbC8CzLdz3xAZYcMwBUXAoGCqsi3QcSYooI02gsKn0VZasKC6ZBwD5BJramNwurg6uxFi9fSqWgjodLZFVeKmfrDWdjRuaDKHqEQtSqV9mzFqJWDdLZXGakYPPJmeo9SUzNqbba668xegDNaDnFJLUeQxjZsIIyw5cS5cKUZqdZ8QYWsAdhw9PFf2WV7qbC81uZ8fZMSoZ7a4Mp/2TxyamZpL9GsvADOqDQIcAwQQwYBOxho9V49ljIg69eJiot9qcGVWYoHATt4s4iHaQ89ylpbe8NUqudCtVZgqhO22K/30TcxGi2MHbVbSwKyP5xEIhaS7RYk19zdoWUdCA01kWc1+gYNZmebGmU1GKjvvVyqBv0GA6nokCrgPhofUrVm1h7eLvbS+bgSFXSH5qiJLva+WyoLG2dh+wAQC4/0hgoNvzTB6mqNjyp0EnHOZbZ4r77jl+Q0tAyV5ilSqzGWcS6xl1naH9RshiRDLcA25UWaMZYR1rCY8HKdZIekgrcfKjy8M1OEN2+slXPhUEHjxj8yeBhqYIoqwMTAyl4sbKbyyKgjPQd55cUQgkDUujh6MD4J8vahfFuGjo4W8/b/ZNaat5cKaxLcYOrXZTk5FPOhAuJorOzt1YJZ4EIzeTNJyWuCoQ4KEGPFOjlXCUPc6lZVqbbsSBVgEha6eLRxafaqZUwcQjNfahCRZFDSUdTNNJx6k3eYXQsXwWiAq2XHGNCZxj5u/g+eyvEkhnVqpSUAO5VVYJw8Qj0my6SBb/wa1RqsckZhgy+0leQxvauo/mFUK8+LTthhFZdmqssMFNGHiYAq8oiwq0OvYl4yjs5eAZH/ZhkdwrpuNuLV4bPkBAFGsLDgsXJhTCdl043i5DBbeC8svRvc3zbvwbr5tl3RLmTtjE0nlyFyy0idWlhRZVxKJ09JD3/5GO9I4ya0nsmSR0lOP+7U2mzQtCZ1GKc9hPcf4+J6dG8zzo5tPgc7+bjf8DNUhHcNLYUptoPvFQDDt/bljpUOFiF8IupB/V44/C+lVIu+WA843vptpJeb4tvHFooNYepLnoWYHrR6C2/fKe66cHCHrQthzt5JFKUurT8L43vi8kDkrvVcipXeJhVk/86DGn/x8N8q48aOcBDYLwyvhc2O+rbgEhr9KsQ7+y5EXZ1wD5999wg97dyJqG5tM7aEQQDLKfWdqIsz/gGQMOytNFdEfffdOaR26fJ0/3kXzdvL+jpT36g23Gw0E1TfFfi1/28azwR1eho+h8rGqs56j592X9aSsS6l+owpC5dY3tv6I2qGcq1M6GJLqE7ItKvO5ndkHlIzUvtSHnZQyfIp0xavpudMXr3HFiRZuYnad76YcYM91MgwcoB91Bx4uVZ8AvoBFftNHvZB0M/tCAJJTeCWexMVi1gwYNOWoOUJqvh9y1MqtGZyCLCHyrk9EjTucALeXIVQaDu7h9ozLeUoFOiqwDOqPdTcyw+IWp5CI3trpwJ67AZq5UR+oUFhHzUjtb8gPnctQBcIdEaeumttosrJA+xxLeDf4MSo7XI/pyaimpR3SJuonLDEY4fnYZCayXVjlnkjlYdD6GHwlNpwxpaVOGwJg5Ha10Q7qDXYrwZTPcBzKnDWF3js/tqgAV4FmJ9geEqNE3X1/agHVMLJj7RuoJp/+AD6KbRr8+BQqQT/MsWnrSm1UgGJ1OF83MBQG1UOfL7FWlIz5vefU2mShgU1P1NsDviDnCO1PIGiE0H311yUusFf6Se4Ih4tbllrHgykJi7h2UR1I2H72TMSjtS6Y3wdZ5hNo3aTsvHd89Y4x26g4sydh/XADiom3XavXVbrrKdUtybcRi0gJ8OYy9iyfqVVMa64N1HxZ46lmBL27At0tyEVUluo/OP8iUuzdmyPR+qmXRztOLmCcdOO82BEmrfJsXbsjoG/kxWpEGTLTv5lmzRQv3ZQpWYk0k7me0uarFE9Y6ycjt9ExYG7UwvsSRdTzXjA9XB+unilBjht5VC5hG0DFIlHt7HcLm3KbHOB9LGC2bApEFnxFz8LlQxuofbIOqh/uMJ1C/ULx/8c6PfDtuTg/6GasCNmcx+1ywbqnx6nWHmOa4MdVD01ghY2abU3ptaw7XQnyFfAU90UrlYFIZUteWJpfUWY8aev9zXMQfefVN7ZAKn7HEB08LObGQ7v+htU2BkA0nYNrP8GdWuw/jepO5aC/xYV/oK7/reo8W8EwV+ibpqwH1D/D8wcnFnM/SyEAAAAAElFTkSuQmCC" alt="Le Grand Taxi">
-      <img class="wordmark" src="data:image/png;base64,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" alt="">
+<div class="hero">
+  <img class="hero-mark" src="data:image/png;base64,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" alt="">
+  <div class="hero-inner">
+    <span class="eyebrow">Schiphol &middot; vaste prijs</span>
+    <h1 class="hero-h1">Geen meter.<br>&Eacute;&eacute;n prijs.</h1>
+    <p class="dek">Michell rijdt je zelf naar Schiphol. Geen callcenter.</p>
+    <div class="hero-actions">
+      <button class="btn" type="button" data-open-modal>Bereken je prijs</button>
+      <a class="btn ghost" href="tel:+31685639077">Bel Michell</a>
     </div>
-    <div class="hp-navright">
-      <a class="hp-phone" href="tel:+31685639077">06 85 63 90 77</a>
-      <a class="hp-btn" href="#reserveren-1">Reserveer</a>
-    </div>
-  </div>
-
-  <div class="hp-hero">
-    <img class="hp-hero-mark" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAVEAAAFhAgMAAAC0YnF8AAAAIGNIUk0AAHomAACAhAAA+gAAAIDoAAB1MAAA6mAAADqYAAAXcJy6UTwAAAAJUExURcmiS8miS////0nI5wUAAAABdFJOUwBA5thmAAAAAWJLR0QCZgt8ZAAAAAd0SU1FB+oIDQ83DVz7muwAAAAldEVYdGRhdGU6Y3JlYXRlADIwMjYtMDgtMTNUMTU6NTQ6MzgrMDA6MDCcXkmfAAAAJXRFWHRkYXRlOm1vZGlmeQAyMDI2LTA4LTEzVDE1OjU0OjM4KzAwOjAw7QPxIwAAACh0RVh0ZGF0ZTp0aW1lc3RhbXAAMjAyNi0wOC0xM1QxNTo1NToxMyswMDowMBX26EUAAA8NSURBVHja1ZzLjuQqD4BB+r2fxeF96EXvaQne/1X+Cr5iSHVSYY50WIymU8kX4wsX46oQnrSUHz2+bO1oZS8zNmx7xW3cdkKTUDfqAFrbL2w00H3CJkvdJewg6jY3GEVt9W+IukkF4KlbVOChW7xgEnWLYpPVZ9qk2GihpI6NCij6kvyY6pWZdphLFMDywQ4qWFGPf+MOJ0hGVOSl59Tovap06TcpoMh/d1CNAvh/8blrqQJU6sfUqApQv01PqSAKMIGbnjpsEgXoGJPhKVVDwIyuT6mqVjPL1KdUVWsy1PiQqmplgY8r8WHIiloJlNrXc6qqFdBFoZXnVKvWiq85qF/PqFathajpMdWqNeOVeoTrHSp4f4lCBcags96gzvORGivxJ3epcZjy5D1srNcHsRL15zo1DdOzuYTGOl7SqfEONQpBmzFWD4H7VDM/rYxVPqPqSH9qrNSFRmq5BGVbRaOCQ/xvNVZot6nAvYc8GSsfxoLS/20lekW9aUkspVSZp+LhT8ckeAh5h7q689AyRxZNrfeoq0Xpce2HqGSzRmuMizM3oAL+56/9GBzelOE6NaFPVU/9JmN1TPyE+pqWir+WmJpZ+eEGlcaQ7K8ldAGKjQN4YxMTaQzxb2IXEJOnepsaq78mLiBvukMFfLqsqIVnwk4tYR4w31NT8de+zdiCXnCHii4wGuu4BuQCHViPN+UboYXUNlHZBfDvgxpuUvPCBYhaUSPHiHjbXeOpYxW0Xg48JnxMPXpaiJrxQok8JlzbGC3c9ZDpi1wgHzoNxxo7h3aZGn+hAm63SmLqJcdCKkxrAXKsikY/FHLHBd5SI0v3ijQ21sdU41hIjTqAX3OBt1Qw1DvGWlGtY71oCam88HhOTR3d6VXU8SHVOtYxERYcu28Y6z21ixY7PdwxFlOtuuw4+BIt5qAKuEWNSyrvM6Iq4GJ6JM6ji3VXVglvZu+ss3O0PTPuWkl42c1fMxavsgzVumsRBdxSq1DLgooLYpy9b6kVqcVS2bGEatIZlzdwSE11ohbcE6Gt4i21IrVahz0MhYMUZR2NAi6qVanZUnnMRlGLrOivQimrHLVzDXM2h7sVFjXeVCvvNcx6SoOgsKjpplp5iZ64d12lFARopXBfAbqdyIYqFkw2T3ojiUFUSTv02YTcldOttxWA1CojCc4qSO1GKx8dRkbSGKcsbBA0zmTdVYDsjXWAkiAg+Uwe9nrjJ+gxOxPgpXTbA/ihGnhjYYIAO60JiNtUzIgXQ2VXle33DVuFoDOyRDwHAaUHP1GAWT0k6reGljmJuGWrYOeORAcCHATGVLfPHgZj2CCw/b+dckzWGkzF6UGg9w8JhrFjmAk0TX4/OzrEDlOPadfk3m+LOnqkCYKf9kBUY+fsQuuJqMYmfUgpElpPRPUn5BJaj0T1p/kHtVrqh+lxGKgcWtI+g7qTd08tn1IHFeC5S3rY/+DsZeaXJ/0fha12J/jslNAdjGkQfKzU3mBNfXr87ILgzv7yig5MaG2owWAdZAmtLRUz4IKgLPtz91VQEwdBtdsPaR/5GiVY44k/qfOVW9TyjmrD7460GKb1pERgGIDuULPOL3NHxiH4DrV3fkkdR+AbOojN7F/e9v+OfxE1r6he1OvCQjWLrF9EvS7sG+os6mU3oCAIC+oCetUNzoNgJerlM0kNAkdty3bNXqdBMIpa+M9LKoinQTCGlWAvpqJPgiBOXU/XVQCN0q2eOtmq3siYGXedjiS8U8FlFQC66xQEcaa26zl+ctcpCFI7FfYata2CYOmrssv/rZG7empcUvEM9YK5aOvu3XUZrfjyC4pld/XUdbS2iyWbEd21B0G2l9cNVfArld3VBYFVQDay19WZ+5LK7uoz59zpQSXL+oCpnbjrBJV0QrpirpTFXRdFH83lksmsv1JbXgWBqHWSv8Yr5kLH4hzepNaM76j6qnCBGg01z2qt8keW/1xwglhX7hqtqEmslsRc5RMqGFGT/j+KuRbU1Ewnyspdk4qq3pApw75czstttr7ZUY2vquNWetuKOoVif+5ruNPsD8HA+fhqplooYY3i3E05KKHJ8cE8w/mhKIdV8jbJa9ThoqhgnuObbwZS/F1lKICHRqU601AME1XdXG/UJPmwqeXjPh8xq6G4yMuye3e1ARDwZK4THDUtqBqK/rZiVYEyhcVIdDJr8CderXkOMTyb/FqZdqWDZB1L3pZYYJZIA7H8IirHpb+vcho9WrtBc4sn6wA2GUodLO4+ez6hZ728KK2uYyyg4RasQRkVFeQ46TjvAlKFp3oFlHHG09IfVQA/elBZFQ3P1uoogu14MsL6+CtGfGYk2pik5ufzNXYeKrKpAuD8BqAT4BHIm7haCMt2MUVWzI8kiFJhQTUmmwLQ1q6J1ORaSk0rqmaGfaxUW7YT1Tb9Ac16LKFGtZOxTO2aUMFRT1eO4whijJWCo6bKdWVfTIUTqurAG8uuugpqpkRHTWfU4qYCYLVaHy7UB08ddDm8Q5RjjfWKgWyomY9v0RkXVO8SdRRWjBXGhvfSV1jaOI+qrVXReRCWjfVnhOpE3PDgOluGagtUWGCUPB18U2pSavKi2mtZhykxlm8gR6oLqjWsWbSosGfUREYeqFZUELgXtpjj1IlaaP2iVLvoUR2a0+HEL436qaOicCtqdrrgP9gNihRW+MZrJ0sFMYfb8jhhq18aOCqsqGWIKutxWQaVVQruhJr4mWHoMjowwsLKWESNK6o/eTIGM+7/RtaRKpiGQYx467RFnSutfGCg/lhqXyiWyKH5+tMKC8a5ypIKXA/9Y7VZurapDLcvSOosbKbl2kTts4OnfnNlM1UOAVfQyGLtrb36AmNJzdgPDoBMQrGDWOca7YX2hoGKXpn6czVw7RSvxCZhF/Zqsu9aUFFMUGO1pbC8CzLdz3xAZYcMwBUXAoGCqsi3QcSYooI02gsKn0VZasKC6ZBwD5BJramNwurg6uxFi9fSqWgjodLZFVeKmfrDWdjRuaDKHqEQtSqV9mzFqJWDdLZXGakYPPJmeo9SUzNqbba668xegDNaDnFJLUeQxjZsIIyw5cS5cKUZqdZ8QYWsAdhw9PFf2WV7qbC81uZ8fZMSoZ7a4Mp/2TxyamZpL9GsvADOqDQIcAwQQwYBOxho9V49ljIg69eJiot9qcGVWYoHATt4s4iHaQ89ylpbe8NUqudCtVZgqhO22K/30TcxGi2MHbVbSwKyP5xEIhaS7RYk19zdoWUdCA01kWc1+gYNZmebGmU1GKjvvVyqBv0GA6nokCrgPhofUrVm1h7eLvbS+bgSFXSH5qiJLva+WyoLG2dh+wAQC4/0hgoNvzTB6mqNjyp0EnHOZbZ4r77jl+Q0tAyV5ilSqzGWcS6xl1naH9RshiRDLcA25UWaMZYR1rCY8HKdZIekgrcfKjy8M1OEN2+slXPhUEHjxj8yeBhqYIoqwMTAyl4sbKbyyKgjPQd55cUQgkDUujh6MD4J8vahfFuGjo4W8/b/ZNaat5cKaxLcYOrXZTk5FPOhAuJorOzt1YJZ4EIzeTNJyWuCoQ4KEGPFOjlXCUPc6lZVqbbsSBVgEha6eLRxafaqZUwcQjNfahCRZFDSUdTNNJx6k3eYXQsXwWiAq2XHGNCZxj5u/g+eyvEkhnVqpSUAO5VVYJw8Qj0my6SBb/wa1RqsckZhgy+0leQxvauo/mFUK8+LTthhFZdmqssMFNGHiYAq8oiwq0OvYl4yjs5eAZH/ZhkdwrpuNuLV4bPkBAFGsLDgsXJhTCdl043i5DBbeC8svRvc3zbvwbr5tl3RLmTtjE0nlyFyy0idWlhRZVxKJ09JD3/5GO9I4ya0nsmSR0lOP+7U2mzQtCZ1GKc9hPcf4+J6dG8zzo5tPgc7+bjf8DNUhHcNLYUptoPvFQDDt/bljpUOFiF8IupB/V44/C+lVIu+WA843vptpJeb4tvHFooNYepLnoWYHrR6C2/fKe66cHCHrQthzt5JFKUurT8L43vi8kDkrvVcipXeJhVk/86DGn/x8N8q48aOcBDYLwyvhc2O+rbgEhr9KsQ7+y5EXZ1wD5999wg97dyJqG5tM7aEQQDLKfWdqIsz/gGQMOytNFdEfffdOaR26fJ0/3kXzdvL+jpT36g23Gw0E1TfFfi1/28azwR1eho+h8rGqs56j592X9aSsS6l+owpC5dY3tv6I2qGcq1M6GJLqE7ItKvO5ndkHlIzUvtSHnZQyfIp0xavpudMXr3HFiRZuYnad76YcYM91MgwcoB91Bx4uVZ8AvoBFftNHvZB0M/tCAJJTeCWexMVi1gwYNOWoOUJqvh9y1MqtGZyCLCHyrk9EjTucALeXIVQaDu7h9ozLeUoFOiqwDOqPdTcyw+IWp5CI3trpwJ67AZq5UR+oUFhHzUjtb8gPnctQBcIdEaeumttosrJA+xxLeDf4MSo7XI/pyaimpR3SJuonLDEY4fnYZCayXVjlnkjlYdD6GHwlNpwxpaVOGwJg5Ha10Q7qDXYrwZTPcBzKnDWF3js/tqgAV4FmJ9geEqNE3X1/agHVMLJj7RuoJp/+AD6KbRr8+BQqQT/MsWnrSm1UgGJ1OF83MBQG1UOfL7FWlIz5vefU2mShgU1P1NsDviDnCO1PIGiE0H311yUusFf6Se4Ih4tbllrHgykJi7h2UR1I2H72TMSjtS6Y3wdZ5hNo3aTsvHd89Y4x26g4sydh/XADiom3XavXVbrrKdUtybcRi0gJ8OYy9iyfqVVMa64N1HxZ46lmBL27At0tyEVUluo/OP8iUuzdmyPR+qmXRztOLmCcdOO82BEmrfJsXbsjoG/kxWpEGTLTv5lmzRQv3ZQpWYk0k7me0uarFE9Y6ycjt9ExYG7UwvsSRdTzXjA9XB+unilBjht5VC5hG0DFIlHt7HcLm3KbHOB9LGC2bApEFnxFz8LlQxuofbIOqh/uMJ1C/ULx/8c6PfDtuTg/6GasCNmcx+1ywbqnx6nWHmOa4MdVD01ghY2abU3ptaw7XQnyFfAU90UrlYFIZUteWJpfUWY8aev9zXMQfefVN7ZAKn7HEB08LObGQ7v+htU2BkA0nYNrP8GdWuw/jepO5aC/xYV/oK7/reo8W8EwV+ibpqwH1D/D8wcnFnM/SyEAAAAAElFTkSuQmCC" alt="">
-    <div class="hp-hero-inner">
-      <span class="hp-eyebrow">Schiphol · vaste prijs</span>
-      <h1 class="hp-h1">Eén chauffeur.<br>Eén vaste prijs.</h1>
-      <p class="hp-dek">Michell rijdt je zelf naar Schiphol. Geen meter, geen callcenter.</p>
-      <div class="hp-hero-actions">
-        <a class="hp-btn" href="#reserveren-1">Bereken je prijs</a>
-        <a class="hp-btn ghost" href="tel:+31685639077">Bel Michell</a>
-      </div>
-      <div class="hp-process">
-        <span>Boek je rit</span>
-        <span class="arrow">&rarr;</span>
-        <span><b>Michell</b> bevestigt persoonlijk</span>
-        <span class="arrow">&rarr;</span>
-        <span>vaste prijs, geen verrassingen</span>
-      </div>
+    <div class="process">
+      <span>Boek je rit</span>
+      <span class="arrow">&rarr;</span>
+      <span><b>Michell</b> bevestigt persoonlijk</span>
+      <span class="arrow">&rarr;</span>
+      <span>vaste prijs, geen verrassingen</span>
     </div>
   </div>
+</div>
 
-  <div class="hp-section" id="reserveren-1">
-    <div class="hp-inner">
-      <div class="hp-quote">
-        <div class="hp-quote-row">
-          <div class="hp-field"><label>Ophaaladres</label><input type="text" placeholder="Straat, huisnummer, plaats"></div>
-          <div class="hp-field"><label>Bestemming</label><input type="text" placeholder="Schiphol Airport"></div>
+<div class="section">
+  <div class="inner">
+    <span class="section-label">Tarieven</span>
+    <div class="prices-card">
+      <div class="price-row"><span class="city">Amsterdam</span><span class="amt">&euro; 39</span></div>
+      <div class="price-row"><span class="city">Rotterdam</span><span class="amt">&euro; 69</span></div>
+      <div class="price-row"><span class="city">Utrecht</span><span class="amt">&euro; 59</span></div>
+      <div class="price-row"><span class="city">Almere</span><span class="amt">&euro; 49</span></div>
+    </div>
+    <p class="price-note">Andere bestemming: &euro; 2,15 per km + &euro; 0,40 per minuut, altijd vooraf bevestigd.</p>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="footer-meta">
+      <strong style="color:var(--text)">Le Grand Taxi</strong><br>
+      Geldershoofd 116, Amsterdam &middot; 06 85 63 90 77<br>
+      KVK 91578388 &middot; BTW NL004905641B18
+    </div>
+    <div class="footer-cta">
+      <a class="btn ghost" href="tel:+31685639077">Bel</a>
+      <button class="btn" type="button" data-open-modal>Reserveer</button>
+    </div>
+  </div>
+</footer>
+
+<!-- ============ BOOKING MODAL ============ -->
+<dialog id="bookingModal" aria-labelledby="modalTitle">
+  <div class="modal-shell">
+    <button class="modal-close" type="button" aria-label="Sluiten">&times;</button>
+
+    <div class="modal-scroll">
+      <div id="formView">
+        <h2 id="modalTitle">Bereken je vaste prijs</h2>
+        <p class="modal-sub">Geen meter, geen callcenter. Michell bevestigt je rit persoonlijk.</p>
+
+        <span class="field-label" style="display:block;margin-bottom:.5rem;">Richting</span>
+        <div class="segmented" role="radiogroup" aria-label="Richting">
+          <input class="vh-radio" type="radio" name="direction" id="dirNaar" value="naar" checked>
+          <label for="dirNaar">Naar Schiphol</label>
+          <input class="vh-radio" type="radio" name="direction" id="dirVanaf" value="vanaf">
+          <label for="dirVanaf">Vanaf Schiphol</label>
         </div>
-        <div class="hp-quote-row">
-          <div class="hp-field"><label>Datum</label><input type="text" placeholder="dd-mm-jjjj"></div>
-          <div class="hp-field"><label>Tijd</label><input type="text" placeholder="uu:mm"></div>
+
+        <div class="field-group">
+          <span class="field-label" id="chipGroupLabel" style="display:block;margin-bottom:.1rem;">Ophaalstad</span>
+          <div class="chip-group" role="radiogroup" aria-labelledby="chipGroupLabel">
+            <input class="vh-radio" type="radio" name="city" id="cityAms" data-price="39" data-city="Amsterdam">
+            <label class="chip" for="cityAms"><span class="chip-city">Amsterdam</span><span class="chip-price">&euro;39</span></label>
+
+            <input class="vh-radio" type="radio" name="city" id="cityRot" data-price="69" data-city="Rotterdam">
+            <label class="chip" for="cityRot"><span class="chip-city">Rotterdam</span><span class="chip-price">&euro;69</span></label>
+
+            <input class="vh-radio" type="radio" name="city" id="cityUtr" data-price="59" data-city="Utrecht">
+            <label class="chip" for="cityUtr"><span class="chip-city">Utrecht</span><span class="chip-price">&euro;59</span></label>
+
+            <input class="vh-radio" type="radio" name="city" id="cityAlm" data-price="49" data-city="Almere">
+            <label class="chip" for="cityAlm"><span class="chip-city">Almere</span><span class="chip-price">&euro;49</span></label>
+
+            <input class="vh-radio" type="radio" name="city" id="cityOther" data-price="" data-city="">
+            <label class="chip" for="cityOther" style="grid-column:1 / -1;"><span class="chip-city">Overig</span><span class="chip-price">v.a. &euro;2,15/km</span></label>
+          </div>
         </div>
-        <div class="hp-quote-result">
-          <span style="font-size:.85rem;color:var(--text-soft);">Vaste prijs</span>
-          <span class="amt">&euro; 39,&ndash;</span>
+
+        <div class="field-group" id="otherDestGroup" hidden>
+          <label for="otherDest">Naar welke plaats?</label>
+          <input type="text" id="otherDest" placeholder="Adres of plaatsnaam">
+          <div class="field-row" style="margin-top:.5rem;">
+            <div class="field-group" style="margin-bottom:0;"><label for="otherKm">Afstand (km)</label><input type="number" id="otherKm" min="0" step="1" inputmode="numeric" placeholder="bijv. 25"></div>
+            <div class="field-group" style="margin-bottom:0;"><label for="otherMin">Reistijd (min)</label><input type="number" id="otherMin" min="0" step="1" inputmode="numeric" placeholder="bijv. 30"></div>
+          </div>
+          <p class="field-hint">Weet je dit niet precies? Laat leeg &mdash; Michell bevestigt de exacte prijs.</p>
         </div>
-        <a class="hp-btn" href="#" style="text-align:center;">Reserveer</a>
-      </div>
-    </div>
-  </div>
 
-  <div class="hp-section">
-    <div class="hp-inner">
-      <span class="hp-section-label">Tarieven</span>
-      <div class="hp-prices">
-        <div class="hp-price-row"><span class="city">Amsterdam</span><span class="amt">&euro; 39</span></div>
-        <div class="hp-price-row"><span class="city">Rotterdam</span><span class="amt">&euro; 69</span></div>
-        <div class="hp-price-row"><span class="city">Utrecht</span><span class="amt">&euro; 59</span></div>
-        <div class="hp-price-row"><span class="city">Almere</span><span class="amt">&euro; 49</span></div>
-      </div>
-      <p class="hp-price-note">Andere bestemming: &euro; 2,15 per km + &euro; 0,40 per minuut, ook vooraf berekend.</p>
-    </div>
-  </div>
-
-  <div class="hp-footer">
-    <div class="hp-footer-inner">
-      <div class="hp-footer-meta">
-        <strong style="color:var(--text)">Le Grand Taxi</strong><br>
-        Geldershoofd 116, Amsterdam &middot; 06 85 63 90 77<br>
-        KVK 91578388 &middot; BTW NL004905641B18
-      </div>
-      <div class="hp-footer-cta">
-        <a class="hp-btn ghost" href="tel:+31685639077">Bel</a>
-        <a class="hp-btn" href="#">WhatsApp</a>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ============ PANEL 2 — ZWART-ROOD ============ -->
-<section class="hp variant-rood" id="panel-2">
-  <div class="hp-nav">
-    <div class="hp-brand">
-      <img class="icon" src="data:image/png;base64,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" alt="Le Grand Taxi">
-      <img class="wordmark" src="data:image/png;base64,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" alt="">
-    </div>
-    <div class="hp-navright">
-      <a class="hp-phone" href="tel:+31685639077">06 85 63 90 77</a>
-      <a class="hp-btn" href="#reserveren-2">Reserveer</a>
-    </div>
-  </div>
-
-  <div class="hp-hero">
-    <img class="hp-hero-mark" src="data:image/png;base64,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" alt="">
-    <div class="hp-hero-inner">
-      <span class="hp-eyebrow">Schiphol &middot; vaste prijs</span>
-      <h1 class="hp-h1">GEEN METER.<br>&Eacute;&Eacute;N PRIJS.</h1>
-      <p class="hp-dek">Michell rijdt je zelf naar Schiphol. Geen callcenter.</p>
-      <div class="hp-hero-actions">
-        <a class="hp-btn" href="#reserveren-2">Bereken je prijs</a>
-        <a class="hp-btn ghost" href="tel:+31685639077">Bel Michell</a>
-      </div>
-      <div class="hp-process">
-        <span>Boek je rit</span>
-        <span class="arrow">&rarr;</span>
-        <span><b>Michell</b> bevestigt persoonlijk</span>
-        <span class="arrow">&rarr;</span>
-        <span>vaste prijs, geen verrassingen</span>
-      </div>
-    </div>
-  </div>
-
-  <div class="hp-section" id="reserveren-2">
-    <div class="hp-inner">
-      <div class="hp-quote">
-        <div class="hp-quote-row">
-          <div class="hp-field"><label>Ophaaladres</label><input type="text" placeholder="Straat, huisnummer, plaats"></div>
-          <div class="hp-field"><label>Bestemming</label><input type="text" placeholder="Schiphol Airport"></div>
+        <div class="field-group" id="pickupGroup">
+          <label for="ophaaladres">Ophaaladres</label>
+          <input type="text" id="ophaaladres" placeholder="Straat, huisnummer, plaats" autocomplete="street-address" autocapitalize="words">
         </div>
-        <div class="hp-quote-row">
-          <div class="hp-field"><label>Datum</label><input type="text" placeholder="dd-mm-jjjj"></div>
-          <div class="hp-field"><label>Tijd</label><input type="text" placeholder="uu:mm"></div>
+
+        <div class="field-group" id="schipholFixed" hidden>
+          <span class="field-label">Ophaallocatie</span>
+          <div class="fixed-value">Schiphol Airport, Aankomsthal</div>
         </div>
-        <div class="hp-quote-result">
-          <span style="font-size:.85rem;color:var(--text-soft);">Vaste prijs</span>
-          <span class="amt">&euro; 39,&ndash;</span>
+
+        <div class="field-row">
+          <div class="field-group">
+            <label for="datum">Datum</label>
+            <input type="date" id="datum">
+          </div>
+          <div class="field-group">
+            <label for="tijd">Tijd</label>
+            <input type="time" id="tijd">
+          </div>
         </div>
-        <a class="hp-btn" href="#" style="text-align:center;">Reserveer</a>
+
+        <div class="field-row">
+          <div class="field-group">
+            <label for="naam">Naam</label>
+            <input type="text" id="naam" placeholder="Voor- en achternaam" autocomplete="name">
+          </div>
+          <div class="field-group">
+            <label for="telefoon">Telefoon</label>
+            <input type="tel" id="telefoon" placeholder="06 12 34 56 78" autocomplete="tel">
+          </div>
+        </div>
+      </div>
+
+      <div id="confirmView" hidden>
+        <div class="confirm-badge" aria-hidden="true">&check;</div>
+        <h2>Bijna klaar</h2>
+        <div class="confirm-summary">
+          <div class="row"><span class="k">Route</span><span class="v" id="summaryRoute">&mdash;</span></div>
+          <div class="row"><span class="k">Wanneer</span><span class="v" id="summaryWhen">&mdash;</span></div>
+          <div class="row"><span class="k">Prijs</span><span class="v" id="summaryPrice">&mdash;</span></div>
+        </div>
+        <p class="confirm-micro">Je bericht staat klaar in WhatsApp. Druk daar op versturen, dan bevestigt <strong>Michell</strong> je rit persoonlijk &mdash; meestal binnen enkele minuten. Geen callcenter, geen wachtrij.</p>
+        <div class="confirm-actions">
+          <a class="btn block" id="waSendBtn" href="#" target="_blank" rel="noopener">Open WhatsApp en verstuur</a>
+          <a class="confirm-secondary" href="tel:+31685639077">Liever bellen? 06 85 63 90 77</a>
+          <button class="confirm-secondary" id="newBookingBtn" type="button" style="background:none;border:none;cursor:pointer;font-family:inherit;">Nieuwe boeking</button>
+        </div>
       </div>
     </div>
-  </div>
 
-  <div class="hp-section">
-    <div class="hp-inner">
-      <span class="hp-section-label">Tarieven</span>
-      <div class="hp-prices">
-        <div class="hp-price-row"><span class="city">Amsterdam</span><span class="amt">&euro; 39</span></div>
-        <div class="hp-price-row"><span class="city">Rotterdam</span><span class="amt">&euro; 69</span></div>
-        <div class="hp-price-row"><span class="city">Utrecht</span><span class="amt">&euro; 59</span></div>
-        <div class="hp-price-row"><span class="city">Almere</span><span class="amt">&euro; 49</span></div>
+    <div class="modal-footer" id="modalFooter">
+      <div class="price-display">
+        <span class="price-label">Vaste prijs</span>
+        <span class="price-amt" id="priceAmt">&mdash;</span>
       </div>
-      <p class="hp-price-note">Andere bestemming: &euro; 2,15 per km + &euro; 0,40 per minuut, ook vooraf berekend.</p>
+      <button class="btn" id="reserveBtn" type="button" disabled>Reserveer</button>
     </div>
   </div>
+</dialog>
 
-  <div class="hp-footer">
-    <div class="hp-footer-inner">
-      <div class="hp-footer-meta">
-        <strong style="color:var(--text)">Le Grand Taxi</strong><br>
-        Geldershoofd 116, Amsterdam &middot; 06 85 63 90 77<br>
-        KVK 91578388 &middot; BTW NL004905641B18
-      </div>
-      <div class="hp-footer-cta">
-        <a class="hp-btn ghost" href="tel:+31685639077">Bel</a>
-        <a class="hp-btn" href="#">WhatsApp</a>
-      </div>
-    </div>
-  </div>
-</section>
+<script>
+(function(){
+  "use strict";
+  var RATE_PER_KM = 2.15;
+  var RATE_PER_MIN = 0.40;
+  var PHONE = "31685639077"; // Michell, international format, no +, no leading 0
 
+  var dialog = document.getElementById('bookingModal');
+  var triggers = document.querySelectorAll('[data-open-modal]');
+  var closeBtn = dialog.querySelector('.modal-close');
+  var dirRadios = dialog.querySelectorAll('input[name="direction"]');
+  var cityRadios = dialog.querySelectorAll('input[name="city"]');
+  var pickupGroup = document.getElementById('pickupGroup');
+  var schipholFixed = document.getElementById('schipholFixed');
+  var chipGroupLabel = document.getElementById('chipGroupLabel');
+  var otherDestGroup = document.getElementById('otherDestGroup');
+  var otherDestInput = document.getElementById('otherDest');
+  var otherKmInput = document.getElementById('otherKm');
+  var otherMinInput = document.getElementById('otherMin');
+  var ophaaladresInput = document.getElementById('ophaaladres');
+  var datumInput = document.getElementById('datum');
+  var tijdInput = document.getElementById('tijd');
+  var naamInput = document.getElementById('naam');
+  var telefoonInput = document.getElementById('telefoon');
+  var priceAmt = document.getElementById('priceAmt');
+  var reserveBtn = document.getElementById('reserveBtn');
+  var formView = document.getElementById('formView');
+  var confirmView = document.getElementById('confirmView');
+  var modalFooter = document.getElementById('modalFooter');
+  var newBookingBtn = document.getElementById('newBookingBtn');
+  var summaryRoute = document.getElementById('summaryRoute');
+  var summaryWhen = document.getElementById('summaryWhen');
+  var summaryPrice = document.getElementById('summaryPrice');
+  var waSendBtn = document.getElementById('waSendBtn');
+
+  var lastTrigger = null;
+
+  function euro(n){
+    if (Math.abs(n - Math.round(n)) < 0.005) {
+      return '€ ' + Math.round(n) + ',–';
+    }
+    return '€ ' + n.toFixed(2).replace('.', ',');
+  }
+
+  function calcOtherPrice(km, min){
+    return (km * RATE_PER_KM) + (min * RATE_PER_MIN);
+  }
+
+  function updateDirection(){
+    var dir = dialog.querySelector('input[name="direction"]:checked').value;
+    if(dir === 'vanaf'){
+      pickupGroup.hidden = true;
+      schipholFixed.hidden = false;
+      chipGroupLabel.textContent = 'Bestemming';
+    } else {
+      pickupGroup.hidden = false;
+      schipholFixed.hidden = true;
+      chipGroupLabel.textContent = 'Ophaalstad';
+    }
+    validateForm();
+  }
+
+  function updateOtherPrice(){
+    var checked = dialog.querySelector('input[name="city"]:checked');
+    if(!checked || checked.id !== 'cityOther') return;
+    var km = parseFloat(otherKmInput.value);
+    var min = parseFloat(otherMinInput.value);
+    if(km > 0 && min >= 0 && !isNaN(km) && !isNaN(min)){
+      priceAmt.textContent = euro(calcOtherPrice(km, min));
+      priceAmt.classList.remove('price-formula');
+    } else {
+      priceAmt.textContent = '€2,15/km + €0,40/min';
+      priceAmt.classList.add('price-formula');
+    }
+  }
+
+  function updateCitySelection(){
+    var checked = dialog.querySelector('input[name="city"]:checked');
+    if(!checked){
+      otherDestGroup.hidden = true;
+      priceAmt.textContent = '—';
+      priceAmt.classList.remove('price-formula');
+      validateForm();
+      return;
+    }
+    if(checked.id === 'cityOther'){
+      otherDestGroup.hidden = false;
+      updateOtherPrice();
+    } else {
+      otherDestGroup.hidden = true;
+      priceAmt.textContent = euro(Number(checked.dataset.price));
+      priceAmt.classList.remove('price-formula');
+    }
+    validateForm();
+  }
+
+  function validateForm(){
+    var dir = dialog.querySelector('input[name="direction"]:checked').value;
+    var cityChecked = dialog.querySelector('input[name="city"]:checked');
+    var datumOk = !!datumInput.value;
+    var tijdOk = !!tijdInput.value;
+    var addressOk = dir === 'vanaf' ? true : ophaaladresInput.value.trim().length > 3;
+    var destOk = !!cityChecked;
+    if(cityChecked && cityChecked.id === 'cityOther'){
+      destOk = otherDestInput.value.trim().length > 2;
+    }
+    var naamOk = naamInput.value.trim().length > 1;
+    var telOk = telefoonInput.value.trim().length > 6;
+    reserveBtn.disabled = !(datumOk && tijdOk && addressOk && destOk && naamOk && telOk);
+  }
+
+  function formatDate(iso){
+    if(!iso) return '';
+    var p = iso.split('-');
+    return p[2] + '-' + p[1] + '-' + p[0];
+  }
+
+  function openModal(trigger){
+    lastTrigger = trigger;
+    if (typeof dialog.showModal === 'function') {
+      dialog.showModal();
+    } else {
+      dialog.setAttribute('open', '');
+    }
+    requestAnimationFrame(function(){
+      var firstRadio = dialog.querySelector('input[name="direction"]:checked');
+      if (firstRadio) firstRadio.focus();
+    });
+  }
+
+  for (var i = 0; i < triggers.length; i++){
+    triggers[i].addEventListener('click', (function(t){ return function(){ openModal(t); }; })(triggers[i]));
+  }
+  closeBtn.addEventListener('click', function(){ dialog.close(); });
+
+  dialog.addEventListener('click', function(e){
+    if (e.target === dialog) dialog.close();
+  });
+  dialog.addEventListener('close', function(){
+    if (lastTrigger) lastTrigger.focus();
+  });
+
+  for (var j = 0; j < dirRadios.length; j++){ dirRadios[j].addEventListener('change', updateDirection); }
+  for (var k = 0; k < cityRadios.length; k++){ cityRadios[k].addEventListener('change', updateCitySelection); }
+  otherDestInput.addEventListener('input', validateForm);
+  otherKmInput.addEventListener('input', function(){ updateOtherPrice(); });
+  otherMinInput.addEventListener('input', function(){ updateOtherPrice(); });
+  ophaaladresInput.addEventListener('input', validateForm);
+  datumInput.addEventListener('input', validateForm);
+  tijdInput.addEventListener('input', validateForm);
+  naamInput.addEventListener('input', validateForm);
+  telefoonInput.addEventListener('input', validateForm);
+
+  function buildWaUrl(d){
+    var lines = [
+      'Hallo Michell! Ik wil graag een taxi reserveren:',
+      '',
+      '👤 Naam: ' + d.naam,
+      '📱 Telefoon: ' + d.telefoon,
+      '📍 Van: ' + d.from,
+      '🎯 Naar: ' + d.to,
+      '📅 Datum: ' + d.when,
+      '💶 Prijs: ' + d.price,
+      '',
+      'Kun je dit bevestigen? Bedankt!'
+    ];
+    var text = lines.join('\n');
+    return 'https://wa.me/' + PHONE + '?text=' + encodeURIComponent(text);
+  }
+
+  reserveBtn.addEventListener('click', function(){
+    if (reserveBtn.disabled) return;
+    var dir = dialog.querySelector('input[name="direction"]:checked').value;
+    var cityChecked = dialog.querySelector('input[name="city"]:checked');
+    var cityName = cityChecked.id === 'cityOther'
+      ? (otherDestInput.value.trim() || 'opgegeven bestemming')
+      : cityChecked.dataset.city;
+    var from = dir === 'naar' ? ophaaladresInput.value.trim() : 'Schiphol Airport';
+    var to = dir === 'naar' ? 'Schiphol Airport' : cityName;
+    var when = formatDate(datumInput.value) + ' om ' + tijdInput.value;
+
+    summaryRoute.textContent = from + ' → ' + to;
+    summaryWhen.textContent = when;
+    summaryPrice.textContent = priceAmt.textContent;
+
+    waSendBtn.href = buildWaUrl({
+      naam: naamInput.value.trim(),
+      telefoon: telefoonInput.value.trim(),
+      from: from,
+      to: to,
+      when: when,
+      price: priceAmt.textContent
+    });
+
+    formView.hidden = true;
+    modalFooter.hidden = true;
+    confirmView.hidden = false;
+    waSendBtn.focus();
+  });
+
+  newBookingBtn.addEventListener('click', function(){
+    var radios = dialog.querySelectorAll('input[type="radio"]');
+    for (var r = 0; r < radios.length; r++){ radios[r].checked = false; }
+    document.getElementById('dirNaar').checked = true;
+    ophaaladresInput.value = '';
+    otherDestInput.value = '';
+    otherKmInput.value = '';
+    otherMinInput.value = '';
+    datumInput.value = '';
+    tijdInput.value = '';
+    naamInput.value = '';
+    telefoonInput.value = '';
+    updateDirection();
+    updateCitySelection();
+    formView.hidden = false;
+    modalFooter.hidden = false;
+    confirmView.hidden = true;
+    dialog.close();
+  });
+
+  updateDirection();
+  updateCitySelection();
+})();
+</script>
 </body>
 </html>

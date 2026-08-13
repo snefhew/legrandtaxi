@@ -1,0 +1,351 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Le Grand Taxi — Design v2 demo (layered dark system)</title>
+<style>
+  /* ==========================================================================
+     LE GRAND TAXI — DESIGN v2 DEMO
+     Companion to DESIGN-SPEC.md. Adapts the "Ease Health" layered-surface
+     system (one saturated ink color, warming/lightening dark surface ramp
+     instead of shadows, single-weight display type, 12px/999px radius
+     discipline) to black + oxblood red + off-white.
+     This file is a standalone preview — it does not touch the live index.html.
+     ========================================================================== */
+
+  *{ box-sizing:border-box; }
+  html{ -webkit-text-size-adjust:100%; }
+  img{ max-width:100%; display:block; }
+  @media (prefers-reduced-motion: reduce){
+    *{ animation-duration:.001ms !important; transition-duration:.001ms !important; }
+  }
+
+  :root{
+    /* ---- 1.1 ink (foreground only, never a bg fill) ---- */
+    --ink-fill:#b3372c;      /* solid CTA fills, big numerals */
+    --ink-text:#d9695c;      /* headings-as-links, eyebrow, small UI text — tuned lighter for contrast */
+
+    /* ---- 1.2 layered dark surfaces — warms + lightens as elevation increases ---- */
+    --canvas:#0a0908;        /* 0 — page base */
+    --surface-1:#141110;     /* 1 — footer, nav-on-scroll, alt bands */
+    --surface-2:#1d1714;     /* 2 — cards */
+    --surface-3:#28201b;     /* 3 — raised: focus/hover/active */
+    --surface-image:#241512; /* exclusive — logo mark / future photography ONLY */
+
+    /* ---- text ---- */
+    --text:#f3efe9;
+    --text-soft:#a39d92;
+    --line:rgba(243,239,233,.12);
+    --line-strong:rgba(243,239,233,.28);
+
+    /* ---- type ---- */
+    --font-display:-apple-system,"Segoe UI","Arial Black",sans-serif;
+    --font-body:-apple-system,"Segoe UI",Roboto,sans-serif;
+    --font-mono:ui-monospace,"SF Mono",Consolas,monospace;
+
+    /* ---- shape — exactly two radius values, system-wide ---- */
+    --radius:12px;
+    --radius-pill:999px;
+  }
+
+  body{
+    margin:0;
+    background:var(--canvas);
+    color:var(--text);
+    font-family:var(--font-body);
+  }
+
+  .wrap{ max-width:1160px; margin:0 auto; padding:0 1.6rem; }
+
+  /* ============ annotation chrome (demo-only, not part of the real site) ============ */
+  .demo-note{
+    max-width:820px; margin:0 auto; padding:2.4rem 1.5rem 1rem; text-align:center;
+  }
+  .demo-note .kicker{
+    font-family:var(--font-mono); font-size:.7rem; letter-spacing:.12em; text-transform:uppercase;
+    color:var(--ink-text);
+  }
+  .demo-note h1{
+    font-family:var(--font-body); font-size:clamp(1.2rem,2.6vw,1.5rem); font-weight:600;
+    margin:.6rem 0 .4rem; color:var(--text);
+  }
+  .demo-note p{ color:var(--text-soft); font-size:.88rem; max-width:60ch; margin:0 auto; line-height:1.6; }
+  .tag{
+    display:inline-block; font-family:var(--font-mono); font-size:.62rem; letter-spacing:.08em;
+    text-transform:uppercase; color:var(--ink-text); background:rgba(217,105,92,.12);
+    border-radius:var(--radius-pill); padding:.25rem .7rem; margin:.15rem;
+  }
+
+  /* ============ nav ============ */
+  .nav{
+    position:sticky; top:0; z-index:20;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:1.1rem 1.6rem; max-width:1160px; margin:0 auto;
+    background:rgba(10,9,8,.72); backdrop-filter:blur(14px);
+    border-bottom:1px solid transparent;
+  }
+  .nav.scrolled{ background:var(--surface-1); border-bottom-color:var(--line); }
+  .brand{ display:flex; align-items:center; gap:.65rem; }
+  .brand img.icon{ height:30px; width:auto; }
+  .brand img.wordmark{ height:17px; width:auto; }
+  .navright{ display:flex; align-items:center; gap:1.2rem; }
+  .phone{ font-size:.85rem; color:var(--text-soft); text-decoration:none; font-variant-numeric:tabular-nums; }
+  .phone:hover{ color:var(--text); }
+
+  .btn{
+    font-family:var(--font-body); font-size:.85rem; font-weight:600;
+    padding:.7rem 1.3rem; border-radius:var(--radius); border:1px solid transparent;
+    background:var(--ink-fill); color:var(--text); text-decoration:none; display:inline-block; cursor:pointer;
+    transition:filter .15s ease;
+  }
+  .btn:hover{ filter:brightness(1.1); }
+  .btn.ghost{ background:transparent; color:var(--text); border-color:var(--line-strong); }
+  .btn.ghost:hover{ background:var(--surface-2); }
+
+  /* ============ hero ============ */
+  .hero{ position:relative; overflow:hidden; padding:clamp(2.6rem,7vw,5rem) 1.6rem clamp(3rem,7vw,4.6rem); }
+  .hero-inner{ max-width:1160px; margin:0 auto; position:relative; z-index:2; }
+
+  /* ---- 4. fixed hero watermark ----
+     Old: width:min(60vw,620px); opacity:.1; right:-6%; top:50%; translateY(-50%)
+     New: ~42% of old max width, corner-anchored (out of the H1 reading zone),
+     radial mask to feather the crop (the source PNG has a thin low-detail
+     pendant tail with a lot of surrounding transparent padding at the bottom
+     of its 337x353 canvas — the mask keeps that from reading as a hard-edged
+     rectangle), opacity nudged up since a smaller, better-placed mark can
+     carry more presence than an oversized centered one needed to hide behind. */
+  .hero-mark{
+    position:absolute; z-index:1; pointer-events:none;
+    width:min(22vw, 260px);
+    right:-3%; bottom:-9%;
+    opacity:.18;
+    -webkit-mask-image:radial-gradient(circle at 65% 40%, #000 55%, transparent 85%);
+            mask-image:radial-gradient(circle at 65% 40%, #000 55%, transparent 85%);
+  }
+  /* Exclusive imagery panel treatment (§1.2 / §4) — the mark sits on its own
+     reserved warm-dark tone, never the ordinary card surface. Shown here as a
+     soft glow so the corner reads as "designed," not "leftover asset." */
+  .hero::after{
+    content:""; position:absolute; z-index:0; pointer-events:none;
+    width:44vw; height:44vw; max-width:520px; max-height:520px;
+    right:-14%; bottom:-22%;
+    background:radial-gradient(circle, var(--surface-image) 0%, transparent 70%);
+    opacity:.8;
+  }
+
+  .eyebrow{
+    font-family:var(--font-mono); font-size:.7rem; letter-spacing:.12em; text-transform:uppercase;
+    color:var(--ink-text); margin:0 0 1rem; display:block;
+  }
+  .h1{
+    font-family:var(--font-display); font-weight:900; letter-spacing:-0.02em;
+    line-height:.96; font-size:clamp(2.5rem,6.4vw,4.625rem); text-wrap:balance;
+    margin:0 0 1.1rem; max-width:13ch; color:var(--text);
+  }
+  .dek{ font-size:1.05rem; line-height:1.6; color:var(--text-soft); max-width:38ch; margin:0 0 1.8rem; }
+  .hero-actions{ display:flex; gap:.8rem; flex-wrap:wrap; margin-bottom:2.6rem; }
+
+  .process{
+    display:flex; flex-wrap:wrap; gap:.5rem 1.3rem; align-items:center;
+    padding:1.15rem 0; border-top:1px solid var(--line); border-bottom:1px solid var(--line);
+    font-size:.88rem; color:var(--text-soft);
+  }
+  .process b{ color:var(--text); font-weight:600; }
+  .process .arrow{ color:var(--ink-text); }
+
+  /* ============ quote card ============ */
+  .section{ padding:clamp(2.4rem,5vw,3.6rem) 1.6rem; }
+  .section-label{
+    font-family:var(--font-mono); font-size:.7rem; letter-spacing:.12em; text-transform:uppercase;
+    color:var(--ink-text); margin-bottom:.9rem; display:block;
+  }
+
+  .quote{
+    background:var(--surface-2); border-radius:var(--radius);
+    padding:2rem; display:flex; flex-direction:column; gap:1rem; max-width:520px;
+  }
+  @media (min-width:640px){ .quote{ padding:2.5rem; } }
+  .quote-row{ display:grid; grid-template-columns:1fr 1fr; gap:.7rem; }
+  @media (max-width:480px){ .quote-row{ grid-template-columns:1fr; } }
+  .field{ display:flex; flex-direction:column; gap:.35rem; }
+  .field label{
+    font-size:.66rem; letter-spacing:.06em; text-transform:uppercase; color:var(--text-soft);
+    font-family:var(--font-mono);
+  }
+  .field input{
+    background:var(--surface-1); border:1px solid var(--line); border-radius:8px;
+    color:var(--text); padding:.65rem .75rem; font-size:.9rem; font-family:var(--font-body);
+    transition:background .15s ease, border-color .15s ease;
+  }
+  .field input:focus{
+    outline:none; background:var(--surface-3); border-color:var(--line-strong);
+  }
+  .field input::placeholder{ color:var(--text-soft); opacity:.7; }
+  .quote-result{
+    display:flex; align-items:baseline; justify-content:space-between;
+    padding-top:.5rem; border-top:1px solid var(--line);
+  }
+  .quote-result .label{ font-size:.85rem; color:var(--text-soft); }
+  .quote-result .amt{
+    font-family:var(--font-display); font-size:1.6rem; font-weight:900; color:var(--ink-text);
+    font-variant-numeric:tabular-nums;
+  }
+
+  /* ============ price-row card ============ */
+  .prices-card{
+    background:var(--surface-2); border-radius:var(--radius); padding:2rem;
+  }
+  @media (min-width:640px){ .prices-card{ padding:2.5rem; } }
+  .price-row{
+    display:flex; justify-content:space-between; align-items:baseline;
+    padding:1rem 0; border-bottom:1px solid var(--line);
+  }
+  .price-row:last-of-type{ border-bottom:none; }
+  .price-row .city{ font-size:1rem; color:var(--text); }
+  .price-row .amt{
+    font-family:var(--font-display); font-size:1.35rem; font-weight:900;
+    color:var(--text); font-variant-numeric:tabular-nums;
+  }
+  .price-note{ margin-top:1.2rem; font-size:.85rem; color:var(--text-soft); line-height:1.6; }
+
+  /* ============ footer ============ */
+  .footer{ padding:2.4rem 1.6rem 2.6rem; background:var(--surface-1); border-top:1px solid var(--line); }
+  .footer-inner{
+    max-width:1160px; margin:0 auto; display:flex; justify-content:space-between;
+    align-items:flex-end; flex-wrap:wrap; gap:1.2rem;
+  }
+  .footer-meta{ font-size:.78rem; color:var(--text-soft); line-height:1.75; }
+  .footer-meta strong{ color:var(--text); font-weight:600; }
+  .footer-cta{ display:flex; gap:.6rem; }
+
+  /* ============ token legend ============ */
+  .legend{ padding:3rem 1.6rem; background:var(--canvas); }
+  .legend h2{
+    font-family:var(--font-body); font-weight:600; font-size:1.1rem; margin:0 0 1.2rem; color:var(--text);
+  }
+  .swatches{ display:flex; flex-wrap:wrap; gap:1rem; }
+  .swatch{ width:132px; }
+  .swatch .chip{ height:64px; border-radius:var(--radius); border:1px solid var(--line); }
+  .swatch .name{ font-family:var(--font-mono); font-size:.68rem; color:var(--text); margin-top:.5rem; }
+  .swatch .hex{ font-family:var(--font-mono); font-size:.66rem; color:var(--text-soft); }
+</style>
+</head>
+<body>
+
+<div class="demo-note">
+  <span class="kicker">Le Grand Taxi — ontwerp v2 preview</span>
+  <h1>Layered-dark system · zwart, oxblood-rood, off-white</h1>
+  <p>Standalone demo — geen wijzigingen aan de live site. Zie DESIGN-SPEC.md voor de volledige token-lijst en de redenering achter elke keuze.</p>
+  <div>
+    <span class="tag">12px radius, overal</span>
+    <span class="tag">geen box-shadow</span>
+    <span class="tag">1 ink-kleur</span>
+    <span class="tag">gefixte hero-watermark</span>
+  </div>
+</div>
+
+<nav class="nav">
+  <div class="brand">
+    <img class="icon" src="../../assets/icon-white.png" alt="Le Grand Taxi">
+    <img class="wordmark" src="../../assets/wordmark-white.png" alt="">
+  </div>
+  <div class="navright">
+    <a class="phone" href="tel:+31685639077">06 85 63 90 77</a>
+    <a class="btn" href="#reserveren">Reserveer</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <img class="hero-mark" src="../../assets/icon-white.png" alt="">
+  <div class="hero-inner">
+    <span class="eyebrow">Schiphol &middot; vaste prijs</span>
+    <h1 class="h1">GEEN METER.<br>&Eacute;&Eacute;N PRIJS.</h1>
+    <p class="dek">Michell rijdt je zelf naar Schiphol. Geen callcenter.</p>
+    <div class="hero-actions">
+      <a class="btn" href="#reserveren">Bereken je prijs</a>
+      <a class="btn ghost" href="tel:+31685639077">Bel Michell</a>
+    </div>
+    <div class="process">
+      <span>Boek je rit</span>
+      <span class="arrow">&rarr;</span>
+      <span><b>Michell</b> bevestigt persoonlijk</span>
+      <span class="arrow">&rarr;</span>
+      <span>vaste prijs, geen verrassingen</span>
+    </div>
+  </div>
+</header>
+
+<div class="section" id="reserveren">
+  <div class="wrap">
+    <span class="section-label">Bereken je prijs</span>
+    <div class="quote">
+      <div class="quote-row">
+        <div class="field"><label>Ophaaladres</label><input type="text" placeholder="Straat, huisnummer, plaats"></div>
+        <div class="field"><label>Bestemming</label><input type="text" placeholder="Schiphol Airport"></div>
+      </div>
+      <div class="quote-row">
+        <div class="field"><label>Datum</label><input type="text" placeholder="dd-mm-jjjj"></div>
+        <div class="field"><label>Tijd</label><input type="text" placeholder="uu:mm"></div>
+      </div>
+      <div class="quote-result">
+        <span class="label">Vaste prijs</span>
+        <span class="amt">&euro; 39,&ndash;</span>
+      </div>
+      <a class="btn" href="#" style="text-align:center;">Reserveer</a>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="wrap">
+    <span class="section-label">Tarieven</span>
+    <div class="prices-card">
+      <div class="price-row"><span class="city">Amsterdam</span><span class="amt">&euro; 39</span></div>
+      <div class="price-row"><span class="city">Rotterdam</span><span class="amt">&euro; 69</span></div>
+      <div class="price-row"><span class="city">Utrecht</span><span class="amt">&euro; 59</span></div>
+      <div class="price-row"><span class="city">Almere</span><span class="amt">&euro; 49</span></div>
+    </div>
+    <p class="price-note">Andere bestemming: &euro; 2,15 per km + &euro; 0,40 per minuut, ook vooraf berekend.</p>
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-meta">
+      <strong>Le Grand Taxi</strong><br>
+      Geldershoofd 116, Amsterdam &middot; 06 85 63 90 77<br>
+      KVK 91578388 &middot; BTW NL004905641B18
+    </div>
+    <div class="footer-cta">
+      <a class="btn ghost" href="tel:+31685639077">Bel</a>
+      <a class="btn" href="#">WhatsApp</a>
+    </div>
+  </div>
+</footer>
+
+<section class="legend">
+  <div class="wrap">
+    <h2>Token-overzicht (zie DESIGN-SPEC.md &sect;1&ndash;3)</h2>
+    <div class="swatches">
+      <div class="swatch"><div class="chip" style="background:var(--canvas)"></div><div class="name">canvas</div><div class="hex">#0a0908</div></div>
+      <div class="swatch"><div class="chip" style="background:var(--surface-1)"></div><div class="name">surface-1</div><div class="hex">#141110</div></div>
+      <div class="swatch"><div class="chip" style="background:var(--surface-2)"></div><div class="name">surface-2</div><div class="hex">#1d1714</div></div>
+      <div class="swatch"><div class="chip" style="background:var(--surface-3)"></div><div class="name">surface-3</div><div class="hex">#28201b</div></div>
+      <div class="swatch"><div class="chip" style="background:var(--surface-image)"></div><div class="name">surface-image (exclusief)</div><div class="hex">#241512</div></div>
+      <div class="swatch"><div class="chip" style="background:var(--ink-fill)"></div><div class="name">ink-fill</div><div class="hex">#b3372c</div></div>
+      <div class="swatch"><div class="chip" style="background:var(--ink-text)"></div><div class="name">ink-text</div><div class="hex">#d9695c</div></div>
+      <div class="swatch"><div class="chip" style="background:var(--text)"></div><div class="name">text</div><div class="hex">#f3efe9</div></div>
+    </div>
+  </div>
+</section>
+
+<script>
+  // demo-only: toggle nav background on scroll to preview the surface-1 nav state
+  addEventListener('scroll', function(){
+    document.querySelector('.nav').classList.toggle('scrolled', scrollY > 40);
+  });
+</script>
+
+</body>
+</html>
