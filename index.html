@@ -654,9 +654,14 @@
      quirks, just measured on driving km instead of straight-line km.
      ============================================================ */
   var SCHIPHOL_LAT = 52.3105, SCHIPHOL_LON = 4.7683;
+  // ORS needs a coordinate it can snap onto an actual road; the raw airport
+  // point above is >350m from any routable road segment per ORS and 404s.
+  // This is the same location shifted onto the terminal approach road,
+  // verified live against the ORS driving-car endpoint.
+  var SCHIPHOL_ROUTING_LAT = 52.3105, SCHIPHOL_ROUTING_LON = 4.7642;
 
-  var PRICE_A_DRIVING = 25.09;
-  var PRICE_B_DRIVING = 0.7051;
+  var PRICE_A_DRIVING = 20.69;
+  var PRICE_B_DRIVING = 0.7925;
 
   var PRICE_A_HAVERSINE = 27.98;
   var PRICE_B_HAVERSINE = 0.843;
@@ -676,39 +681,33 @@
   /* ============================================================
      DRIVING-ROUTE DISTANCE VIA OPENROUTESERVICE (ORS)
      Free tier: ~2,500 requests/day, 40,000/month, no credit card.
-     Requires an API key. This site has NO key committed to source
-     (never commit a production key to a public repo) - it reads one
-     from localStorage instead, so it's a one-time browser setting a
-     developer (or Michell, with help) can turn on later.
+     DEFAULT_ORS_KEY below is a real free-tier key provided by the
+     site owner. It works for every visitor out of the box. If it
+     ever stops working (quota exhausted, revoked, referrer-locked
+     to a different domain), the code below still degrades cleanly
+     to the haversine (straight-line) estimate - nothing breaks.
 
-     HOW TO ACTIVATE REAL DRIVING-ROUTE PRICING (one-time, ~2 min):
-       1. Go to https://openrouteservice.org/dev/#/signup and sign
-          up for a free account (email + password only, no card).
-       2. In the ORS Dashboard, create a new API key/token - pick
-          the free "Standard" tier. Optionally restrict it to the
-          site's domain (snefhew.github.io) in the key settings to
-          reduce abuse risk.
-       3. Open https://snefhew.github.io/legrandtaxi/ in Chrome,
-          press F12 to open DevTools, click the "Console" tab, paste
-          the line below (with the real key instead of the example)
-          and press Enter:
+     RECOMMENDED: log into the ORS dashboard (openrouteservice.org)
+     and restrict this key to the site's domain (snefhew.github.io)
+     under the key's settings, so it can't be used from other sites
+     even though it's visible in this public page's source - this
+     is the standard mitigation for a client-side key on a small
+     static site with no backend to hide it behind.
 
-            localStorage.setItem('ors_api_key', 'PASTE_YOUR_KEY_HERE');
-
-       4. Reload the page. From then on, THAT BROWSER will use real
-          driving-route distances for pricing. Nothing needs to
-          change in the code, and nothing is required for anyone
-          else - every other visitor keeps using the safe
-          haversine-based estimate automatically, forever, since
-          they never set this value in their own browser's storage.
-       5. To turn it back off: localStorage.removeItem('ors_api_key')
+     A visitor's own browser can still override this with a personal
+     key via: localStorage.setItem('ors_api_key', 'OTHER_KEY')
+     and clear that override via: localStorage.removeItem('ors_api_key')
      ============================================================ */
   var ORS_URL = 'https://api.openrouteservice.org/v2/directions/driving-car';
   var ORS_TIMEOUT_MS = 6000;
+  var DEFAULT_ORS_KEY = 'eyJvcmciOiI1YjNjZTM1OTc4NTExMTAwMDFjZjYyNDgiLCJpZCI6IjBjNzk4ZDdkZjUyNDQzODNhZTE5ZDJhYzMyZWYzYTFkIiwiaCI6Im11cm11cjY0In0=';
 
   function getOrsKey(){
-    try { return (window.localStorage.getItem('ors_api_key') || '').trim(); }
-    catch (e){ return ''; } // localStorage blocked (private mode etc.) -> treat as no key
+    try {
+      var own = (window.localStorage.getItem('ors_api_key') || '').trim();
+      return own || DEFAULT_ORS_KEY;
+    }
+    catch (e){ return DEFAULT_ORS_KEY; } // localStorage blocked (private mode etc.) -> still use the default key
   }
 
   // Calls back with driving-route km, or null if no key is set, or the
@@ -820,7 +819,7 @@
         // Try real driving-route distance; drivingDistanceKm() always calls
         // back (never throws), with null if no key/failure/timeout, in
         // which case we use the straight-line distance already computed above.
-        drivingDistanceKm(SCHIPHOL_LAT, SCHIPHOL_LON, lat, lon, function(drivingKm){
+        drivingDistanceKm(SCHIPHOL_ROUTING_LAT, SCHIPHOL_ROUTING_LON, lat, lon, function(drivingKm){
           if (drivingKm != null && drivingKm > 0){
             finish(drivingKm, 'driving');
           } else {
