@@ -4,14 +4,14 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="icon" href="data:,">
-<title>Informatie & Schiphol taxi | Le Grand Taxi</title>
-<meta name="description" content="Praktische informatie over Le Grand Taxi: real-time vluchtinformatie op Schiphol, betaalmethoden, onze chauffeur(s) en drie diensten: lokaal taxivervoer, luchthavenvervoer en zakelijk vervoer.">
+<title>Informatie & Schiphol taxi | Le Grand Services</title>
+<meta name="description" content="Praktische informatie over Le Grand Services: real-time vluchtinformatie op Schiphol, betaalmethoden, onze chauffeur(s) en drie diensten: lokaal taxivervoer, luchthavenvervoer en zakelijk vervoer.">
 <link rel="canonical" href="https://snefhew.github.io/legrandtaxi/info.html">
 
 <!-- Open Graph / social preview -->
 <meta property="og:type" content="website">
-<meta property="og:site_name" content="Le Grand Taxi">
-<meta property="og:title" content="Informatie & Schiphol taxi | Le Grand Taxi">
+<meta property="og:site_name" content="Le Grand Services">
+<meta property="og:title" content="Informatie & Schiphol taxi | Le Grand Services">
 <meta property="og:description" content="Real-time vluchtinformatie, betaalmethoden en onze diensten: lokaal taxivervoer, luchthavenvervoer en zakelijk vervoer.">
 <meta property="og:url" content="https://snefhew.github.io/legrandtaxi/info.html">
 <meta property="og:image" content="https://snefhew.github.io/legrandtaxi/assets/logo.png">
@@ -23,7 +23,7 @@
 {
   "@context": "https://schema.org",
   "@type": "TaxiService",
-  "name": "Le Grand Taxi",
+  "name": "Le Grand Services",
   "telephone": "+31685639077",
   "url": "https://snefhew.github.io/legrandtaxi/",
   "areaServed": [
@@ -45,7 +45,7 @@
   "mainEntity": [
     {
       "@type": "Question",
-      "name": "Hoe weet Le Grand Taxi dat mijn vlucht vertraging heeft?",
+      "name": "Hoe weet Le Grand Services dat mijn vlucht vertraging heeft?",
       "acceptedAnswer": {"@type": "Answer", "text": "Geef bij het boeken uw vluchtnummer door. Wij volgen uw vlucht real-time en de ophaaltijd schuift automatisch mee."}
     },
     {
@@ -70,7 +70,7 @@
     },
     {
       "@type": "Question",
-      "name": "Hoe kan ik betalen bij Le Grand Taxi?",
+      "name": "Hoe kan ik betalen bij Le Grand Services?",
       "acceptedAnswer": {"@type": "Answer", "text": "Contant, met pin of creditcard, via iDEAL vooraf, of op factuur bij zakelijke ritten."}
     },
     {
@@ -109,11 +109,14 @@
   }
 
   :root{
-    --canvas:#181110; --surface-1:#241a17; --surface-2:#2f2320; --surface-3:#3c2d27; --surface-image:#33201a;
-    --ink-fill:#c73a26; --ink-text:#f0785a;
-    --brass:#cf9f5e; --brass-soft:rgba(207,159,94,0.4);
-    --text:#f8f1e7; --text-soft:#bcaf9e;
-    --line:rgba(248,241,231,0.13); --line-strong:rgba(248,241,231,0.3);
+    /* warm-LIGHT surface ramp (light conversion) - matches index.html. canvas lightest,
+       surfaces progressively more tinted; depth from the ramp only, no shadow/colored border. */
+    --canvas:#f5f0e8; --surface-1:#ece4d6; --surface-2:#e4dbc9; --surface-3:#dacdb7; --surface-image:#e4dbc9;
+    --ink-fill:#c73a26; --ink-text:#b0301d;
+    --on-ink:#f8f1e7;
+    --brass:#8a6220; --brass-soft:rgba(138,98,32,0.45);
+    --text:#241512; --text-soft:#6a5c50;
+    --line:rgba(36,21,18,0.14); --line-strong:rgba(36,21,18,0.3);
     --radius:6px; --radius-pill:999px;
     --font-body:-apple-system,"Segoe UI",Roboto,sans-serif;
     --font-mono:ui-monospace,"SF Mono",Consolas,monospace;
@@ -124,8 +127,8 @@
   img{ max-width:100%; display:block; }
   body{
     margin:0; background-color:var(--canvas); color:var(--text);
-    background-image:radial-gradient(ellipse 900px 520px at 85% -10%, rgba(199,58,38,0.16), transparent 60%),
-      radial-gradient(ellipse 700px 480px at -5% 100%, rgba(207,159,94,0.07), transparent 65%),
+    background-image:radial-gradient(ellipse 900px 520px at 85% -10%, rgba(199,58,38,0.09), transparent 60%),
+      radial-gradient(ellipse 700px 480px at -5% 100%, rgba(138,98,32,0.06), transparent 65%),
       url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.03 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
     background-attachment:fixed;
     font-family:var(--font-body); line-height:1.5;
@@ -146,12 +149,15 @@
     position:sticky; top:0; z-index:40;
     display:flex; align-items:center; justify-content:space-between;
     padding:1.05rem 1.6rem; max-width:1160px; margin:0 auto;
-    background:rgba(20,17,16,0.78); backdrop-filter:blur(10px);
+    background:rgba(245,240,232,0.82); backdrop-filter:blur(10px);
     border-bottom:1px solid var(--line);
   }
   .brand{ display:flex; align-items:center; gap:.65rem; text-decoration:none; }
   .brand img.icon{ height:27px; width:auto; }
-  .brand img.wordmark{ height:16px; width:auto; }
+  .brand-word{ font-family:var(--font-display); font-weight:600; font-size:1.08rem; letter-spacing:-.01em; color:var(--text); white-space:nowrap; }
+  .brand-divider{ width:1px; height:20px; background:var(--line-strong); margin:0 .15rem; flex:none; }
+  .brand-tagline{ font-family:var(--font-mono); font-size:.64rem; letter-spacing:.11em; text-transform:uppercase; color:var(--brass); white-space:nowrap; }
+  @media (max-width:620px){ .brand-divider, .brand-tagline{ display:none; } }
   .navright{ display:flex; align-items:center; gap:1.1rem; }
   .navlink{ font-size:.8rem; color:var(--text-soft); text-decoration:none; transition:color .15s ease; }
   .navlink:hover{ color:var(--text); }
@@ -162,11 +168,11 @@
     font-family:var(--font-body); font-size:.78rem; font-weight:600;
     text-transform:uppercase; letter-spacing:.07em;
     padding:.85rem 1.4rem; border-radius:0; border:1px solid var(--ink-fill);
-    background:var(--ink-fill); color:var(--text); text-decoration:none; display:inline-flex;
+    background:var(--ink-fill); color:var(--on-ink); text-decoration:none; display:inline-flex;
     align-items:center; justify-content:center; cursor:pointer; min-height:48px;
-    transition:filter .15s ease, transform .12s ease, border-color .15s ease, background .15s ease, box-shadow .2s ease;
+    transition:filter .15s ease, transform .12s ease, border-color .15s ease, background .15s ease;
   }
-  .btn:hover{ filter:brightness(1.14); transform:translateY(-1px); box-shadow:0 6px 18px -6px rgba(199,58,38,0.55); }
+  .btn:hover{ filter:brightness(1.08); transform:translateY(-1px); }
   .btn:active{ transform:scale(.98) translateY(0); box-shadow:none; }
   .btn.ghost{ background:transparent; color:var(--text); border-color:var(--line-strong); }
   .btn.ghost:hover{ border-color:var(--ink-text); color:var(--ink-text); filter:none; box-shadow:none; }
@@ -196,6 +202,16 @@
     pointer-events:none;
   }
   .info-hero-inner{ position:relative; z-index:2; max-width:1160px; margin:0 auto; }
+  /* The hero is a deliberate dark contrast band (client-supplied duotone photo) within an
+     otherwise light page, so its text is scoped light regardless of the global dark text. */
+  .info-hero h1.info-h1{ color:#f8f1e7; }
+  .info-hero h1.info-h1 em{ color:#f4906f; }
+  .info-hero .info-eyebrow{ color:#f4906f; }
+  .info-hero .info-eyebrow::before{ background:#f4906f; }
+  .info-hero .info-dek{ color:rgba(248,241,231,0.82); }
+  .info-hero .trust-line{ color:rgba(248,241,231,0.82); }
+  .info-hero .trust-line b{ color:#f4906f; }
+  .info-hero .trust-sep{ color:#d8b075; }
   .info-eyebrow{
     font-family:var(--font-mono); font-size:.72rem; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-text);
     margin:0 0 1.2rem; display:flex; align-items:center; gap:.6rem;
@@ -314,9 +330,11 @@
 </div>
 
 <nav class="site-nav">
-  <a class="brand" href="index.html" aria-label="Le Grand Taxi, terug naar de homepage">
-    <img class="icon" src="assets/icon-white.png" alt="" width="27" height="27">
-    <img class="wordmark" src="assets/wordmark-white.png" alt="Le Grand Taxi">
+  <a class="brand" href="index.html" aria-label="Le Grand Services, terug naar de homepage">
+    <img class="icon" src="assets/icon-dark.png" alt="" width="27" height="27">
+    <span class="brand-word">Le Grand Services</span>
+    <span class="brand-divider" aria-hidden="true"></span>
+    <span class="brand-tagline">Persoonlijke Taxi</span>
   </a>
   <div class="navright">
     <a class="navlink" href="index.html">Home</a>
@@ -348,7 +366,7 @@
     <div class="section-head">
       <span class="section-label">Onze diensten</span>
       <h2 class="section-title" id="diensten-title">Drie manieren waarop we u vervoeren</h2>
-      <p class="section-intro">Le Grand Taxi rijdt niet op de meter. U weet vooraf de prijs, van een lokale rit tot zakelijk vervoer.</p>
+      <p class="section-intro">Le Grand Services rijdt niet op de meter. U weet vooraf de prijs, van een lokale rit tot zakelijk vervoer.</p>
     </div>
     <div class="service-grid">
       <article class="service-card">
@@ -376,13 +394,13 @@
         <h2 class="section-title" id="chauffeur-title">Persoonlijk, van deur tot deur</h2>
         <p>Vandaag rijdt <strong>Michell</strong> zelf het grootste deel van de ritten. Geen callcenter, geen wisselende chauffeur: u weet wie er voorrijdt.</p>
         <p>Michell kent de wegen rond Amsterdam en Schiphol goed en kiest altijd de snelste veilige route.</p>
-        <p>Le Grand Taxi groeit mee met de vraag. Nieuwe chauffeurs sluiten aan, altijd met dezelfde standaard: op tijd en representatief.</p>
+        <p>Le Grand Services groeit mee met de vraag. Nieuwe chauffeurs sluiten aan, altijd met dezelfde standaard: op tijd en representatief.</p>
         <p>Iedere chauffeur rijdt met een geldige chauffeurskaart en de wettelijke vergunning voor taxivervoer.</p>
       </div>
       <div class="chauffeur-card">
         <div class="chauffeur-seal">
           <span class="chauffeur-seal-ring" aria-hidden="true"><span>LG</span></span>
-          <span class="chauffeur-seal-text"><b>Michell</b><span>Chauffeur, Le Grand Taxi</span></span>
+          <span class="chauffeur-seal-text"><b>Michell</b><span>Chauffeur, Le Grand Services</span></span>
         </div>
         <p class="chauffeur-card-copy">Zelf achter het stuur, van boeking tot aankomst uw vaste aanspreekpunt in en rond Amsterdam, Rotterdam, Utrecht, Almere en Schiphol.</p>
         <div class="chauffeur-note">Vergunninghouder taxivervoer &middot; P-136560</div>
@@ -438,7 +456,7 @@
     </div>
     <div class="faq-list">
       <details class="faq-item">
-        <summary>Hoe weet Le Grand Taxi dat mijn vlucht vertraging heeft?</summary>
+        <summary>Hoe weet Le Grand Services dat mijn vlucht vertraging heeft?</summary>
         <p>Geef bij het boeken uw vluchtnummer door. Wij volgen uw vlucht real-time en de ophaaltijd schuift automatisch mee.</p>
       </details>
       <details class="faq-item">
@@ -458,7 +476,7 @@
         <p>Ja. Op verzoek stellen we een factuur op naam van uw bedrijf op.</p>
       </details>
       <details class="faq-item">
-        <summary>Hoe kan ik betalen bij Le Grand Taxi?</summary>
+        <summary>Hoe kan ik betalen bij Le Grand Services?</summary>
         <p>Contant, met pin of creditcard, via iDEAL vooraf, of op factuur bij zakelijke ritten.</p>
       </details>
       <details class="faq-item">
@@ -481,8 +499,8 @@
 
 <footer class="site-footer">
   <div class="footer-inner">
-    <p class="footer-signature">Le Grand Taxi</p>
-    <p class="footer-tagline">Persoonlijke chauffeur, vaste prijs</p>
+    <p class="footer-signature">Le Grand Services</p>
+    <p class="footer-tagline">Persoonlijke Taxi, vaste prijs</p>
     <div class="footer-links">
       <a href="index.html">Home</a>
       <a href="index.html">Boek een rit</a>
@@ -494,7 +512,7 @@
     </div>
     <div class="footer-row">
       <div class="footer-meta">
-        <strong style="color:var(--text)">Le Grand Taxi</strong><br>
+        <strong style="color:var(--text)">Le Grand Services</strong> &middot; Persoonlijke Taxi<br>
         06 85 63 90 77<br>
         KVK 91578388 &middot; BTW NL004905641B18
       </div>
