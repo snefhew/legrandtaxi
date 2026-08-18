@@ -343,8 +343,9 @@
     transition:border-left-color .18s ease, background .18s ease, padding-left .18s ease;
   }
   .rate-row:hover{ border-left-color:var(--ink-fill); background:rgba(36,21,18,0.04); padding-left:.5rem; }
-  .rate-city{ font-family:var(--font-display); font-size:1.2rem; font-weight:500; }
+  .rate-city{ font-family:var(--font-display); font-size:1.2rem; font-weight:500; display:flex; flex-direction:column; gap:.18rem; line-height:1.12; }
   .rate-city-dest{ color:var(--text-soft); font-weight:400; }
+  .rate-eta{ font-family:var(--font-mono); font-size:.62rem; letter-spacing:.09em; text-transform:uppercase; color:var(--text-soft); font-weight:600; }
   .rate-leader{ border-bottom:1px dotted var(--line-strong); align-self:center; margin-bottom:.4rem; min-width:.75rem; }
   .rate-amt-prefix{ font-family:var(--font-mono); font-size:.6rem; letter-spacing:.08em; text-transform:uppercase; color:var(--text-soft); font-weight:600; margin-right:.35rem; vertical-align:middle; }
   .rate-amt{ font-family:var(--font-display); font-weight:700; font-size:1.45rem; font-variant-numeric:tabular-nums; color:var(--ink-text); }
@@ -608,6 +609,8 @@
   .waarom-point.accent-red h3{ color:var(--ink-text); }
   .waarom-point.accent-brass h3{ color:var(--brass); }
   .waarom-area{ margin-top:2.8rem; padding-top:1.6rem; border-top:1px solid var(--line); font-size:.98rem; line-height:1.75; color:var(--text-soft); max-width:64ch; }
+  .diensten-note{ margin-top:2.4rem; padding-top:1.5rem; border-top:1px solid var(--line); font-size:.95rem; line-height:1.7; color:var(--text-soft); max-width:64ch; }
+  .diensten-note strong{ color:var(--text); }
   .waarom-area strong{ color:var(--ink-text); font-weight:700; }
 
   /* vlucht / schiphol: text + duotone terminal photo, side by side */
@@ -803,22 +806,22 @@
     </div>
     <div class="rate-card">
       <div class="rate-row">
-        <span class="rate-city">Amsterdam <span class="rate-city-dest">- Schiphol</span></span>
+        <span class="rate-city"><span class="rate-city-name">Amsterdam <span class="rate-city-dest">- Schiphol</span></span><span class="rate-eta">ca. 25 min</span></span>
         <span class="rate-leader" aria-hidden="true"></span>
         <span class="rate-amt"><span class="rate-amt-prefix">vanaf</span> &euro;39,-</span>
       </div>
       <div class="rate-row">
-        <span class="rate-city">Rotterdam <span class="rate-city-dest">- Schiphol</span></span>
+        <span class="rate-city"><span class="rate-city-name">Rotterdam <span class="rate-city-dest">- Schiphol</span></span><span class="rate-eta">ca. 50 min</span></span>
         <span class="rate-leader" aria-hidden="true"></span>
         <span class="rate-amt"><span class="rate-amt-prefix">vanaf</span> &euro;69,-</span>
       </div>
       <div class="rate-row">
-        <span class="rate-city">Utrecht <span class="rate-city-dest">- Schiphol</span></span>
+        <span class="rate-city"><span class="rate-city-name">Utrecht <span class="rate-city-dest">- Schiphol</span></span><span class="rate-eta">ca. 40 min</span></span>
         <span class="rate-leader" aria-hidden="true"></span>
         <span class="rate-amt"><span class="rate-amt-prefix">vanaf</span> &euro;59,-</span>
       </div>
       <div class="rate-row">
-        <span class="rate-city">Almere <span class="rate-city-dest">- Schiphol</span></span>
+        <span class="rate-city"><span class="rate-city-name">Almere <span class="rate-city-dest">- Schiphol</span></span><span class="rate-eta">ca. 35 min</span></span>
         <span class="rate-leader" aria-hidden="true"></span>
         <span class="rate-amt"><span class="rate-amt-prefix">vanaf</span> &euro;49,-</span>
       </div>
@@ -869,6 +872,7 @@
           <p>Voor bedrijven die op tijd en representatief vervoerd willen worden: naar een klantafspraak, de luchthaven of vast woon-werkverkeer. Op verzoek factureren we op naam van je bedrijf.</p>
         </article>
       </div>
+      <p class="diensten-note"><strong>Een kinderzitje, extra bagage of met een grotere groep op pad?</strong> Geef het door bij het boeken. App of bel Michell op 06 85 63 90 77 en we kijken samen wat er kan.</p>
     </div>
   </section>
 
@@ -930,7 +934,7 @@
           </div>
           <div class="flight-step">
             <span class="flight-step-num">Na de landing</span>
-            <p>Na het ophalen van je bagage belt of appt Michell je, meestal binnen 15 minuten. Je spreekt dan af waar je elkaar in de aankomsthal treft, zodat je zo doorloopt naar de auto.</p>
+            <p>Na het ophalen van je bagage belt of appt Michell je zelf, meestal binnen 15 minuten. Hij zegt precies waar hij in de aankomsthal staat, zodat je hem zo vindt en doorloopt naar de auto. Je zoekt nooit tussen een rij naambordjes.</p>
           </div>
         </div>
       </div>
