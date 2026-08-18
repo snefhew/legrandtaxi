@@ -4,9 +4,21 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="icon" href="data:,">
-<title>Le Grand Services | vaste prijs naar Schiphol</title>
+<title>Le Grand Services | vaste prijs taxi naar Schiphol</title>
 <meta name="description" content="Persoonlijke taxi met vaste prijs vooraf, van elk adres naar elk adres in Nederland. Vaste transfertarieven van en naar Schiphol, real-time vluchtvolging en persoonlijk contact met Michell. Ook Haarlem, Hoofddorp en Amstelveen.">
 <link rel="canonical" href="https://snefhew.github.io/legrandtaxi/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Le Grand Services">
+<meta property="og:locale" content="nl_NL">
+<meta property="og:title" content="Le Grand Services | vaste prijs taxi naar Schiphol">
+<meta property="og:description" content="Persoonlijke taxi met vaste prijs vooraf, van elk adres naar elk adres in Nederland. Vaste transfertarieven van en naar Schiphol, met real-time vluchtvolging.">
+<meta property="og:url" content="https://snefhew.github.io/legrandtaxi/">
+<meta property="og:image" content="https://snefhew.github.io/legrandtaxi/assets/hero-schiphol.jpg">
+<meta property="og:image:alt" content="Verkeerstoren van Schiphol, luchthavenvervoer met vaste prijs">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Le Grand Services | vaste prijs taxi naar Schiphol">
+<meta name="twitter:description" content="Persoonlijke taxi met vaste prijs vooraf, van elk adres naar elk adres in Nederland. Vaste transfertarieven van en naar Schiphol.">
+<meta name="twitter:image" content="https://snefhew.github.io/legrandtaxi/assets/hero-schiphol.jpg">
 
 <!-- Structured data: taxi service + FAQ, mirrors the visible content on this single page so it stays accurate -->
 <script type="application/ld+json">
@@ -14,9 +26,12 @@
   "@context": "https://schema.org",
   "@type": "TaxiService",
   "name": "Le Grand Services",
+  "description": "Persoonlijk taxivervoer met een vaste prijs vooraf, van elk adres naar elk adres in Nederland. Vaste transfertarieven van en naar Schiphol, met real-time vluchtvolging en persoonlijk contact.",
   "telephone": "+31685639077",
   "url": "https://snefhew.github.io/legrandtaxi/",
+  "image": "https://snefhew.github.io/legrandtaxi/assets/hero-schiphol.jpg",
   "areaServed": [
+    {"@type": "Country", "name": "Nederland"},
     {"@type": "City", "name": "Amsterdam"},
     {"@type": "City", "name": "Rotterdam"},
     {"@type": "City", "name": "Utrecht"},
@@ -26,7 +41,9 @@
     {"@type": "City", "name": "Amstelveen"},
     {"@type": "Airport", "name": "Amsterdam Airport Schiphol"}
   ],
-  "priceRange": "EUR",
+  "priceRange": "€€",
+  "currenciesAccepted": "EUR",
+  "paymentAccepted": "iDEAL, Pin, Creditcard, Contant, Op factuur",
   "vatID": "NL004905641B18",
   "sameAs": ["https://snefhew.github.io/legrandtaxi/"]
 }
@@ -637,22 +654,23 @@
 <header class="site-header">
   <div class="site-header-inner inner">
   <div class="brand">
-    <img class="icon" src="assets/icon-dark.png" alt="" width="27" height="27">
+    <img class="icon" src="assets/icon-dark.png" alt="Le Grand Services taxi" width="27" height="27">
     <span class="brand-word">Le Grand Services</span>
     <span class="brand-divider" aria-hidden="true"></span>
     <span class="brand-tagline">Persoonlijke Taxi</span>
   </div>
-  <div class="navright">
+  <nav class="navright" aria-label="Hoofdmenu">
     <a class="nav-link" href="#tarieven">Tarieven</a>
     <a class="nav-link" href="#diensten">Diensten</a>
     <a class="nav-link" href="#vluchtinfo">Vluchtinfo</a>
     <a class="nav-link" href="#faq">Vragen</a>
     <a class="phone-link" href="tel:+31685639077">06 85 63 90 77</a>
     <button class="btn" type="button" data-open-modal>Reserveer</button>
-  </div>
+  </nav>
   </div>
 </header>
 
+<main>
 <div class="hero">
   <div class="hero-inner">
     <div class="hero-grid">
@@ -1013,6 +1031,7 @@
   </section>
 
 </div>
+</main>
 
 <footer class="site-footer">
   <div class="footer-inner">
