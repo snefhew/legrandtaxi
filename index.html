@@ -1397,10 +1397,21 @@
       var km = (drivingKm != null && drivingKm > 0) ? drivingKm : straightKm;
       var source = (drivingKm != null && drivingKm > 0) ? 'driving' : 'straight-line';
       var amount = estimateFromDistance(km, source); // absolute MIN_FARE floor applied here, always
-      var fromAnchor = findCityAnchor(fromPoint.lat, fromPoint.lon, fromPoint.woonplaats);
-      var toAnchor = findCityAnchor(toPoint.lat, toPoint.lon, toPoint.woonplaats);
-      if (fromAnchor) amount = Math.max(amount, fromAnchor.price);
-      if (toAnchor) amount = Math.max(amount, toAnchor.price);
+      // The per-city minimum (Amsterdam >= 39, etc.) exists ONLY to protect the
+      // advertised Schiphol "vanaf" tariffs. It must apply only when Schiphol is
+      // actually one end of the trip - otherwise a short local ride between two
+      // non-Schiphol addresses that merely happens to sit near a city anchor
+      // (e.g. Vinkeveen -> Duivendrecht, which is near the Amsterdam anchor)
+      // gets wrongly inflated to the Amsterdam Schiphol-floor. For any trip that
+      // does not touch Schiphol, only the real distance price + the low absolute
+      // MIN_FARE floor apply.
+      var schipholTrip = isSchiphol(fromPoint.lat, fromPoint.lon) || isSchiphol(toPoint.lat, toPoint.lon);
+      if (schipholTrip) {
+        var fromAnchor = findCityAnchor(fromPoint.lat, fromPoint.lon, fromPoint.woonplaats);
+        var toAnchor = findCityAnchor(toPoint.lat, toPoint.lon, toPoint.woonplaats);
+        if (fromAnchor) amount = Math.max(amount, fromAnchor.price);
+        if (toAnchor) amount = Math.max(amount, toAnchor.price);
+      }
       cb({ amount: amount });
     });
   }
