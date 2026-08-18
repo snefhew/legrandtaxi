@@ -56,36 +56,38 @@
 
   .inner{ max-width:1160px; margin:0 auto; padding:0 1.6rem; }
 
-  /* ============ MASTHEAD ============ */
-  .masthead{
+  /* ============ HEADER (full-width bar, content pinned to the shared max-width) ============ */
+  header.site-header{
+    position:sticky; top:0; z-index:40; width:100%;
+    background:rgba(20,17,16,0.86); backdrop-filter:blur(10px);
     border-bottom:1px solid var(--line);
   }
-  .masthead-inner{
-    max-width:1160px; margin:0 auto; padding:.55rem 1.6rem;
-    display:flex; align-items:center; justify-content:space-between; gap:1rem;
-    font-family:var(--font-mono); font-size:.66rem; letter-spacing:.12em; text-transform:uppercase;
-    color:var(--text-soft);
+  .site-header-inner{
+    display:flex; align-items:center; justify-content:space-between; gap:1.2rem;
+    padding:1rem 1.6rem;
   }
-  .masthead-inner span:last-child{ white-space:nowrap; }
-  @media (max-width:640px){
-    .masthead-inner{ justify-content:center; }
-    .masthead-inner span:last-child{ display:none; }
+  .brand{ display:flex; align-items:center; gap:.65rem; min-width:0; }
+  .brand img.icon{ height:27px; width:auto; flex:none; }
+  .brand img.wordmark{ height:16px; width:auto; flex:none; }
+  .brand-divider{ width:1px; height:20px; background:var(--line-strong); margin:0 .15rem; flex:none; }
+  .brand-tagline{
+    font-family:var(--font-mono); font-size:.64rem; letter-spacing:.11em; text-transform:uppercase;
+    color:var(--brass); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
   }
-
-  /* ============ NAV ============ */
-  nav.site-nav{
-    position:sticky; top:0; z-index:40;
-    display:flex; align-items:center; justify-content:space-between;
-    padding:1.05rem 1.6rem; max-width:1160px; margin:0 auto;
-    background:rgba(20,17,16,0.78); backdrop-filter:blur(10px);
-    border-bottom:1px solid var(--line);
-  }
-  .brand{ display:flex; align-items:center; gap:.65rem; }
-  .brand img.icon{ height:27px; width:auto; }
-  .brand img.wordmark{ height:16px; width:auto; }
-  .navright{ display:flex; align-items:center; gap:1.1rem; }
+  .navright{ display:flex; align-items:center; gap:1.3rem; }
   .phone-link{ font-size:.85rem; color:var(--text-soft); text-decoration:none; font-variant-numeric:tabular-nums; font-family:var(--font-mono); transition:color .15s ease; }
   .phone-link:hover{ color:var(--ink-text); }
+  .nav-link{
+    font-size:.78rem; color:var(--text-soft); text-decoration:none; font-weight:600;
+    letter-spacing:.02em; transition:color .15s ease; white-space:nowrap;
+  }
+  .nav-link:hover{ color:var(--ink-text); }
+  @media (max-width:760px){
+    .brand-divider, .brand-tagline{ display:none; }
+  }
+  @media (max-width:620px){
+    .navright .nav-link{ display:none; }
+  }
 
   .btn{
     font-family:var(--font-body); font-size:.78rem; font-weight:600;
@@ -137,16 +139,55 @@
   .hero-seal-ring span{ font-family:var(--font-display); font-weight:600; font-style:italic; font-size:.92rem; color:var(--brass); }
   .hero-seal-text{ font-family:var(--font-mono); font-size:.64rem; letter-spacing:.1em; text-transform:uppercase; color:var(--text-soft); line-height:1.6; }
 
-  .dek{ font-size:1.05rem; line-height:1.6; color:var(--text-soft); max-width:36ch; margin:0 0 1.7rem; }
-
-  .hero-rate{
-    display:flex; align-items:baseline; flex-wrap:wrap; gap:.1rem .7rem;
-    padding:1.15rem 0; border-top:1px solid var(--line); border-bottom:1px solid var(--line);
-    margin-bottom:1.8rem;
+  /* ---- hero mini price-calculator: the primary conversion point on the page ---- */
+  .hero-calc{
+    background:var(--surface-1); border:1px solid var(--line); border-top:2px solid var(--ink-fill);
+    border-radius:var(--radius); padding:1.3rem 1.3rem 1.4rem; margin:0 0 1.7rem;
   }
-  .hero-rate-label{ font-family:var(--font-mono); font-size:.68rem; letter-spacing:.1em; text-transform:uppercase; color:var(--text-soft); }
-  .hero-rate-amt{ font-family:var(--font-display); font-weight:700; font-size:2.3rem; line-height:1; color:var(--text); font-variant-numeric:tabular-nums; }
-  .hero-rate-note{ font-size:.78rem; color:var(--text-soft); width:100%; margin-top:.3rem; }
+  .hero-calc-label{
+    font-family:var(--font-mono); font-size:.68rem; letter-spacing:.1em; text-transform:uppercase;
+    color:var(--text-soft); margin:0 0 .9rem;
+  }
+  .hero-calc-fields{ display:flex; flex-direction:column; gap:.6rem; }
+  .hero-calc-field{ display:flex; flex-direction:column; gap:.35rem; }
+  .hero-calc-field label{
+    font-size:.66rem; letter-spacing:.06em; text-transform:uppercase; color:var(--text-soft); font-family:var(--font-mono);
+  }
+  .hero-calc-field input{
+    background:var(--surface-2); border:1px solid var(--line); border-radius:var(--radius);
+    color:var(--text); padding:.75rem .85rem; font-size:16px; font-family:var(--font-body);
+    min-height:46px; width:100%; transition:border-color .15s ease, background .15s ease;
+  }
+  .hero-calc-field input::placeholder{ color:#847c72; }
+  .hero-calc-field input:focus-visible{ outline:2px solid var(--ink-text); outline-offset:1px; border-color:var(--line-strong); background:var(--surface-3); }
+  .hero-calc-swap{
+    align-self:center; width:34px; height:34px; border-radius:var(--radius-pill); border:1px solid var(--line);
+    background:var(--surface-2); color:var(--text-soft); cursor:pointer; display:flex; align-items:center; justify-content:center;
+    transition:border-color .15s ease, color .15s ease, transform .15s ease; flex:none; margin:-.15rem 0;
+  }
+  .hero-calc-swap:hover{ border-color:var(--ink-text); color:var(--ink-text); transform:rotate(180deg); }
+  .hero-calc-swap:focus-visible{ outline:2px solid var(--ink-text); outline-offset:2px; }
+
+  /* the hero card holds the COMPLETE booking form (client requirement: no
+     modal needed to finish a booking) - compact 2-up rows for datum/tijd,
+     naam/telefoon, and the optional fields tucked behind "Meer opties" so
+     the always-visible surface stays tight. */
+  .hero-calc-row2{ display:grid; grid-template-columns:1fr 1fr; gap:.6rem; margin-top:.6rem; }
+  .hero-calc-more{
+    display:flex; align-items:center; justify-content:space-between; width:100%;
+    background:none; border:none; border-top:1px solid var(--line); cursor:pointer;
+    padding:.9rem .1rem .3rem; margin-top:1rem; color:var(--text-soft);
+    font-family:var(--font-mono); font-size:.68rem; letter-spacing:.08em; text-transform:uppercase;
+  }
+  .hero-calc-more:hover{ color:var(--ink-text); }
+  .hero-calc-more-icon{ font-size:1rem; line-height:1; transition:transform .15s ease; }
+  .hero-calc-more[aria-expanded="true"] .hero-calc-more-icon{ transform:rotate(45deg); }
+  .hero-calc-more-fields{ display:flex; flex-direction:column; gap:.6rem; margin-top:.6rem; }
+  .hero-calc-footer{
+    display:flex; align-items:center; justify-content:space-between; gap:1rem;
+    margin-top:1.1rem; padding-top:1.1rem; border-top:1px solid var(--line);
+  }
+  .hero-calc-footer .btn{ flex:none; }
 
   .hero-actions{ display:flex; gap:.7rem; flex-wrap:wrap; }
 
@@ -162,6 +203,10 @@
     .hero-grid{ grid-template-columns:1.55fr 1fr; gap:3.2rem; align-items:start; }
     .hero-aside{ padding-left:2.6rem; border-left:1px solid var(--line); padding-top:.4rem; }
   }
+  @media (max-width:380px){
+    .hero-calc-row2{ grid-template-columns:1fr; }
+    .hero-calc{ padding:1.1rem 1rem 1.2rem; }
+  }
 
   /* ============ SECTIONS ============ */
   .section{ padding:clamp(2.6rem,5vw,3.8rem) 1.6rem; }
@@ -174,17 +219,19 @@
 
   .rate-card{ border-top:2px solid var(--text); max-width:640px; }
   .rate-row{
-    display:grid; grid-template-columns:2.1rem auto 1fr auto; align-items:baseline; gap:.8rem;
+    display:grid; grid-template-columns:auto 1fr auto; align-items:baseline; gap:.8rem;
     padding:1.05rem .1rem; border-bottom:1px solid var(--line); border-left:2px solid transparent;
     margin-left:-.1rem;
     transition:border-left-color .18s ease, background .18s ease, padding-left .18s ease;
   }
   .rate-row:hover{ border-left-color:var(--ink-fill); background:rgba(248,241,231,0.025); padding-left:.5rem; }
-  .rate-idx{ font-family:var(--font-mono); font-size:.72rem; color:var(--text-soft); }
   .rate-city{ font-family:var(--font-display); font-size:1.2rem; font-weight:500; }
+  .rate-city-dest{ color:var(--text-soft); font-weight:400; }
   .rate-leader{ border-bottom:1px dotted var(--line-strong); align-self:center; margin-bottom:.4rem; min-width:.75rem; }
+  .rate-amt-prefix{ font-family:var(--font-mono); font-size:.6rem; letter-spacing:.08em; text-transform:uppercase; color:var(--text-soft); font-weight:600; margin-right:.35rem; vertical-align:middle; }
   .rate-amt{ font-family:var(--font-display); font-weight:700; font-size:1.45rem; font-variant-numeric:tabular-nums; color:var(--ink-text); }
   .price-note{ margin-top:1.3rem; font-size:.85rem; color:var(--text-soft); max-width:560px; }
+  .price-note-cta{ margin-top:1.3rem; }
 
   footer.site-footer{ padding:clamp(2.8rem,6vw,4.4rem) 1.6rem 2.6rem; background:var(--surface-1); border-top:1px solid var(--line); }
   .footer-inner{ max-width:1160px; margin:0 auto; }
@@ -195,6 +242,9 @@
     padding-top:1.7rem; border-top:1px solid var(--line);
   }
   .footer-meta{ font-size:.78rem; color:var(--text-soft); line-height:1.7; }
+  .footer-links{ display:flex; gap:1rem; margin-top:.6rem; }
+  .footer-links a{ font-size:.78rem; color:var(--text-soft); text-decoration:none; transition:color .15s ease; }
+  .footer-links a:hover{ color:var(--ink-text); }
   .footer-cta{ display:flex; gap:.6rem; }
 
   /* ============ BOOKING MODAL ============ */
@@ -249,10 +299,11 @@
     color:var(--text-soft); padding:.8rem .85rem; font-size:.95rem; min-height:48px; display:flex; align-items:center;
   }
   .field-hint{ font-size:.78rem; color:var(--text-soft); margin:.4rem .1rem 0; }
+  .field-optional{ text-transform:none; letter-spacing:0; opacity:.7; font-weight:400; }
 
   .vh-radio{ position:absolute; opacity:0; width:1px; height:1px; overflow:hidden; }
 
-  .segmented{ display:grid; grid-template-columns:1fr 1fr; gap:0; margin-bottom:1.3rem; border-bottom:1px solid var(--line); }
+  .segmented{ display:grid; grid-template-columns:1fr 1fr; gap:0; margin-bottom:0; border-bottom:1px solid var(--line); }
   .segmented label{
     text-align:center; padding:.85rem .6rem; border-radius:0; border:none; border-bottom:2px solid transparent;
     background:transparent; color:var(--text-soft); font-size:.78rem; font-weight:600; letter-spacing:.05em; text-transform:uppercase;
@@ -262,20 +313,25 @@
   .vh-radio:checked + label{ background:transparent; color:var(--text); border-bottom-color:var(--ink-fill); }
   .vh-radio:focus-visible + label{ outline:2px solid var(--text); outline-offset:-2px; }
 
-  .chip-group{ display:grid; grid-template-columns:1fr 1fr; gap:.55rem; }
-  .chip{
-    display:flex; align-items:center; justify-content:space-between; gap:.5rem;
-    padding:.8rem .9rem; border-radius:var(--radius); border:1px solid var(--line); border-left:2px solid var(--line-strong);
-    background:var(--surface-1); cursor:pointer; min-height:48px;
-    transition:background .15s ease, border-color .15s ease, transform .1s ease;
+  /* ---- optional trip-detail fields: passenger stepper + luggage choice ---- */
+  .stepper{
+    display:flex; align-items:stretch; border:1px solid var(--line); border-radius:var(--radius);
+    background:var(--surface-1); overflow:hidden;
   }
-  .chip:hover{ border-color:var(--line-strong); border-left-color:var(--ink-text); background:var(--surface-3); }
-  .chip .chip-city{ font-size:.88rem; font-weight:600; color:var(--text); }
-  .chip .chip-price{ font-family:var(--font-display); font-weight:700; font-size:.92rem; color:var(--text-soft); font-variant-numeric:tabular-nums; }
-  .vh-radio:checked + .chip{ background:var(--ink-fill); border-color:var(--ink-fill); }
-  .vh-radio:checked + .chip:hover{ border-left-color:var(--ink-fill); }
-  .vh-radio:checked + .chip .chip-city, .vh-radio:checked + .chip .chip-price{ color:var(--text); }
-  .vh-radio:focus-visible + .chip{ outline:2px solid var(--ink-text); outline-offset:2px; }
+  .stepper-btn{
+    flex:none; width:46px; min-height:48px; border:none; background:transparent; color:var(--text);
+    font-size:1.1rem; cursor:pointer; display:flex; align-items:center; justify-content:center;
+    transition:background .15s ease, color .15s ease;
+  }
+  .stepper-btn:hover{ background:var(--surface-3); color:var(--ink-text); }
+  .stepper-btn:focus-visible{ outline:2px solid var(--ink-text); outline-offset:-2px; }
+  .stepper input[type="number"]{
+    border:none; border-left:1px solid var(--line); border-right:1px solid var(--line); border-radius:0;
+    text-align:center; min-height:48px; width:100%; background:transparent; color:var(--text);
+    font-size:16px; font-family:var(--font-body); -moz-appearance:textfield;
+  }
+  .stepper input[type="number"]::-webkit-outer-spin-button,
+  .stepper input[type="number"]::-webkit-inner-spin-button{ -webkit-appearance:none; margin:0; }
 
   .modal-footer{
     display:flex; align-items:center; justify-content:space-between; gap:1rem;
@@ -284,25 +340,13 @@
   .price-display{ display:flex; flex-direction:column; gap:.1rem; }
   .price-display .price-label{ font-size:.66rem; letter-spacing:.06em; text-transform:uppercase; color:var(--text-soft); font-family:var(--font-mono); }
   .price-display .price-amt{ font-family:var(--font-display); font-size:1.6rem; font-weight:700; color:var(--ink-text); font-variant-numeric:tabular-nums; }
-  .price-display .price-amt.price-formula{ font-size:.85rem; font-family:var(--font-body); font-weight:600; }
-  #modalFooter .btn{ flex-shrink:0; }
-
-  /* ---- smart pricing: fixed vs estimated price treatment ---- */
-  .price-tag{
-    display:inline-block; font-size:.62rem; letter-spacing:.08em; text-transform:uppercase;
-    font-family:var(--font-mono); font-weight:600; padding:.15rem .55rem; border-radius:var(--radius-pill);
-    margin-bottom:.3rem; transition:background .15s ease, border-color .15s ease, color .15s ease;
-  }
-  .price-tag.tag-fixed{ background:var(--ink-fill); color:var(--text); border:1px solid var(--ink-fill); }
-  .price-tag.tag-estimate{ background:transparent; color:var(--text-soft); border:1px dashed var(--line-strong); }
-  .price-tag.tag-loading{ background:transparent; color:var(--text-soft); border:1px solid var(--line); }
   .price-display .price-amt.price-loading{
     font-size:1rem; font-family:var(--font-body); font-weight:600; color:var(--text-soft);
     animation:price-pulse 1.15s ease-in-out infinite;
   }
   @keyframes price-pulse{ 0%,100%{ opacity:.4; } 50%{ opacity:1; } }
+  #modalFooter .btn{ flex-shrink:0; }
   .price-meta{ font-size:.72rem; color:var(--text-soft); font-family:var(--font-mono); min-height:1em; }
-  .price-meta.is-estimate{ color:var(--ink-text); }
 
   .geo-status{
     font-size:.78rem; margin:.4rem .1rem 0; font-family:var(--font-mono); color:var(--text-soft);
@@ -318,12 +362,12 @@
   .geo-status.is-ok::before{ content:'✓'; color:var(--ink-text); font-weight:700; flex-shrink:0; }
   .geo-status.is-fail{ color:var(--ink-text); }
 
-  #confirmView{ padding:.4rem .1rem 1rem; }
+  .confirm-view{ padding:.4rem .1rem 1rem; }
   .confirm-badge{
     width:52px; height:52px; border-radius:var(--radius-pill); background:var(--ink-fill); color:var(--text);
     display:flex; align-items:center; justify-content:center; font-size:1.5rem; margin-bottom:1rem;
   }
-  #confirmView h2{ font-family:var(--font-display); font-weight:700; font-size:1.5rem; margin:0 0 .6rem; }
+  .confirm-view h2{ font-family:var(--font-display); font-weight:700; font-size:1.5rem; margin:0 0 .6rem; }
   .confirm-summary{
     background:var(--surface-1); border:1px solid var(--line); border-radius:var(--radius);
     padding:1rem 1.1rem; margin:1rem 0; display:flex; flex-direction:column; gap:.5rem;
@@ -347,7 +391,6 @@
       dialog#bookingModal[open]{ animation:sheet-in .22s ease-out; }
     }
     @keyframes sheet-in{ from{transform:translateY(100%);} to{transform:translateY(0);} }
-    .chip-group{ grid-template-columns:1fr 1fr; }
   }
   @media (max-width:480px){
     .navright .phone-link{ display:none; }
@@ -356,23 +399,21 @@
 </head>
 <body>
 
-<div class="masthead">
-  <div class="masthead-inner">
-    <span>Amsterdam &middot; Rotterdam &middot; Utrecht &middot; Almere</span>
-    <span>Persoonlijke chauffeur &middot; vaste prijs</span>
-  </div>
-</div>
-
-<nav class="site-nav">
+<header class="site-header">
+  <div class="site-header-inner inner">
   <div class="brand">
     <img class="icon" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAVEAAAFhAgMAAAC0YnF8AAAAIGNIUk0AAHomAACAhAAA+gAAAIDoAAB1MAAA6mAAADqYAAAXcJy6UTwAAAAJUExURfPv6fPv6f///3Kb0Y8AAAABdFJOUwBA5thmAAAAAWJLR0QCZgt8ZAAAAAd0SU1FB+oIDQ83DVz7muwAAAAldEVYdGRhdGU6Y3JlYXRlADIwMjYtMDgtMTNUMTU6NTQ6NTgrMDA6MDBaMUAYAAAAJXRFWHRkYXRlOm1vZGlmeQAyMDI2LTA4LTEzVDE1OjU0OjU4KzAwOjAwK2z4pAAAACh0RVh0ZGF0ZTp0aW1lc3RhbXAAMjAyNi0wOC0xM1QxNTo1NToxMyswMDowMBX26EUAAA8NSURBVHja1ZzLjuQqD4BB+r2fxeF96EXvaQne/1X+Cr5iSHVSYY50WIymU8kX4wsX46oQnrSUHz2+bO1oZS8zNmx7xW3cdkKTUDfqAFrbL2w00H3CJkvdJewg6jY3GEVt9W+IukkF4KlbVOChW7xgEnWLYpPVZ9qk2GihpI6NCij6kvyY6pWZdphLFMDywQ4qWFGPf+MOJ0hGVOSl59Tovap06TcpoMh/d1CNAvh/8blrqQJU6sfUqApQv01PqSAKMIGbnjpsEgXoGJPhKVVDwIyuT6mqVjPL1KdUVWsy1PiQqmplgY8r8WHIiloJlNrXc6qqFdBFoZXnVKvWiq85qF/PqFathajpMdWqNeOVeoTrHSp4f4lCBcags96gzvORGivxJ3epcZjy5D1srNcHsRL15zo1DdOzuYTGOl7SqfEONQpBmzFWD4H7VDM/rYxVPqPqSH9qrNSFRmq5BGVbRaOCQ/xvNVZot6nAvYc8GSsfxoLS/20lekW9aUkspVSZp+LhT8ckeAh5h7q689AyRxZNrfeoq0Xpce2HqGSzRmuMizM3oAL+56/9GBzelOE6NaFPVU/9JmN1TPyE+pqWir+WmJpZ+eEGlcaQ7K8ldAGKjQN4YxMTaQzxb2IXEJOnepsaq78mLiBvukMFfLqsqIVnwk4tYR4w31NT8de+zdiCXnCHii4wGuu4BuQCHViPN+UboYXUNlHZBfDvgxpuUvPCBYhaUSPHiHjbXeOpYxW0Xg48JnxMPXpaiJrxQok8JlzbGC3c9ZDpi1wgHzoNxxo7h3aZGn+hAm63SmLqJcdCKkxrAXKsikY/FHLHBd5SI0v3ijQ21sdU41hIjTqAX3OBt1Qw1DvGWlGtY71oCam88HhOTR3d6VXU8SHVOtYxERYcu28Y6z21ixY7PdwxFlOtuuw4+BIt5qAKuEWNSyrvM6Iq4GJ6JM6ji3VXVglvZu+ss3O0PTPuWkl42c1fMxavsgzVumsRBdxSq1DLgooLYpy9b6kVqcVS2bGEatIZlzdwSE11ohbcE6Gt4i21IrVahz0MhYMUZR2NAi6qVanZUnnMRlGLrOivQimrHLVzDXM2h7sVFjXeVCvvNcx6SoOgsKjpplp5iZ64d12lFARopXBfAbqdyIYqFkw2T3ojiUFUSTv02YTcldOttxWA1CojCc4qSO1GKx8dRkbSGKcsbBA0zmTdVYDsjXWAkiAg+Uwe9nrjJ+gxOxPgpXTbA/ihGnhjYYIAO60JiNtUzIgXQ2VXle33DVuFoDOyRDwHAaUHP1GAWT0k6reGljmJuGWrYOeORAcCHATGVLfPHgZj2CCw/b+dckzWGkzF6UGg9w8JhrFjmAk0TX4/OzrEDlOPadfk3m+LOnqkCYKf9kBUY+fsQuuJqMYmfUgpElpPRPUn5BJaj0T1p/kHtVrqh+lxGKgcWtI+g7qTd08tn1IHFeC5S3rY/+DsZeaXJ/0fha12J/jslNAdjGkQfKzU3mBNfXr87ILgzv7yig5MaG2owWAdZAmtLRUz4IKgLPtz91VQEwdBtdsPaR/5GiVY44k/qfOVW9TyjmrD7460GKb1pERgGIDuULPOL3NHxiH4DrV3fkkdR+AbOojN7F/e9v+OfxE1r6he1OvCQjWLrF9EvS7sG+os6mU3oCAIC+oCetUNzoNgJerlM0kNAkdty3bNXqdBMIpa+M9LKoinQTCGlWAvpqJPgiBOXU/XVQCN0q2eOtmq3siYGXedjiS8U8FlFQC66xQEcaa26zl+ctcpCFI7FfYata2CYOmrssv/rZG7empcUvEM9YK5aOvu3XUZrfjyC4pld/XUdbS2iyWbEd21B0G2l9cNVfArld3VBYFVQDay19WZ+5LK7uoz59zpQSXL+oCpnbjrBJV0QrpirpTFXRdFH83lksmsv1JbXgWBqHWSv8Yr5kLH4hzepNaM76j6qnCBGg01z2qt8keW/1xwglhX7hqtqEmslsRc5RMqGFGT/j+KuRbU1Ewnyspdk4qq3pApw75czstttr7ZUY2vquNWetuKOoVif+5ruNPsD8HA+fhqplooYY3i3E05KKHJ8cE8w/mhKIdV8jbJa9ThoqhgnuObbwZS/F1lKICHRqU601AME1XdXG/UJPmwqeXjPh8xq6G4yMuye3e1ARDwZK4THDUtqBqK/rZiVYEyhcVIdDJr8CderXkOMTyb/FqZdqWDZB1L3pZYYJZIA7H8IirHpb+vcho9WrtBc4sn6wA2GUodLO4+ez6hZ728KK2uYyyg4RasQRkVFeQ46TjvAlKFp3oFlHHG09IfVQA/elBZFQ3P1uoogu14MsL6+CtGfGYk2pik5ufzNXYeKrKpAuD8BqAT4BHIm7haCMt2MUVWzI8kiFJhQTUmmwLQ1q6J1ORaSk0rqmaGfaxUW7YT1Tb9Ac16LKFGtZOxTO2aUMFRT1eO4whijJWCo6bKdWVfTIUTqurAG8uuugpqpkRHTWfU4qYCYLVaHy7UB08ddDm8Q5RjjfWKgWyomY9v0RkXVO8SdRRWjBXGhvfSV1jaOI+qrVXReRCWjfVnhOpE3PDgOluGagtUWGCUPB18U2pSavKi2mtZhykxlm8gR6oLqjWsWbSosGfUREYeqFZUELgXtpjj1IlaaP2iVLvoUR2a0+HEL436qaOicCtqdrrgP9gNihRW+MZrJ0sFMYfb8jhhq18aOCqsqGWIKutxWQaVVQruhJr4mWHoMjowwsLKWESNK6o/eTIGM+7/RtaRKpiGQYx467RFnSutfGCg/lhqXyiWyKH5+tMKC8a5ypIKXA/9Y7VZurapDLcvSOosbKbl2kTts4OnfnNlM1UOAVfQyGLtrb36AmNJzdgPDoBMQrGDWOca7YX2hoGKXpn6czVw7RSvxCZhF/Zqsu9aUFFMUGO1pbC8CzLdz3xAZYcMwBUXAoGCqsi3QcSYooI02gsKn0VZasKC6ZBwD5BJramNwurg6uxFi9fSqWgjodLZFVeKmfrDWdjRuaDKHqEQtSqV9mzFqJWDdLZXGakYPPJmeo9SUzNqbba668xegDNaDnFJLUeQxjZsIIyw5cS5cKUZqdZ8QYWsAdhw9PFf2WV7qbC81uZ8fZMSoZ7a4Mp/2TxyamZpL9GsvADOqDQIcAwQQwYBOxho9V49ljIg69eJiot9qcGVWYoHATt4s4iHaQ89ylpbe8NUqudCtVZgqhO22K/30TcxGi2MHbVbSwKyP5xEIhaS7RYk19zdoWUdCA01kWc1+gYNZmebGmU1GKjvvVyqBv0GA6nokCrgPhofUrVm1h7eLvbS+bgSFXSH5qiJLva+WyoLG2dh+wAQC4/0hgoNvzTB6mqNjyp0EnHOZbZ4r77jl+Q0tAyV5ilSqzGWcS6xl1naH9RshiRDLcA25UWaMZYR1rCY8HKdZIekgrcfKjy8M1OEN2+slXPhUEHjxj8yeBhqYIoqwMTAyl4sbKbyyKgjPQd55cUQgkDUujh6MD4J8vahfFuGjo4W8/b/ZNaat5cKaxLcYOrXZTk5FPOhAuJorOzt1YJZ4EIzeTNJyWuCoQ4KEGPFOjlXCUPc6lZVqbbsSBVgEha6eLRxafaqZUwcQjNfahCRZFDSUdTNNJx6k3eYXQsXwWiAq2XHGNCZxj5u/g+eyvEkhnVqpSUAO5VVYJw8Qj0my6SBb/wa1RqsckZhgy+0leQxvauo/mFUK8+LTthhFZdmqssMFNGHiYAq8oiwq0OvYl4yjs5eAZH/ZhkdwrpuNuLV4bPkBAFGsLDgsXJhTCdl043i5DBbeC8svRvc3zbvwbr5tl3RLmTtjE0nlyFyy0idWlhRZVxKJ09JD3/5GO9I4ya0nsmSR0lOP+7U2mzQtCZ1GKc9hPcf4+J6dG8zzo5tPgc7+bjf8DNUhHcNLYUptoPvFQDDt/bljpUOFiF8IupB/V44/C+lVIu+WA843vptpJeb4tvHFooNYepLnoWYHrR6C2/fKe66cHCHrQthzt5JFKUurT8L43vi8kDkrvVcipXeJhVk/86DGn/x8N8q48aOcBDYLwyvhc2O+rbgEhr9KsQ7+y5EXZ1wD5999wg97dyJqG5tM7aEQQDLKfWdqIsz/gGQMOytNFdEfffdOaR26fJ0/3kXzdvL+jpT36g23Gw0E1TfFfi1/28azwR1eho+h8rGqs56j592X9aSsS6l+owpC5dY3tv6I2qGcq1M6GJLqE7ItKvO5ndkHlIzUvtSHnZQyfIp0xavpudMXr3HFiRZuYnad76YcYM91MgwcoB91Bx4uVZ8AvoBFftNHvZB0M/tCAJJTeCWexMVi1gwYNOWoOUJqvh9y1MqtGZyCLCHyrk9EjTucALeXIVQaDu7h9ozLeUoFOiqwDOqPdTcyw+IWp5CI3trpwJ67AZq5UR+oUFhHzUjtb8gPnctQBcIdEaeumttosrJA+xxLeDf4MSo7XI/pyaimpR3SJuonLDEY4fnYZCayXVjlnkjlYdD6GHwlNpwxpaVOGwJg5Ha10Q7qDXYrwZTPcBzKnDWF3js/tqgAV4FmJ9geEqNE3X1/agHVMLJj7RuoJp/+AD6KbRr8+BQqQT/MsWnrSm1UgGJ1OF83MBQG1UOfL7FWlIz5vefU2mShgU1P1NsDviDnCO1PIGiE0H311yUusFf6Se4Ih4tbllrHgykJi7h2UR1I2H72TMSjtS6Y3wdZ5hNo3aTsvHd89Y4x26g4sydh/XADiom3XavXVbrrKdUtybcRi0gJ8OYy9iyfqVVMa64N1HxZ46lmBL27At0tyEVUluo/OP8iUuzdmyPR+qmXRztOLmCcdOO82BEmrfJsXbsjoG/kxWpEGTLTv5lmzRQv3ZQpWYk0k7me0uarFE9Y6ycjt9ExYG7UwvsSRdTzXjA9XB+unilBjht5VC5hG0DFIlHt7HcLm3KbHOB9LGC2bApEFnxFz8LlQxuofbIOqh/uMJ1C/ULx/8c6PfDtuTg/6GasCNmcx+1ywbqnx6nWHmOa4MdVD01ghY2abU3ptaw7XQnyFfAU90UrlYFIZUteWJpfUWY8aev9zXMQfefVN7ZAKn7HEB08LObGQ7v+htU2BkA0nYNrP8GdWuw/jepO5aC/xYV/oK7/reo8W8EwV+ibpqwH1D/D8wcnFnM/SyEAAAAAElFTkSuQmCC" alt="Le Grand Taxi">
     <img class="wordmark" src="data:image/png;base64,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" alt="">
+    <span class="brand-divider" aria-hidden="true"></span>
+    <span class="brand-tagline">Persoonlijke chauffeur</span>
   </div>
   <div class="navright">
+    <a class="nav-link" href="info.html">Schiphol &amp; Info</a>
     <a class="phone-link" href="tel:+31685639077">06 85 63 90 77</a>
     <button class="btn" type="button" data-open-modal>Reserveer</button>
   </div>
-</nav>
+  </div>
+</header>
 
 <div class="hero">
   <img class="hero-mark" src="data:image/png;base64,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" alt="">
@@ -394,14 +435,101 @@
           <span class="hero-seal-ring"><span>LG</span></span>
           <span class="hero-seal-text">Chauffeur<br>Michell</span>
         </div>
-        <p class="dek">Michell rijdt je zelf naar Schiphol, persoonlijk en zonder omwegen.</p>
-        <div class="hero-rate">
-          <span class="hero-rate-label">Vanaf</span>
-          <span class="hero-rate-amt">&euro;39</span>
-          <span class="hero-rate-note">Amsterdam &rarr; Schiphol, vaste prijs</span>
+        <div class="hero-calc">
+          <div id="heroFormView">
+            <p class="hero-calc-label">Bereken je vaste prijs</p>
+            <div class="hero-calc-fields">
+              <div class="hero-calc-field">
+                <label for="heroVan">Van</label>
+                <input type="text" id="heroVan" placeholder="Ophaaladres of plaats" autocomplete="off">
+                <p class="geo-status" id="heroVanGeoStatus" aria-live="polite"></p>
+              </div>
+              <button class="hero-calc-swap" type="button" id="heroSwapBtn" aria-label="Van en naar omwisselen">&#8645;</button>
+              <div class="hero-calc-field">
+                <label for="heroNaar">Naar</label>
+                <input type="text" id="heroNaar" placeholder="Bestemming of Schiphol" autocomplete="off">
+                <p class="geo-status" id="heroNaarGeoStatus" aria-live="polite"></p>
+              </div>
+            </div>
+
+            <div class="hero-calc-row2">
+              <div class="hero-calc-field">
+                <label for="heroDatum">Datum</label>
+                <input type="date" id="heroDatum">
+              </div>
+              <div class="hero-calc-field">
+                <label for="heroTijd">Tijd</label>
+                <input type="time" id="heroTijd">
+              </div>
+            </div>
+            <div class="hero-calc-row2">
+              <div class="hero-calc-field">
+                <label for="heroNaam">Naam</label>
+                <input type="text" id="heroNaam" placeholder="Voor- en achternaam" autocomplete="name">
+              </div>
+              <div class="hero-calc-field">
+                <label for="heroTelefoon">Telefoon</label>
+                <input type="tel" id="heroTelefoon" placeholder="06 12 34 56 78" autocomplete="tel">
+              </div>
+            </div>
+
+            <button class="hero-calc-more" type="button" id="heroMoreBtn" aria-expanded="false" aria-controls="heroMoreFields">
+              <span>Meer opties: passagiers, bagage, vlucht</span>
+              <span class="hero-calc-more-icon" aria-hidden="true">+</span>
+            </button>
+            <div class="hero-calc-more-fields" id="heroMoreFields" hidden>
+              <div class="hero-calc-row2">
+                <div class="hero-calc-field">
+                  <label for="heroPassagiers">Passagiers <span class="field-optional">(optioneel)</span></label>
+                  <div class="stepper">
+                    <button type="button" class="stepper-btn" id="heroPaxMinus" aria-label="Minder passagiers">&minus;</button>
+                    <input type="number" id="heroPassagiers" min="1" max="8" step="1" inputmode="numeric" placeholder="1">
+                    <button type="button" class="stepper-btn" id="heroPaxPlus" aria-label="Meer passagiers">+</button>
+                  </div>
+                </div>
+                <div class="hero-calc-field">
+                  <label for="heroVluchtnummer">Vluchtnummer <span class="field-optional">(optioneel)</span></label>
+                  <input type="text" id="heroVluchtnummer" placeholder="bijv. KL1234" autocapitalize="characters">
+                </div>
+              </div>
+              <div class="hero-calc-field">
+                <span class="field-label" id="heroBagageLabel" style="display:block;margin-bottom:.5rem;">Bagage <span class="field-optional">(optioneel)</span></span>
+                <div class="segmented" role="radiogroup" aria-labelledby="heroBagageLabel">
+                  <input class="vh-radio" type="radio" name="heroBagage" id="heroBagageRuim" value="Ruimbagage">
+                  <label for="heroBagageRuim">Ruimbagage</label>
+                  <input class="vh-radio" type="radio" name="heroBagage" id="heroBagageHand" value="Alleen handbagage">
+                  <label for="heroBagageHand">Alleen handbagage</label>
+                </div>
+              </div>
+            </div>
+
+            <div class="hero-calc-footer">
+              <div class="price-display">
+                <span class="price-label">Jouw prijs</span>
+                <span class="price-amt" id="heroPriceAmt">&ndash;</span>
+                <span class="price-meta" id="heroPriceMeta">Vul van en naar in</span>
+              </div>
+              <button class="btn" id="heroReserveBtn" type="button" disabled>Reserveer</button>
+            </div>
+          </div>
+
+          <div id="heroConfirmView" class="confirm-view" hidden>
+            <h2>Bijna klaar</h2>
+            <div class="confirm-summary">
+              <div class="row"><span class="k">Route</span><span class="v" id="heroSummaryRoute">&ndash;</span></div>
+              <div class="row"><span class="k">Wanneer</span><span class="v" id="heroSummaryWhen">&ndash;</span></div>
+              <div class="row"><span class="k">Prijs</span><span class="v" id="heroSummaryPrice">&ndash;</span></div>
+            </div>
+            <p class="confirm-micro">Je bericht staat klaar in WhatsApp. Druk op versturen. <strong>Michell</strong> bevestigt je rit persoonlijk, meestal binnen enkele minuten.</p>
+            <div class="confirm-actions">
+              <a class="btn block" id="heroWaSendBtn" href="#" target="_blank" rel="noopener">Open WhatsApp en verstuur</a>
+              <button class="btn ghost block" type="submit" form="emailFallbackForm">Liever per e-mail?</button>
+              <a class="confirm-secondary" href="tel:+31685639077">Liever bellen? 06 85 63 90 77</a>
+              <button class="confirm-secondary" id="heroNewBookingBtn" type="button" style="background:none;border:none;cursor:pointer;font-family:inherit;">Nieuwe boeking</button>
+            </div>
+          </div>
         </div>
         <div class="hero-actions">
-          <button class="btn" type="button" data-open-modal>Bereken je prijs</button>
           <a class="btn ghost" href="tel:+31685639077">Bel Michell</a>
         </div>
       </div>
@@ -413,49 +541,51 @@
   <div class="inner">
     <div class="section-head">
       <div>
-        <span class="section-label">Tarieven</span>
-        <h2 class="section-title">Vaste prijzen<br>naar Schiphol.</h2>
+        <span class="section-label">Populaire bestemmingen</span>
+        <h2 class="section-title">Goedkope taxi naar Schiphol,<br>vaste prijzen.</h2>
       </div>
     </div>
     <div class="rate-card">
       <div class="rate-row">
-        <span class="rate-idx">01</span>
-        <span class="rate-city">Amsterdam</span>
+        <span class="rate-city">Amsterdam <span class="rate-city-dest">- Schiphol</span></span>
         <span class="rate-leader" aria-hidden="true"></span>
-        <span class="rate-amt">&euro;39</span>
+        <span class="rate-amt"><span class="rate-amt-prefix">vanaf</span> &euro;39,-</span>
       </div>
       <div class="rate-row">
-        <span class="rate-idx">02</span>
-        <span class="rate-city">Rotterdam</span>
+        <span class="rate-city">Rotterdam <span class="rate-city-dest">- Schiphol</span></span>
         <span class="rate-leader" aria-hidden="true"></span>
-        <span class="rate-amt">&euro;69</span>
+        <span class="rate-amt"><span class="rate-amt-prefix">vanaf</span> &euro;69,-</span>
       </div>
       <div class="rate-row">
-        <span class="rate-idx">03</span>
-        <span class="rate-city">Utrecht</span>
+        <span class="rate-city">Utrecht <span class="rate-city-dest">- Schiphol</span></span>
         <span class="rate-leader" aria-hidden="true"></span>
-        <span class="rate-amt">&euro;59</span>
+        <span class="rate-amt"><span class="rate-amt-prefix">vanaf</span> &euro;59,-</span>
       </div>
       <div class="rate-row">
-        <span class="rate-idx">04</span>
-        <span class="rate-city">Almere</span>
+        <span class="rate-city">Almere <span class="rate-city-dest">- Schiphol</span></span>
         <span class="rate-leader" aria-hidden="true"></span>
-        <span class="rate-amt">&euro;49</span>
+        <span class="rate-amt"><span class="rate-amt-prefix">vanaf</span> &euro;49,-</span>
       </div>
     </div>
-    <p class="price-note">Andere bestemming: &euro; 2,15 per km + &euro; 0,40 per minuut, altijd vooraf bevestigd.</p>
+    <p class="price-note">Indicatieve startprijzen voor deze populaire routes. Je chauffeur kiest altijd de snelste veilige route en kent Schiphol als geen ander. Naar een ander adres? Reken hierboven je eigen vaste prijs uit.</p>
+    <div class="price-note-cta">
+      <button class="btn ghost" type="button" data-open-modal>Bereken je prijs</button>
+    </div>
   </div>
 </div>
 
 <footer class="site-footer">
   <div class="footer-inner">
     <p class="footer-signature">Le Grand Taxi</p>
-    <p class="footer-tagline">Persoonlijke chauffeur &middot; Amsterdam</p>
+    <p class="footer-tagline">Persoonlijke chauffeur &middot; vaste prijs</p>
     <div class="footer-row">
       <div class="footer-meta">
         <strong style="color:var(--text)">Le Grand Taxi</strong><br>
-        Geldershoofd 116, Amsterdam &middot; 06 85 63 90 77<br>
+        06 85 63 90 77<br>
         KVK 91578388 &middot; BTW NL004905641B18
+        <div class="footer-links">
+          <a href="info.html">Schiphol &amp; Info</a>
+        </div>
       </div>
       <div class="footer-cta">
         <a class="btn ghost" href="tel:+31685639077">Bel</a>
@@ -475,54 +605,16 @@
         <h2 id="modalTitle">Bereken je vaste prijs</h2>
         <p class="modal-sub">Geen meter, geen wachttijd. Michell bevestigt je rit persoonlijk.</p>
 
-        <span class="field-label" style="display:block;margin-bottom:.5rem;">Richting</span>
-        <div class="segmented" role="radiogroup" aria-label="Richting">
-          <input class="vh-radio" type="radio" name="direction" id="dirNaar" value="naar" checked>
-          <label for="dirNaar">Naar Schiphol</label>
-          <input class="vh-radio" type="radio" name="direction" id="dirVanaf" value="vanaf">
-          <label for="dirVanaf">Vanaf Schiphol</label>
+        <div class="field-group" id="vanGroup">
+          <label for="vanAdres">Van</label>
+          <input type="text" id="vanAdres" placeholder="Ophaaladres of plaats" autocomplete="off" autocapitalize="words">
+          <p class="geo-status" id="vanGeoStatus" aria-live="polite"></p>
         </div>
 
-        <div class="field-group">
-          <span class="field-label" id="chipGroupLabel" style="display:block;margin-bottom:.1rem;">Ophaalstad</span>
-          <div class="chip-group" role="radiogroup" aria-labelledby="chipGroupLabel">
-            <input class="vh-radio" type="radio" name="city" id="cityAms" data-price="39" data-city="Amsterdam">
-            <label class="chip" for="cityAms"><span class="chip-city">Amsterdam</span><span class="chip-price">&euro;39</span></label>
-
-            <input class="vh-radio" type="radio" name="city" id="cityRot" data-price="69" data-city="Rotterdam">
-            <label class="chip" for="cityRot"><span class="chip-city">Rotterdam</span><span class="chip-price">&euro;69</span></label>
-
-            <input class="vh-radio" type="radio" name="city" id="cityUtr" data-price="59" data-city="Utrecht">
-            <label class="chip" for="cityUtr"><span class="chip-city">Utrecht</span><span class="chip-price">&euro;59</span></label>
-
-            <input class="vh-radio" type="radio" name="city" id="cityAlm" data-price="49" data-city="Almere">
-            <label class="chip" for="cityAlm"><span class="chip-city">Almere</span><span class="chip-price">&euro;49</span></label>
-
-            <input class="vh-radio" type="radio" name="city" id="cityOther" data-price="" data-city="">
-            <label class="chip" for="cityOther" style="grid-column:1 / -1;"><span class="chip-city">Overig</span><span class="chip-price">v.a. &euro;2,15/km</span></label>
-          </div>
-        </div>
-
-        <div class="field-group" id="otherDestGroup" hidden>
-          <label for="otherDest">Naar welke plaats?</label>
-          <input type="text" id="otherDest" placeholder="Adres of plaatsnaam">
-          <p class="geo-status" id="otherGeoStatus" aria-live="polite"></p>
-          <div class="field-row" style="margin-top:.5rem;">
-            <div class="field-group" style="margin-bottom:0;"><label for="otherKm">Afstand (km)</label><input type="number" id="otherKm" min="0" step="1" inputmode="numeric" placeholder="bijv. 25"></div>
-            <div class="field-group" style="margin-bottom:0;"><label for="otherMin">Reistijd (min)</label><input type="number" id="otherMin" min="0" step="1" inputmode="numeric" placeholder="bijv. 30"></div>
-          </div>
-          <p class="field-hint" id="otherFieldHint">Weet je dit niet precies? Laat leeg, Michell bevestigt de exacte prijs.</p>
-        </div>
-
-        <div class="field-group" id="pickupGroup">
-          <label for="ophaaladres">Ophaaladres</label>
-          <input type="text" id="ophaaladres" placeholder="Straat, huisnummer, plaats" autocomplete="street-address" autocapitalize="words">
-          <p class="geo-status" id="pickupGeoStatus" aria-live="polite"></p>
-        </div>
-
-        <div class="field-group" id="schipholFixed" hidden>
-          <span class="field-label">Ophaallocatie</span>
-          <div class="fixed-value">Schiphol Airport, Aankomsthal</div>
+        <div class="field-group" id="naarGroup">
+          <label for="naarAdres">Naar</label>
+          <input type="text" id="naarAdres" placeholder="Bestemming of Schiphol" autocomplete="off" autocapitalize="words">
+          <p class="geo-status" id="naarGeoStatus" aria-live="polite"></p>
         </div>
 
         <div class="field-row">
@@ -546,9 +638,36 @@
             <input type="tel" id="telefoon" placeholder="06 12 34 56 78" autocomplete="tel">
           </div>
         </div>
+
+        <p class="field-label" style="margin:1.5rem 0 .9rem;">Optionele ritdetails</p>
+
+        <div class="field-row">
+          <div class="field-group">
+            <label for="passagiers">Aantal passagiers <span class="field-optional">(optioneel)</span></label>
+            <div class="stepper">
+              <button type="button" class="stepper-btn" id="paxMinus" aria-label="Minder passagiers">&minus;</button>
+              <input type="number" id="passagiers" min="1" max="8" step="1" inputmode="numeric" placeholder="1">
+              <button type="button" class="stepper-btn" id="paxPlus" aria-label="Meer passagiers">+</button>
+            </div>
+          </div>
+          <div class="field-group">
+            <label for="vluchtnummer">Vluchtnummer <span class="field-optional">(optioneel)</span></label>
+            <input type="text" id="vluchtnummer" placeholder="bijv. KL1234" autocapitalize="characters">
+          </div>
+        </div>
+
+        <div class="field-group">
+          <span class="field-label" id="bagageLabel" style="display:block;margin-bottom:.5rem;">Bagage <span class="field-optional">(optioneel)</span></span>
+          <div class="segmented" role="radiogroup" aria-labelledby="bagageLabel">
+            <input class="vh-radio" type="radio" name="bagage" id="bagageRuim" value="Ruimbagage">
+            <label for="bagageRuim">Ruimbagage</label>
+            <input class="vh-radio" type="radio" name="bagage" id="bagageHand" value="Alleen handbagage">
+            <label for="bagageHand">Alleen handbagage</label>
+          </div>
+        </div>
       </div>
 
-      <div id="confirmView" hidden>
+      <div id="confirmView" class="confirm-view" hidden>
         <div class="confirm-badge" aria-hidden="true">&check;</div>
         <h2>Bijna klaar</h2>
         <div class="confirm-summary">
@@ -556,7 +675,7 @@
           <div class="row"><span class="k">Wanneer</span><span class="v" id="summaryWhen">&ndash;</span></div>
           <div class="row"><span class="k">Prijs</span><span class="v" id="summaryPrice">&ndash;</span></div>
         </div>
-        <p class="confirm-micro">Je bericht staat klaar in WhatsApp. Druk daar op versturen, dan bevestigt <strong>Michell</strong> je rit persoonlijk, meestal binnen enkele minuten. Geen callcenter, geen wachtrij.</p>
+        <p class="confirm-micro">Je bericht staat klaar in WhatsApp. Druk op versturen. <strong>Michell</strong> bevestigt je rit persoonlijk, meestal binnen enkele minuten. Geen callcenter, geen wachtrij.</p>
         <div class="confirm-actions">
           <a class="btn block" id="waSendBtn" href="#" target="_blank" rel="noopener">Open WhatsApp en verstuur</a>
 
@@ -582,6 +701,9 @@
             <input type="hidden" name="Route" id="efRoute">
             <input type="hidden" name="Datum en tijd" id="efWanneer">
             <input type="hidden" name="Prijs" id="efPrijs">
+            <input type="hidden" name="Passagiers" id="efPassagiers">
+            <input type="hidden" name="Bagage" id="efBagage">
+            <input type="hidden" name="Vluchtnummer" id="efVluchtnummer">
             <button class="btn ghost block" type="submit">Liever per e-mail?</button>
           </form>
 
@@ -593,7 +715,7 @@
 
     <div class="modal-footer" id="modalFooter">
       <div class="price-display">
-        <span class="price-tag tag-fixed" id="priceTag">Vaste prijs</span>
+        <span class="price-label">Jouw prijs</span>
         <span class="price-amt" id="priceAmt">&ndash;</span>
         <span class="price-meta" id="priceMeta"></span>
       </div>
@@ -605,71 +727,37 @@
 <script>
 (function(){
   "use strict";
-  var RATE_PER_KM = 2.15;
-  var RATE_PER_MIN = 0.40;
   var PHONE = "31685639077"; // Michell, international format, no +, no leading 0
 
   /* ============================================================
-     SMART PRICING ENGINE
+     SMART PRICING ENGINE - any address to any address
      PDOK Locatieserver (Dutch national geocoder, free, no API key,
-     CORS-enabled) resolves any NL address to coordinates. From there
-     we need a distance-from-Schiphol figure to feed into:
+     CORS-enabled) resolves any free-text query to coordinates. Once BOTH
+     ends of a trip are known, driving distance between those two exact
+     points feeds:
 
        price(km) = PRICE_A + PRICE_B * km
 
      Two distance sources, in order of preference:
 
        1. DRIVING-ROUTE distance via OpenRouteService (real road
-          distance, not as-the-crow-flies) - used whenever an ORS
-          API key is configured (see the ORS section below) and the
-          request succeeds. Formula calibrated for THIS distance
-          source: PRICE_A_DRIVING / PRICE_B_DRIVING.
+          distance) - used whenever the ORS call succeeds. Formula
+          calibrated for THIS distance source: PRICE_A_DRIVING / PRICE_B_DRIVING.
        2. HAVERSINE (straight-line) distance - the fallback, used
-          whenever no ORS key is set, or the ORS call fails/times
-          out/hits its quota/is offline. Formula calibrated for
-          THIS distance source: PRICE_A_HAVERSINE / PRICE_B_HAVERSINE
-          (this is the untouched original formula from the previous
-          version of this feature).
+          whenever ORS fails/times out/hits its quota/is offline.
+          Formula calibrated for THIS distance source:
+          PRICE_A_HAVERSINE / PRICE_B_HAVERSINE.
 
-     Using two separate formulas matters: driving distance is always
-     longer than straight-line, so applying one formula to both would
-     either systematically overprice (driving-calibrated coefficients
-     applied to short haversine distances) or underprice (haversine-
-     calibrated coefficients applied to longer driving distances).
-     Keeping the original haversine formula untouched also guarantees
-     today's default behaviour (no ORS key configured, which is the
-     state for every visitor until Michell/a developer sets one) is
-     byte-for-byte the same estimate as before this change.
+     IMPORTANT - every price is computed from the two ACTUAL points the
+     customer typed. There is no city-level shortcut: two different
+     addresses inside the same city (e.g. Sloten vs Bijlmer, both
+     "Amsterdam") get their own real geocoded distance and their own
+     price. CITY_ANCHORS below is used only as a silent floor on top of
+     that real number (see computeRoutePrice) - never as a replacement
+     for it.
 
-     --- Formula B: HAVERSINE (fallback), calibrated against ---
-     Calibration inputs (haversine distance from Schiphol to each
-     city's PDOK woonplaats-centroid vs. its advertised price):
-       Amsterdam  11.60 km -> €39
-       Almere     31.41 km -> €49
-       Utrecht    33.24 km -> €59
-       Rotterdam  47.24 km -> €69
-     Least-squares fit: PRICE_A = 27.98, PRICE_B = 0.843 (R^2 = 0.92).
-     Residuals were +1.24 / -5.45 / +3.01 / +1.21 respectively -
-     Almere prices a little below the line (short, easy highway hop)
-     and Utrecht a little above it (more complex routing than its
-     raw distance suggests), which is expected from fitting a
-     straight line through only 4 points.
-
-     --- Formula A: DRIVING-ROUTE, calibrated against ---
-     Calibration inputs (real driving-route km from Schiphol to each
-     city centre, sourced from public route-distance data since no
-     production ORS key exists yet to query this live - re-verify and
-     re-fit once a real key is in place, see report/comment below):
-       Amsterdam  17 km -> €39
-       Almere     41 km -> €49
-       Utrecht    47 km -> €59
-       Rotterdam  59 km -> €69
-     Least-squares fit: PRICE_A = 25.09, PRICE_B = 0.7051 (R^2 = 0.93).
-     Residuals: Amsterdam +1.92, Almere -5.00, Utrecht +0.77,
-     Rotterdam +2.31 - same pattern as the haversine fit (Almere below
-     the line, Utrecht/Rotterdam a touch above), which makes sense
-     since it's the same 4 cities and the same underlying routing
-     quirks, just measured on driving km instead of straight-line km.
+     Nothing about distance/km is ever shown to the customer - the UI
+     only ever displays the resulting euro amount.
      ============================================================ */
   var SCHIPHOL_LAT = 52.3105, SCHIPHOL_LON = 4.7683;
   // ORS needs a coordinate it can snap onto an actual road; the raw airport
@@ -677,6 +765,7 @@
   // This is the same location shifted onto the terminal approach road,
   // verified live against the ORS driving-car endpoint.
   var SCHIPHOL_ROUTING_LAT = 52.3105, SCHIPHOL_ROUTING_LON = 4.7642;
+  var SCHIPHOL_MATCH_RADIUS_KM = 4; // how close a geocoded point must be to count as "Schiphol itself" for the ORS road-snap swap
 
   var PRICE_A_DRIVING = 20.69;
   var PRICE_B_DRIVING = 0.7925;
@@ -684,14 +773,31 @@
   var PRICE_A_HAVERSINE = 27.98;
   var PRICE_B_HAVERSINE = 0.843;
 
-  var MIN_FARE = 25; // floor: nothing prices below this, even a few km from Schiphol
-  var EXACT_MATCH_RADIUS_KM = 6; // geocoded point this close to an anchor -> flat rate applies
+  // Absolute floor: nothing ever prices below this anywhere, however short
+  // the real computed trip is (e.g. Badhoevedorp, a village a few km from
+  // Schiphol, still floors here rather than pricing near-zero). Applied
+  // inside estimateFromDistance() below, which is the ONLY place price is
+  // computed from a distance - so this floor can never be bypassed by any
+  // new pricing path (hero form and modal both funnel through it).
+  var MIN_FARE = 25;
 
+  // How close a geocoded point must be to a named city's centre (or match
+  // its woonplaats name) to count as "in/near that city" for the per-city
+  // minimum below.
+  var EXACT_MATCH_RADIUS_KM = 6;
+
+  // The 4 popular routes advertised in the Tarieven table on the homepage.
+  // Used ONLY as a silent per-city MINIMUM that the real computed price is
+  // clamped UP to (never down, never used to replace the real number) - see
+  // computeRoutePrice(). This guarantees nobody booking an Amsterdam address
+  // ever sees a price below the advertised "vanaf €39", while two different
+  // Amsterdam addresses still get genuinely different prices above that
+  // floor, based on their own real distance.
   var CITY_ANCHORS = [
-    { id: 'cityAms', name: 'amsterdam', price: 39, lat: 52.37344272, lon: 4.90454379 },
-    { id: 'cityRot', name: 'rotterdam', price: 69, lat: 51.92248806, lon: 4.48653571 },
-    { id: 'cityUtr', name: 'utrecht',   price: 59, lat: 52.0886922,  lon: 5.09520363 },
-    { id: 'cityAlm', name: 'almere',    price: 49, lat: 52.40247126, lon: 5.20565106 }
+    { name: 'amsterdam', price: 39, lat: 52.37344272, lon: 4.90454379 },
+    { name: 'rotterdam', price: 69, lat: 51.92248806, lon: 4.48653571 },
+    { name: 'utrecht',   price: 59, lat: 52.0886922,  lon: 5.09520363 },
+    { name: 'almere',    price: 49, lat: 52.40247126, lon: 5.20565106 }
   ];
 
   var PDOK_URL = 'https://api.pdok.nl/bzk/locatieserver/search/v3_1/free';
@@ -728,11 +834,12 @@
     catch (e){ return DEFAULT_ORS_KEY; } // localStorage blocked (private mode etc.) -> still use the default key
   }
 
-  // Calls back with driving-route km, or null if no key is set, or the
-  // request fails/times out/errors for ANY reason (bad key, quota hit,
-  // offline, CORS, referrer-restricted, malformed response, ...). Callers
-  // must treat null as "fall back to the haversine distance you already
-  // have" - this function never throws and never leaves the caller hanging.
+  // Calls back with driving-route km between two arbitrary coordinate pairs,
+  // or null if no key is set, or the request fails/times out/errors for ANY
+  // reason (bad key, quota hit, offline, CORS, referrer-restricted,
+  // malformed response, ...). Callers must treat null as "fall back to the
+  // haversine distance you already have" - this function never throws and
+  // never leaves the caller hanging.
   function drivingDistanceKm(lat1, lon1, lat2, lon2, cb){
     var key = getOrsKey();
     if (!key){ cb(null); return; }
@@ -769,13 +876,24 @@
     return 2 * R * Math.asin(Math.sqrt(x));
   }
 
+  // The single place a euro amount is derived from a distance. MIN_FARE is
+  // enforced right here, so every caller (hero form + modal, today or any
+  // future addition) gets the floor automatically - there is no second
+  // pricing path that could bypass it.
   function estimateFromDistance(km, source){
     var a = (source === 'driving') ? PRICE_A_DRIVING : PRICE_A_HAVERSINE;
     var b = (source === 'driving') ? PRICE_B_DRIVING : PRICE_B_HAVERSINE;
     return Math.max(MIN_FARE, a + b * km);
   }
 
-  function findExactCity(lat, lon, woonplaatsnaam){
+  var DIACRITICS_RE = new RegExp('[' + String.fromCharCode(768) + '-' + String.fromCharCode(879) + ']', 'g');
+  function stripAccents(s){
+    return s.normalize ? s.normalize('NFD').replace(DIACRITICS_RE, '') : s;
+  }
+
+  // Only used to decide the silent per-city MINIMUM (see computeRoutePrice) -
+  // never to pick a flat price directly.
+  function findCityAnchor(lat, lon, woonplaatsnaam){
     var norm = woonplaatsnaam ? stripAccents(woonplaatsnaam.toLowerCase()) : '';
     for (var i = 0; i < CITY_ANCHORS.length; i++){
       var c = CITY_ANCHORS[i];
@@ -785,7 +903,66 @@
     return null;
   }
 
+  function isSchiphol(lat, lon){
+    return haversineKm(lat, lon, SCHIPHOL_LAT, SCHIPHOL_LON) <= SCHIPHOL_MATCH_RADIUS_KM;
+  }
+
+  // Technical ORS fix only, not a pricing shortcut: when a point IS Schiphol,
+  // swap in the road-snapped coordinate for the routing call so ORS doesn't
+  // 404. The distance computed is still the real driving distance to/from
+  // that specific location.
+  function routingCoord(point){
+    return isSchiphol(point.lat, point.lon) ? { lat: SCHIPHOL_ROUTING_LAT, lon: SCHIPHOL_ROUTING_LON } : point;
+  }
+
+  // PDOK's free-text search ranks purely on text relevance, which can pick
+  // the wrong place for two different reasons, both handled generically
+  // below (no hardcoded per-place lookups):
+  //
+  //   1. Two different places share a name (e.g. "Sloten" is both a
+  //      neighbourhood of Amsterdam AND an unrelated village in Friesland -
+  //      a bare "Sloten, Amsterdam" query can rank the Friesland village
+  //      first). Fix: when the query is written as "<place>, <city>" (the
+  //      natural way to disambiguate), prefer a candidate whose own city
+  //      (woonplaatsnaam) matches that trailing city part.
+  //   2. A landmark-style query (e.g. "Utrecht Centraal", "Rotterdam
+  //      Centraal") scores a same-named street/POI in a DIFFERENT city
+  //      higher than the city the visitor actually typed (PDOK matched
+  //      "Centraal" against "Centraal Busstation, Breda" ahead of
+  //      "Utrecht"/"Rotterdam" themselves). Fix: if the top-ranked result's
+  //      city isn't one of the words the visitor typed, but a lower-ranked
+  //      candidate's city IS, prefer that candidate.
+  function pickBestDoc(docs, query){
+    if (!docs || !docs.length) return null;
+    var normQuery = stripAccents(query.toLowerCase());
+    var tokens = normQuery.split(/[,\s]+/).filter(function(t){ return t.length > 2; });
+
+    var parts = query.split(',');
+    if (parts.length > 1){
+      var lastPart = stripAccents(parts[parts.length - 1].trim().toLowerCase());
+      if (lastPart.length > 2){
+        for (var i = 0; i < docs.length; i++){
+          var wp1 = docs[i].woonplaatsnaam ? stripAccents(docs[i].woonplaatsnaam.toLowerCase()) : '';
+          if (wp1 === lastPart) return docs[i];
+        }
+      }
+    }
+
+    var topWp = docs[0].woonplaatsnaam ? stripAccents(docs[0].woonplaatsnaam.toLowerCase()) : '';
+    if (tokens.indexOf(topWp) === -1){
+      for (var j = 0; j < docs.length; j++){
+        var wp2 = docs[j].woonplaatsnaam ? stripAccents(docs[j].woonplaatsnaam.toLowerCase()) : '';
+        if (wp2 && tokens.indexOf(wp2) !== -1) return docs[j];
+      }
+    }
+
+    return docs[0];
+  }
+
   var geocodeCache = {};
+  // Generic geocoder: resolves any free-text query to a single best point via
+  // PDOK. No distance or pricing happens here - that only happens once BOTH
+  // ends of a trip are known, in computeRoutePrice() below.
   function geocodeAddress(query, cb){
     query = (query || '').trim();
     if (query.length < 3){ cb(null); return; }
@@ -793,8 +970,11 @@
     var controller = (typeof AbortController !== 'undefined') ? new AbortController() : null;
     var timer = setTimeout(function(){ if (controller) controller.abort(); }, 6000);
     // exclude type:gemeente - its centroid is a municipality-boundary center
-    // (e.g. skewed toward Rotterdam's harbour), not a usable pickup/dropoff point
-    var url = PDOK_URL + '?q=' + encodeURIComponent(query) + '&rows=1&fq=' + encodeURIComponent('type:(woonplaats OR weg OR adres OR postcode)');
+    // (e.g. skewed toward Rotterdam's harbour), not a usable pickup/dropoff
+    // point. rows=8 (not 1) so pickBestDoc() above has enough real candidates
+    // to disambiguate between when a place name isn't unique nationally, or
+    // the actual city ranks below an unrelated same-word street/POI match.
+    var url = PDOK_URL + '?q=' + encodeURIComponent(query) + '&rows=8&fq=' + encodeURIComponent('type:(woonplaats OR weg OR adres OR postcode)');
     fetch(url, controller ? { signal: controller.signal } : {})
       .then(function(res){
         if (!res.ok) throw new Error('PDOK HTTP ' + res.status);
@@ -804,51 +984,41 @@
         clearTimeout(timer);
         var docs = data && data.response && data.response.docs;
         if (!docs || !docs.length){ geocodeCache[query] = null; cb(null); return; }
-        var doc = docs[0];
+        var doc = pickBestDoc(docs, query);
         var m = /POINT\(([-0-9.]+) ([-0-9.]+)\)/.exec(doc.centroide_ll || '');
         if (!m){ geocodeCache[query] = null; cb(null); return; }
-        var lon = parseFloat(m[1]), lat = parseFloat(m[2]);
-        var straightKm = haversineKm(SCHIPHOL_LAT, SCHIPHOL_LON, lat, lon);
-        var exactCity = findExactCity(lat, lon, doc.woonplaatsnaam);
-        var label = doc.weergavenaam || query;
-        var woonplaats = doc.woonplaatsnaam || '';
-
-        function finish(km, source){
-          var result = {
-            lat: lat, lon: lon,
-            label: label,
-            woonplaats: woonplaats,
-            distanceKm: km,
-            distanceSource: source, // 'driving' (ORS) or 'straight-line' (haversine fallback)
-            exactCity: exactCity,
-            estimate: estimateFromDistance(km, source)
-          };
-          geocodeCache[query] = result;
-          cb(result);
-        }
-
-        if (exactCity){
-          // flat rate applies regardless of distance - skip the ORS call
-          // entirely (saves quota; the km figure isn't shown for exact matches)
-          finish(straightKm, 'straight-line');
-          return;
-        }
-
-        // Try real driving-route distance; drivingDistanceKm() always calls
-        // back (never throws), with null if no key/failure/timeout, in
-        // which case we use the straight-line distance already computed above.
-        drivingDistanceKm(SCHIPHOL_ROUTING_LAT, SCHIPHOL_ROUTING_LON, lat, lon, function(drivingKm){
-          if (drivingKm != null && drivingKm > 0){
-            finish(drivingKm, 'driving');
-          } else {
-            finish(straightKm, 'straight-line');
-          }
-        });
+        var result = {
+          lat: parseFloat(m[2]), lon: parseFloat(m[1]),
+          label: doc.weergavenaam || query,
+          woonplaats: doc.woonplaatsnaam || ''
+        };
+        geocodeCache[query] = result;
+        cb(result);
       })
       .catch(function(){
         clearTimeout(timer);
         cb(null, true);
       });
+  }
+
+  // Computes the live price for an arbitrary Van -> Naar pair. Always
+  // measures the two ACTUAL points passed in (real geocoded coordinates,
+  // real driving distance between exactly those two points) - see the big
+  // comment above CITY_ANCHORS for what that constant is (and is not) used
+  // for here: a silent upward-only floor, nothing more.
+  function computeRoutePrice(fromPoint, toPoint, cb){
+    var straightKm = haversineKm(fromPoint.lat, fromPoint.lon, toPoint.lat, toPoint.lon);
+    var fromR = routingCoord(fromPoint), toR = routingCoord(toPoint);
+    drivingDistanceKm(fromR.lat, fromR.lon, toR.lat, toR.lon, function(drivingKm){
+      var km = (drivingKm != null && drivingKm > 0) ? drivingKm : straightKm;
+      var source = (drivingKm != null && drivingKm > 0) ? 'driving' : 'straight-line';
+      var amount = estimateFromDistance(km, source); // absolute MIN_FARE floor applied here, always
+      var fromAnchor = findCityAnchor(fromPoint.lat, fromPoint.lon, fromPoint.woonplaats);
+      var toAnchor = findCityAnchor(toPoint.lat, toPoint.lon, toPoint.woonplaats);
+      if (fromAnchor) amount = Math.max(amount, fromAnchor.price);
+      if (toAnchor) amount = Math.max(amount, toAnchor.price);
+      cb({ amount: amount });
+    });
   }
 
   function debounce(fn, wait){
@@ -860,64 +1030,6 @@
     };
   }
 
-  var dialog = document.getElementById('bookingModal');
-  var triggers = document.querySelectorAll('[data-open-modal]');
-  var closeBtn = dialog.querySelector('.modal-close');
-  var dirRadios = dialog.querySelectorAll('input[name="direction"]');
-  var cityRadios = dialog.querySelectorAll('input[name="city"]');
-  var pickupGroup = document.getElementById('pickupGroup');
-  var schipholFixed = document.getElementById('schipholFixed');
-  var chipGroupLabel = document.getElementById('chipGroupLabel');
-  var otherDestGroup = document.getElementById('otherDestGroup');
-  var otherDestInput = document.getElementById('otherDest');
-  var otherKmInput = document.getElementById('otherKm');
-  var otherMinInput = document.getElementById('otherMin');
-  var otherFieldHint = document.getElementById('otherFieldHint');
-  var otherGeoStatus = document.getElementById('otherGeoStatus');
-  var ophaaladresInput = document.getElementById('ophaaladres');
-  var pickupGeoStatus = document.getElementById('pickupGeoStatus');
-  var datumInput = document.getElementById('datum');
-  var tijdInput = document.getElementById('tijd');
-  var naamInput = document.getElementById('naam');
-  var telefoonInput = document.getElementById('telefoon');
-  var priceAmt = document.getElementById('priceAmt');
-  var priceTag = document.getElementById('priceTag');
-  var priceMeta = document.getElementById('priceMeta');
-  var reserveBtn = document.getElementById('reserveBtn');
-  var formView = document.getElementById('formView');
-  var confirmView = document.getElementById('confirmView');
-  var modalFooter = document.getElementById('modalFooter');
-  var newBookingBtn = document.getElementById('newBookingBtn');
-  var summaryRoute = document.getElementById('summaryRoute');
-  var summaryWhen = document.getElementById('summaryWhen');
-  var summaryPrice = document.getElementById('summaryPrice');
-  var waSendBtn = document.getElementById('waSendBtn');
-  var efSubject = document.getElementById('efSubject');
-  var efNaam = document.getElementById('efNaam');
-  var efTelefoon = document.getElementById('efTelefoon');
-  var efRoute = document.getElementById('efRoute');
-  var efWanneer = document.getElementById('efWanneer');
-  var efPrijs = document.getElementById('efPrijs');
-
-  var lastTrigger = null;
-  var cityManuallySet = false;
-  var currentPriceInfo = { type: 'empty' };
-
-  // live geocode state for the two free-text fields
-  // status: idle | pending (debounce running) | loading (fetch in flight) | done | failed
-  var pickupGeo = { status: 'idle', result: null };
-  var otherGeo = { status: 'idle', result: null };
-
-  var defaultOtherHint = 'Weet je dit niet precies? Laat leeg, Michell bevestigt de exacte prijs.';
-  var fallbackOtherHint = 'We konden dit adres niet automatisch vinden. Vul de afstand handmatig in, Michell bevestigt de exacte prijs.';
-
-  var DIACRITICS_RE = new RegExp('[' + String.fromCharCode(768) + '-' + String.fromCharCode(879) + ']', 'g');
-  function stripAccents(s){
-    return s.normalize ? s.normalize('NFD').replace(DIACRITICS_RE, '') : s;
-  }
-
-  function capitalize(s){ return s ? s.charAt(0).toUpperCase() + s.slice(1) : s; }
-
   function euro(n){
     if (Math.abs(n - Math.round(n)) < 0.005) {
       return '€ ' + Math.round(n) + ',–';
@@ -925,337 +1037,10 @@
     return '€ ' + n.toFixed(2).replace('.', ',');
   }
 
-  function calcOtherPrice(km, min){
-    return (km * RATE_PER_KM) + (min * RATE_PER_MIN);
-  }
-
-  function currentDirection(){
-    return dialog.querySelector('input[name="direction"]:checked').value;
-  }
-
-  function syncAutoChip(id){
-    for (var x = 0; x < cityRadios.length; x++){ cityRadios[x].checked = (cityRadios[x].id === id); }
-  }
-  function clearAutoChip(){
-    for (var x = 0; x < cityRadios.length; x++){ cityRadios[x].checked = false; }
-  }
-
-  // ---- debounced geocoding for the pickup address field ----
-  var runPickupGeocode = debounce(function(){
-    var val = ophaaladresInput.value.trim();
-    if (val.length < 3){
-      pickupGeo = { status: 'idle', result: null };
-      renderAll();
-      return;
-    }
-    pickupGeo = { status: 'loading', result: null };
-    renderAll();
-    geocodeAddress(val, function(result, failed){
-      if (ophaaladresInput.value.trim() !== val) return; // stale response, address changed since
-      pickupGeo = result ? { status: 'done', result: result } : { status: 'failed', result: null, error: !!failed };
-      renderAll();
-    });
-  }, 450);
-
-  // ---- debounced geocoding for the "Overig" destination field ----
-  var runOtherGeocode = debounce(function(){
-    var val = otherDestInput.value.trim();
-    if (val.length < 3){
-      otherGeo = { status: 'idle', result: null };
-      renderAll();
-      return;
-    }
-    otherGeo = { status: 'loading', result: null };
-    renderAll();
-    geocodeAddress(val, function(result, failed){
-      if (otherDestInput.value.trim() !== val) return;
-      otherGeo = result ? { status: 'done', result: result } : { status: 'failed', result: null, error: !!failed };
-      renderAll();
-    });
-  }, 450);
-
-  function setPriceTag(text, cls){
-    priceTag.textContent = text;
-    priceTag.className = 'price-tag ' + cls;
-  }
-
-  function renderPickupStatus(){
-    if (!pickupGeoStatus) return;
-    if (pickupGeo.status === 'pending'){
-      pickupGeoStatus.textContent = '';
-      pickupGeoStatus.className = 'geo-status is-pending';
-    } else if (pickupGeo.status === 'loading'){
-      pickupGeoStatus.textContent = 'Adres opzoeken';
-      pickupGeoStatus.className = 'geo-status is-loading';
-    } else if (pickupGeo.status === 'done' && pickupGeo.result){
-      var r = pickupGeo.result;
-      pickupGeoStatus.textContent = r.exactCity
-        ? 'Herkend als ' + capitalize(r.exactCity.name) + ': vaste prijs van toepassing'
-        : 'Herkend: ' + r.label + ' (~' + Math.round(r.distanceKm) + ' km van Schiphol)';
-      pickupGeoStatus.className = 'geo-status is-ok';
-    } else if (pickupGeo.status === 'failed'){
-      pickupGeoStatus.textContent = 'Adres niet automatisch gevonden. Kies hieronder een stad, of "Overig" voor handmatige invoer.';
-      pickupGeoStatus.className = 'geo-status is-fail';
-    } else {
-      pickupGeoStatus.textContent = '';
-      pickupGeoStatus.className = 'geo-status';
-    }
-  }
-
-  function otherPriceInfo(){
-    var km = parseFloat(otherKmInput.value);
-    var min = parseFloat(otherMinInput.value);
-    if (km >= 0 && min >= 0 && !isNaN(km) && !isNaN(min)){
-      return { type: 'manual', amount: calcOtherPrice(km, min) };
-    }
-    if (otherGeo.status === 'loading') return { type: 'loading' };
-    if (otherGeo.status === 'pending') return currentPriceInfo;
-    if (otherGeo.status === 'done' && otherGeo.result){
-      var r = otherGeo.result;
-      return r.exactCity
-        ? { type: 'fixed', amount: r.exactCity.price, city: capitalize(r.exactCity.name) }
-        : { type: 'estimate', amount: r.estimate, distanceKm: r.distanceKm, label: r.label };
-    }
-    return { type: 'formula' };
-  }
-
-  function renderOtherStatus(info){
-    if (!otherGeoStatus) return;
-    if (info.type === 'manual'){
-      otherGeoStatus.textContent = 'Handmatige invoer gebruikt.';
-      otherGeoStatus.className = 'geo-status is-ok';
-      otherFieldHint.textContent = defaultOtherHint;
-      return;
-    }
-    if (otherGeo.status === 'loading'){
-      otherGeoStatus.textContent = 'Adres opzoeken';
-      otherGeoStatus.className = 'geo-status is-loading';
-      otherFieldHint.textContent = defaultOtherHint;
-    } else if (otherGeo.status === 'pending'){
-      otherGeoStatus.textContent = '';
-      otherGeoStatus.className = 'geo-status is-pending';
-    } else if (otherGeo.status === 'done' && otherGeo.result){
-      var r = otherGeo.result;
-      otherGeoStatus.textContent = r.exactCity
-        ? 'Herkend als ' + capitalize(r.exactCity.name) + ': vaste prijs van toepassing'
-        : 'Herkend: ' + r.label + ' (~' + Math.round(r.distanceKm) + ' km van Schiphol)';
-      otherGeoStatus.className = 'geo-status is-ok';
-      otherFieldHint.textContent = defaultOtherHint;
-    } else if (otherGeo.status === 'failed'){
-      otherGeoStatus.textContent = 'Adres niet automatisch gevonden.';
-      otherGeoStatus.className = 'geo-status is-fail';
-      otherFieldHint.textContent = fallbackOtherHint;
-    } else {
-      otherGeoStatus.textContent = '';
-      otherGeoStatus.className = 'geo-status';
-      otherFieldHint.textContent = defaultOtherHint;
-    }
-  }
-
-  function applyPriceInfo(info){
-    if (!info) info = { type: 'empty' };
-    switch (info.type){
-      case 'fixed':
-        priceAmt.textContent = euro(info.amount);
-        priceAmt.className = 'price-amt';
-        setPriceTag('Vaste prijs', 'tag-fixed');
-        priceMeta.textContent = info.city || '';
-        priceMeta.className = 'price-meta';
-        break;
-      case 'estimate':
-        priceAmt.textContent = euro(info.amount);
-        priceAmt.className = 'price-amt';
-        setPriceTag('Geschatte prijs', 'tag-estimate');
-        priceMeta.textContent = '~' + Math.round(info.distanceKm) + ' km van Schiphol';
-        priceMeta.className = 'price-meta is-estimate';
-        break;
-      case 'manual':
-        priceAmt.textContent = euro(info.amount);
-        priceAmt.className = 'price-amt';
-        setPriceTag('Geschatte prijs', 'tag-estimate');
-        priceMeta.textContent = 'Handmatige invoer';
-        priceMeta.className = 'price-meta is-estimate';
-        break;
-      case 'loading':
-        priceAmt.textContent = 'Berekenen';
-        priceAmt.className = 'price-amt price-loading';
-        setPriceTag('Even geduld', 'tag-loading');
-        priceMeta.textContent = '';
-        priceMeta.className = 'price-meta';
-        break;
-      case 'formula':
-        priceAmt.textContent = '€2,15/km + €0,40/min';
-        priceAmt.className = 'price-amt price-formula';
-        setPriceTag('Geschatte prijs', 'tag-estimate');
-        priceMeta.textContent = 'Vul afstand + reistijd in voor een schatting';
-        priceMeta.className = 'price-meta';
-        break;
-      case 'needs-manual':
-        priceAmt.textContent = '–';
-        priceAmt.className = 'price-amt';
-        setPriceTag('Prijs onbekend', 'tag-loading');
-        priceMeta.textContent = 'Kies hieronder een stad, of "Overig"';
-        priceMeta.className = 'price-meta';
-        break;
-      default:
-        priceAmt.textContent = '–';
-        priceAmt.className = 'price-amt';
-        setPriceTag('Vaste prijs', 'tag-fixed');
-        priceMeta.textContent = '';
-        priceMeta.className = 'price-meta';
-    }
-    currentPriceInfo = info;
-  }
-
-  function renderAll(){
-    renderPickupStatus();
-    var dir = currentDirection();
-    var cityChecked = dialog.querySelector('input[name="city"]:checked');
-    var priceInfo;
-
-    if (dir === 'naar'){
-      if (cityManuallySet && cityChecked && cityChecked.id !== 'cityOther'){
-        priceInfo = { type: 'fixed', amount: Number(cityChecked.dataset.price), city: cityChecked.dataset.city };
-      } else if (cityManuallySet && cityChecked && cityChecked.id === 'cityOther'){
-        priceInfo = otherPriceInfo();
-        renderOtherStatus(priceInfo);
-      } else if (pickupGeo.status === 'loading'){
-        priceInfo = { type: 'loading' };
-      } else if (pickupGeo.status === 'pending'){
-        priceInfo = currentPriceInfo;
-      } else if (pickupGeo.status === 'done' && pickupGeo.result){
-        var pr = pickupGeo.result;
-        if (pr.exactCity){
-          syncAutoChip(pr.exactCity.id);
-          priceInfo = { type: 'fixed', amount: pr.exactCity.price, city: capitalize(pr.exactCity.name) };
-        } else {
-          clearAutoChip();
-          priceInfo = { type: 'estimate', amount: pr.estimate, distanceKm: pr.distanceKm, label: pr.label };
-        }
-      } else if (pickupGeo.status === 'failed'){
-        clearAutoChip();
-        priceInfo = { type: 'needs-manual' };
-      } else {
-        priceInfo = { type: 'empty' };
-      }
-      otherDestGroup.hidden = !(cityManuallySet && cityChecked && cityChecked.id === 'cityOther');
-    } else {
-      if (!cityChecked){
-        priceInfo = { type: 'empty' };
-        otherDestGroup.hidden = true;
-      } else if (cityChecked.id !== 'cityOther'){
-        priceInfo = { type: 'fixed', amount: Number(cityChecked.dataset.price), city: cityChecked.dataset.city };
-        otherDestGroup.hidden = true;
-      } else {
-        otherDestGroup.hidden = false;
-        priceInfo = otherPriceInfo();
-        renderOtherStatus(priceInfo);
-      }
-    }
-
-    applyPriceInfo(priceInfo);
-    validateForm();
-  }
-
-  function updateDirection(){
-    var dir = currentDirection();
-    if(dir === 'vanaf'){
-      pickupGroup.hidden = true;
-      schipholFixed.hidden = false;
-      chipGroupLabel.textContent = 'Bestemming';
-    } else {
-      pickupGroup.hidden = false;
-      schipholFixed.hidden = true;
-      chipGroupLabel.textContent = 'Ophaalstad';
-    }
-    renderAll();
-  }
-
-  function validateForm(){
-    var dir = currentDirection();
-    var cityChecked = dialog.querySelector('input[name="city"]:checked');
-    var datumOk = !!datumInput.value;
-    var tijdOk = !!tijdInput.value;
-    var addressOk = dir === 'vanaf' ? true : ophaaladresInput.value.trim().length > 3;
-    var destOk;
-    if (dir === 'naar'){
-      if (cityManuallySet){
-        // user explicitly picked a chip (fixed city or Overig) - trust that override,
-        // same lenient rule as before (Overig may still be unresolved, Michell confirms)
-        destOk = addressOk;
-      } else {
-        // auto/geocoded path: require an actual resolved price, never let a dead
-        // "-" price go to WhatsApp - if geocoding failed, the user must pick a chip
-        destOk = addressOk && (currentPriceInfo.type === 'fixed' || currentPriceInfo.type === 'estimate');
-      }
-    } else {
-      destOk = !!cityChecked;
-      if (cityChecked && cityChecked.id === 'cityOther'){
-        destOk = otherDestInput.value.trim().length > 2;
-      }
-    }
-    var naamOk = naamInput.value.trim().length > 1;
-    var telOk = telefoonInput.value.trim().length > 6;
-    reserveBtn.disabled = !(datumOk && tijdOk && addressOk && destOk && naamOk && telOk);
-  }
-
   function formatDate(iso){
     if(!iso) return '';
     var p = iso.split('-');
     return p[2] + '-' + p[1] + '-' + p[0];
-  }
-
-  function openModal(trigger){
-    lastTrigger = trigger;
-    if (typeof dialog.showModal === 'function') {
-      dialog.showModal();
-    } else {
-      dialog.setAttribute('open', '');
-    }
-    requestAnimationFrame(function(){
-      var firstRadio = dialog.querySelector('input[name="direction"]:checked');
-      if (firstRadio) firstRadio.focus();
-    });
-  }
-
-  for (var i = 0; i < triggers.length; i++){
-    triggers[i].addEventListener('click', (function(t){ return function(){ openModal(t); }; })(triggers[i]));
-  }
-  closeBtn.addEventListener('click', function(){ dialog.close(); });
-
-  dialog.addEventListener('click', function(e){
-    if (e.target === dialog) dialog.close();
-  });
-  dialog.addEventListener('close', function(){
-    if (lastTrigger) lastTrigger.focus();
-  });
-
-  for (var j = 0; j < dirRadios.length; j++){ dirRadios[j].addEventListener('change', updateDirection); }
-  for (var k = 0; k < cityRadios.length; k++){
-    cityRadios[k].addEventListener('change', function(){
-      cityManuallySet = true;
-      renderAll();
-    });
-  }
-  otherDestInput.addEventListener('input', function(){
-    otherGeo = { status: 'pending', result: null };
-    renderAll();
-    runOtherGeocode();
-  });
-  otherKmInput.addEventListener('input', function(){ renderAll(); });
-  otherMinInput.addEventListener('input', function(){ renderAll(); });
-  ophaaladresInput.addEventListener('input', function(){
-    pickupGeo = { status: 'pending', result: null };
-    renderAll();
-    runPickupGeocode();
-  });
-  datumInput.addEventListener('input', validateForm);
-  tijdInput.addEventListener('input', validateForm);
-  naamInput.addEventListener('input', validateForm);
-  telefoonInput.addEventListener('input', validateForm);
-
-  function priceMessageText(){
-    return priceTag.textContent + ': ' + priceAmt.textContent;
   }
 
   function buildWaUrl(d){
@@ -1267,89 +1052,379 @@
       '📍 Van: ' + d.from,
       '🎯 Naar: ' + d.to,
       '📅 Datum: ' + d.when,
-      '💶 Prijs: ' + d.price,
-      '',
-      'Kun je dit bevestigen? Bedankt!'
+      '💶 Prijs: ' + d.price
     ];
+    if (d.passagiers) lines.push('👥 Passagiers: ' + d.passagiers);
+    if (d.bagage) lines.push('🧳 Bagage: ' + d.bagage);
+    if (d.vlucht) lines.push('✈️ Vluchtnummer: ' + d.vlucht);
+    lines.push('', 'Kun je dit bevestigen? Bedankt!');
     var text = lines.join('\n');
     return 'https://wa.me/' + PHONE + '?text=' + encodeURIComponent(text);
   }
 
-  reserveBtn.addEventListener('click', function(){
-    if (reserveBtn.disabled) return;
-    var dir = currentDirection();
-    var cityChecked = dialog.querySelector('input[name="city"]:checked');
-    var from, to;
-    if (dir === 'naar'){
-      from = ophaaladresInput.value.trim();
-      to = 'Schiphol Airport';
-    } else {
-      from = 'Schiphol Airport';
-      to = cityChecked
-        ? (cityChecked.id === 'cityOther' ? (otherDestInput.value.trim() || 'opgegeven bestemming') : cityChecked.dataset.city)
-        : 'opgegeven bestemming';
+  /* ============================================================
+     SHARED BOOKING-FLOW CONTROLLER
+     One factory, instantiated twice: once for the complete inline form in
+     the hero (the primary homepage experience) and once for the modal
+     (kept as a quick-access shortcut from the nav/footer/Tarieven CTAs, so
+     a visitor scrolled away from the hero doesn't have to scroll back up).
+     Both share the exact same geocoding cache, pricing engine, validation
+     rules and WhatsApp/email message building - only the DOM elements they
+     read from and write to differ, via `cfg`.
+     ============================================================ */
+  function createBookingFlow(cfg){
+    // status: idle | pending (debounce running) | loading (fetch in flight) | done | failed
+    var vanGeo = { status: 'idle', result: null };
+    var naarGeo = { status: 'idle', result: null };
+    var currentPrice = null; // number once computed for the current van+naar pair, else null
+    var priceReqId = 0;
+
+    function renderGeoStatus(el, geo){
+      if (!el) return;
+      if (geo.status === 'loading'){
+        el.textContent = 'Adres opzoeken';
+        el.className = 'geo-status is-loading';
+      } else if (geo.status === 'done' && geo.result){
+        el.textContent = 'Herkend: ' + geo.result.label;
+        el.className = 'geo-status is-ok';
+      } else if (geo.status === 'failed'){
+        el.textContent = 'Adres niet automatisch gevonden. Michell bevestigt de exacte prijs.';
+        el.className = 'geo-status is-fail';
+      } else {
+        el.textContent = '';
+        el.className = 'geo-status';
+      }
     }
-    var when = formatDate(datumInput.value) + ' om ' + tijdInput.value;
-    var priceText = priceMessageText();
 
-    summaryRoute.textContent = from + ' → ' + to;
-    summaryWhen.textContent = when;
-    summaryPrice.textContent = priceText;
+    // Renders ONLY the resulting euro amount - by design there is no
+    // distance, no methodology, no "vast" vs "geschat" labelling shown.
+    function renderPrice(){
+      var bothResolved = vanGeo.status === 'done' && naarGeo.status === 'done' && vanGeo.result && naarGeo.result;
+      if (bothResolved && currentPrice == null){
+        cfg.priceAmt.textContent = 'Berekenen';
+        cfg.priceAmt.className = 'price-amt price-loading';
+        cfg.priceMeta.textContent = '';
+      } else if (bothResolved && currentPrice != null){
+        cfg.priceAmt.textContent = euro(currentPrice);
+        cfg.priceAmt.className = 'price-amt';
+        cfg.priceMeta.textContent = '';
+      } else if (vanGeo.status === 'loading' || naarGeo.status === 'loading'){
+        cfg.priceAmt.textContent = 'Berekenen';
+        cfg.priceAmt.className = 'price-amt price-loading';
+        cfg.priceMeta.textContent = '';
+      } else if (vanGeo.status === 'failed' || naarGeo.status === 'failed'){
+        cfg.priceAmt.textContent = '–';
+        cfg.priceAmt.className = 'price-amt';
+        cfg.priceMeta.textContent = 'Prijs op aanvraag, Michell bevestigt persoonlijk';
+      } else {
+        cfg.priceAmt.textContent = '–';
+        cfg.priceAmt.className = 'price-amt';
+        cfg.priceMeta.textContent = 'Vul van en naar in';
+      }
+    }
 
-    var naamVal = naamInput.value.trim();
-    var telefoonVal = telefoonInput.value.trim();
+    function recomputePrice(){
+      if (vanGeo.status === 'done' && naarGeo.status === 'done' && vanGeo.result && naarGeo.result){
+        currentPrice = null;
+        renderPrice();
+        var reqId = ++priceReqId;
+        computeRoutePrice(vanGeo.result, naarGeo.result, function(res){
+          if (reqId !== priceReqId) return; // stale response, van/naar changed since
+          currentPrice = res.amount;
+          renderPrice();
+          validateForm();
+        });
+      } else {
+        currentPrice = null;
+        renderPrice();
+        validateForm();
+      }
+    }
 
-    waSendBtn.href = buildWaUrl({
-      naam: naamVal,
-      telefoon: telefoonVal,
-      from: from,
-      to: to,
-      when: when,
-      price: priceText
+    var runVanGeocode = debounce(function(){
+      var val = cfg.vanInput.value.trim();
+      if (val.length < 3){
+        vanGeo = { status: 'idle', result: null };
+        renderGeoStatus(cfg.vanStatusEl, vanGeo);
+        recomputePrice();
+        return;
+      }
+      vanGeo = { status: 'loading', result: null };
+      renderGeoStatus(cfg.vanStatusEl, vanGeo);
+      recomputePrice();
+      geocodeAddress(val, function(result){
+        if (cfg.vanInput.value.trim() !== val) return; // stale, address changed since
+        vanGeo = result ? { status: 'done', result: result } : { status: 'failed', result: null };
+        renderGeoStatus(cfg.vanStatusEl, vanGeo);
+        recomputePrice();
+      });
+    }, 450);
+
+    var runNaarGeocode = debounce(function(){
+      var val = cfg.naarInput.value.trim();
+      if (val.length < 3){
+        naarGeo = { status: 'idle', result: null };
+        renderGeoStatus(cfg.naarStatusEl, naarGeo);
+        recomputePrice();
+        return;
+      }
+      naarGeo = { status: 'loading', result: null };
+      renderGeoStatus(cfg.naarStatusEl, naarGeo);
+      recomputePrice();
+      geocodeAddress(val, function(result){
+        if (cfg.naarInput.value.trim() !== val) return; // stale, address changed since
+        naarGeo = result ? { status: 'done', result: result } : { status: 'failed', result: null };
+        renderGeoStatus(cfg.naarStatusEl, naarGeo);
+        recomputePrice();
+      });
+    }, 450);
+
+    cfg.vanInput.addEventListener('input', function(){
+      vanGeo = { status: 'pending', result: null };
+      renderGeoStatus(cfg.vanStatusEl, vanGeo);
+      recomputePrice();
+      runVanGeocode();
+    });
+    cfg.naarInput.addEventListener('input', function(){
+      naarGeo = { status: 'pending', result: null };
+      renderGeoStatus(cfg.naarStatusEl, naarGeo);
+      recomputePrice();
+      runNaarGeocode();
     });
 
-    // Same booking details, mirrored into the Web3Forms email-fallback form
-    efSubject.value = 'Nieuwe boeking via Le Grand Taxi - ' + (naamVal || 'onbekende klant');
-    efNaam.value = naamVal;
-    efTelefoon.value = telefoonVal;
-    efRoute.value = from + ' → ' + to;
-    efWanneer.value = when;
-    efPrijs.value = priceText;
+    // ---- optional passenger-count stepper ----
+    function clampPax(n){ return Math.max(1, Math.min(8, n)); }
+    if (cfg.paxMinus && cfg.paxPlus && cfg.passagiersInput){
+      cfg.paxMinus.addEventListener('click', function(){
+        var v = parseInt(cfg.passagiersInput.value, 10);
+        cfg.passagiersInput.value = clampPax((isNaN(v) ? 1 : v) - 1);
+      });
+      cfg.paxPlus.addEventListener('click', function(){
+        var v = parseInt(cfg.passagiersInput.value, 10);
+        cfg.passagiersInput.value = clampPax((isNaN(v) ? 0 : v) + 1);
+      });
+    }
 
-    formView.hidden = true;
-    modalFooter.hidden = true;
-    confirmView.hidden = false;
-    waSendBtn.focus();
+    function validateForm(){
+      var vanOk = cfg.vanInput.value.trim().length > 3;
+      var naarOk = cfg.naarInput.value.trim().length > 3;
+      var datumOk = !!cfg.datumInput.value;
+      var tijdOk = !!cfg.tijdInput.value;
+      var naamOk = cfg.naamInput.value.trim().length > 1;
+      var telOk = cfg.telefoonInput.value.trim().length > 6;
+      // Geocoding success is not required to reserve - if an address can't
+      // be auto-resolved Michell confirms the exact price personally.
+      cfg.reserveBtn.disabled = !(vanOk && naarOk && datumOk && tijdOk && naamOk && telOk);
+    }
+    cfg.datumInput.addEventListener('input', validateForm);
+    cfg.tijdInput.addEventListener('input', validateForm);
+    cfg.naamInput.addEventListener('input', validateForm);
+    cfg.telefoonInput.addEventListener('input', validateForm);
+
+    function priceMessageText(){
+      return currentPrice != null ? euro(currentPrice) : 'Op aanvraag';
+    }
+
+    cfg.reserveBtn.addEventListener('click', function(){
+      if (cfg.reserveBtn.disabled) return;
+      var from = cfg.vanInput.value.trim();
+      var to = cfg.naarInput.value.trim();
+      var when = formatDate(cfg.datumInput.value) + ' om ' + cfg.tijdInput.value;
+      var priceText = priceMessageText();
+      var bagageChecked = cfg.bagageName ? document.querySelector('input[name="' + cfg.bagageName + '"]:checked') : null;
+      var paxVal = cfg.passagiersInput ? cfg.passagiersInput.value.trim() : '';
+      var vluchtVal = cfg.vluchtnummerInput ? cfg.vluchtnummerInput.value.trim() : '';
+
+      cfg.summaryRoute.textContent = from + ' → ' + to;
+      cfg.summaryWhen.textContent = when;
+      cfg.summaryPrice.textContent = priceText;
+
+      var naamVal = cfg.naamInput.value.trim();
+      var telefoonVal = cfg.telefoonInput.value.trim();
+
+      cfg.waSendBtn.href = buildWaUrl({
+        naam: naamVal, telefoon: telefoonVal, from: from, to: to, when: when, price: priceText,
+        passagiers: paxVal, bagage: bagageChecked ? bagageChecked.value : '', vlucht: vluchtVal
+      });
+
+      // Same booking details, mirrored into the single shared Web3Forms
+      // email-fallback form (both the hero and the modal confirmation
+      // screens submit into that one hidden form via the button's
+      // form="emailFallbackForm" attribute).
+      efSubject.value = 'Nieuwe boeking via Le Grand Taxi - ' + (naamVal || 'onbekende klant');
+      efNaam.value = naamVal;
+      efTelefoon.value = telefoonVal;
+      efRoute.value = from + ' → ' + to;
+      efWanneer.value = when;
+      efPrijs.value = priceText;
+      efPassagiers.value = paxVal;
+      efBagage.value = bagageChecked ? bagageChecked.value : '';
+      efVluchtnummer.value = vluchtVal;
+
+      cfg.formView.hidden = true;
+      cfg.confirmView.hidden = false;
+      if (cfg.onSubmit) cfg.onSubmit();
+      cfg.waSendBtn.focus();
+    });
+
+    if (cfg.newBookingBtn){
+      cfg.newBookingBtn.addEventListener('click', function(){
+        cfg.vanInput.value = '';
+        cfg.naarInput.value = '';
+        cfg.datumInput.value = '';
+        cfg.tijdInput.value = '';
+        cfg.naamInput.value = '';
+        cfg.telefoonInput.value = '';
+        if (cfg.passagiersInput) cfg.passagiersInput.value = '';
+        if (cfg.vluchtnummerInput) cfg.vluchtnummerInput.value = '';
+        if (cfg.bagageName){
+          var bagageRadios = document.querySelectorAll('input[name="' + cfg.bagageName + '"]');
+          for (var r = 0; r < bagageRadios.length; r++){ bagageRadios[r].checked = false; }
+        }
+        vanGeo = { status: 'idle', result: null };
+        naarGeo = { status: 'idle', result: null };
+        currentPrice = null;
+        renderGeoStatus(cfg.vanStatusEl, vanGeo);
+        renderGeoStatus(cfg.naarStatusEl, naarGeo);
+        renderPrice();
+        cfg.formView.hidden = false;
+        cfg.confirmView.hidden = true;
+        if (cfg.onReset) cfg.onReset();
+        validateForm();
+      });
+    }
+
+    renderPrice();
+    validateForm();
+
+    return {
+      focusFirst: function(){ cfg.vanInput.focus(); }
+    };
+  }
+
+  // ---- single shared Web3Forms hidden fields, written by whichever flow (hero or modal) submits ----
+  var efSubject = document.getElementById('efSubject');
+  var efNaam = document.getElementById('efNaam');
+  var efTelefoon = document.getElementById('efTelefoon');
+  var efRoute = document.getElementById('efRoute');
+  var efWanneer = document.getElementById('efWanneer');
+  var efPrijs = document.getElementById('efPrijs');
+  var efPassagiers = document.getElementById('efPassagiers');
+  var efBagage = document.getElementById('efBagage');
+  var efVluchtnummer = document.getElementById('efVluchtnummer');
+
+  /* ============================================================
+     MODAL - kept as a quick-access shortcut (nav/footer/Tarieven CTAs)
+     so a visitor doesn't have to scroll back up to the hero. Same fields,
+     same flow, wired through the shared factory above.
+     ============================================================ */
+  var dialog = document.getElementById('bookingModal');
+  var triggers = document.querySelectorAll('[data-open-modal]');
+  var closeBtn = dialog.querySelector('.modal-close');
+  var modalFooter = document.getElementById('modalFooter');
+  var lastTrigger = null;
+
+  var modalFlow = createBookingFlow({
+    vanInput: document.getElementById('vanAdres'),
+    vanStatusEl: document.getElementById('vanGeoStatus'),
+    naarInput: document.getElementById('naarAdres'),
+    naarStatusEl: document.getElementById('naarGeoStatus'),
+    datumInput: document.getElementById('datum'),
+    tijdInput: document.getElementById('tijd'),
+    naamInput: document.getElementById('naam'),
+    telefoonInput: document.getElementById('telefoon'),
+    passagiersInput: document.getElementById('passagiers'),
+    paxMinus: document.getElementById('paxMinus'),
+    paxPlus: document.getElementById('paxPlus'),
+    vluchtnummerInput: document.getElementById('vluchtnummer'),
+    bagageName: 'bagage',
+    priceAmt: document.getElementById('priceAmt'),
+    priceMeta: document.getElementById('priceMeta'),
+    reserveBtn: document.getElementById('reserveBtn'),
+    formView: document.getElementById('formView'),
+    confirmView: document.getElementById('confirmView'),
+    summaryRoute: document.getElementById('summaryRoute'),
+    summaryWhen: document.getElementById('summaryWhen'),
+    summaryPrice: document.getElementById('summaryPrice'),
+    waSendBtn: document.getElementById('waSendBtn'),
+    newBookingBtn: document.getElementById('newBookingBtn'),
+    onSubmit: function(){ modalFooter.hidden = true; },
+    onReset: function(){ modalFooter.hidden = false; dialog.close(); }
   });
 
-  newBookingBtn.addEventListener('click', function(){
-    var radios = dialog.querySelectorAll('input[type="radio"]');
-    for (var r = 0; r < radios.length; r++){ radios[r].checked = false; }
-    document.getElementById('dirNaar').checked = true;
-    cityManuallySet = false;
-    pickupGeo = { status: 'idle', result: null };
-    otherGeo = { status: 'idle', result: null };
-    ophaaladresInput.value = '';
-    otherDestInput.value = '';
-    otherKmInput.value = '';
-    otherMinInput.value = '';
-    datumInput.value = '';
-    tijdInput.value = '';
-    naamInput.value = '';
-    telefoonInput.value = '';
-    efNaam.value = '';
-    efTelefoon.value = '';
-    efRoute.value = '';
-    efWanneer.value = '';
-    efPrijs.value = '';
-    updateDirection();
-    formView.hidden = false;
-    modalFooter.hidden = false;
-    confirmView.hidden = true;
-    dialog.close();
+  function openModal(trigger){
+    lastTrigger = trigger;
+    if (typeof dialog.showModal === 'function') {
+      dialog.showModal();
+    } else {
+      dialog.setAttribute('open', '');
+    }
+    requestAnimationFrame(function(){ modalFlow.focusFirst(); });
+  }
+
+  for (var i = 0; i < triggers.length; i++){
+    triggers[i].addEventListener('click', (function(t){ return function(){ openModal(t); }; })(triggers[i]));
+  }
+  closeBtn.addEventListener('click', function(){ dialog.close(); });
+  dialog.addEventListener('click', function(e){
+    if (e.target === dialog) dialog.close();
+  });
+  dialog.addEventListener('close', function(){
+    if (lastTrigger) lastTrigger.focus();
   });
 
-  updateDirection();
+  /* ============================================================
+     HERO - the complete booking form, and the primary homepage
+     experience. No modal needed to finish a booking: Van, Naar, Datum,
+     Tijd, Naam, Telefoon are always visible; passengers/luggage/flight
+     number are optional and tucked behind "Meer opties" so the form stays
+     compact by default (progressive disclosure).
+     ============================================================ */
+  var heroSwapBtn = document.getElementById('heroSwapBtn');
+  var heroVanInput = document.getElementById('heroVan');
+  var heroNaarInput = document.getElementById('heroNaar');
+  var heroMoreBtn = document.getElementById('heroMoreBtn');
+  var heroMoreFields = document.getElementById('heroMoreFields');
+
+  createBookingFlow({
+    vanInput: heroVanInput,
+    vanStatusEl: document.getElementById('heroVanGeoStatus'),
+    naarInput: heroNaarInput,
+    naarStatusEl: document.getElementById('heroNaarGeoStatus'),
+    datumInput: document.getElementById('heroDatum'),
+    tijdInput: document.getElementById('heroTijd'),
+    naamInput: document.getElementById('heroNaam'),
+    telefoonInput: document.getElementById('heroTelefoon'),
+    passagiersInput: document.getElementById('heroPassagiers'),
+    paxMinus: document.getElementById('heroPaxMinus'),
+    paxPlus: document.getElementById('heroPaxPlus'),
+    vluchtnummerInput: document.getElementById('heroVluchtnummer'),
+    bagageName: 'heroBagage',
+    priceAmt: document.getElementById('heroPriceAmt'),
+    priceMeta: document.getElementById('heroPriceMeta'),
+    reserveBtn: document.getElementById('heroReserveBtn'),
+    formView: document.getElementById('heroFormView'),
+    confirmView: document.getElementById('heroConfirmView'),
+    summaryRoute: document.getElementById('heroSummaryRoute'),
+    summaryWhen: document.getElementById('heroSummaryWhen'),
+    summaryPrice: document.getElementById('heroSummaryPrice'),
+    waSendBtn: document.getElementById('heroWaSendBtn'),
+    newBookingBtn: document.getElementById('heroNewBookingBtn')
+  });
+
+  heroMoreBtn.addEventListener('click', function(){
+    var expanded = heroMoreBtn.getAttribute('aria-expanded') === 'true';
+    heroMoreBtn.setAttribute('aria-expanded', String(!expanded));
+    heroMoreFields.hidden = expanded;
+  });
+
+  heroSwapBtn.addEventListener('click', function(){
+    var tmp = heroVanInput.value;
+    heroVanInput.value = heroNaarInput.value;
+    heroNaarInput.value = tmp;
+    heroVanInput.dispatchEvent(new Event('input'));
+    heroNaarInput.dispatchEvent(new Event('input'));
+  });
 })();
 </script>
 </body>
