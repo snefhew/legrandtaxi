@@ -5,6 +5,85 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="icon" href="data:,">
 <title>Le Grand Services | vaste prijs naar Schiphol</title>
+<meta name="description" content="Persoonlijke taxi met vaste prijs vooraf, van en naar Schiphol. Real-time vluchtvolging, de snelste veilige route en persoonlijk contact met Michell. Amsterdam en omgeving: Schiphol, Haarlem, Hoofddorp, Amstelveen.">
+<link rel="canonical" href="https://snefhew.github.io/legrandtaxi/">
+
+<!-- Structured data: taxi service + FAQ, mirrors the visible content on this single page so it stays accurate -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TaxiService",
+  "name": "Le Grand Services",
+  "telephone": "+31685639077",
+  "url": "https://snefhew.github.io/legrandtaxi/",
+  "areaServed": [
+    {"@type": "City", "name": "Amsterdam"},
+    {"@type": "City", "name": "Rotterdam"},
+    {"@type": "City", "name": "Utrecht"},
+    {"@type": "City", "name": "Almere"},
+    {"@type": "City", "name": "Haarlem"},
+    {"@type": "City", "name": "Hoofddorp"},
+    {"@type": "City", "name": "Amstelveen"},
+    {"@type": "Airport", "name": "Amsterdam Airport Schiphol"}
+  ],
+  "priceRange": "EUR",
+  "vatID": "NL004905641B18",
+  "sameAs": ["https://snefhew.github.io/legrandtaxi/"]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Hoe weet Le Grand Services dat mijn vlucht vertraging heeft?",
+      "acceptedAnswer": {"@type": "Answer", "text": "Geef bij het boeken je vluchtnummer door. Wij volgen je vlucht real-time en de ophaaltijd schuift automatisch mee."}
+    },
+    {
+      "@type": "Question",
+      "name": "Waar tref ik mijn chauffeur op Schiphol?",
+      "acceptedAnswer": {"@type": "Answer", "text": "Na het ophalen van je bagage belt of appt Michell je, meestal binnen 15 minuten, om af te spreken waar je elkaar in de aankomsthal treft."}
+    },
+    {
+      "@type": "Question",
+      "name": "Wat kost een taxi naar of van Schiphol?",
+      "acceptedAnswer": {"@type": "Answer", "text": "Wij rijden niet op de meter. Je spreekt vooraf een vaste prijs af via het boekingsformulier bovenaan de pagina."}
+    },
+    {
+      "@type": "Question",
+      "name": "Rijden jullie ook buiten Amsterdam, Rotterdam, Utrecht en Almere?",
+      "acceptedAnswer": {"@type": "Answer", "text": "Deze vier steden zijn onze populaire vaste routes. Andere bestemmingen in Nederland zijn ook mogelijk, bel voor een prijsopgave."}
+    },
+    {
+      "@type": "Question",
+      "name": "Bieden jullie facturatie voor zakelijk vervoer?",
+      "acceptedAnswer": {"@type": "Answer", "text": "Ja. Op verzoek stellen we een factuur op naam van je bedrijf op."}
+    },
+    {
+      "@type": "Question",
+      "name": "Hoe kan ik betalen bij Le Grand Services?",
+      "acceptedAnswer": {"@type": "Answer", "text": "Contant, met pin of creditcard, via iDEAL vooraf, of op factuur bij zakelijke ritten."}
+    },
+    {
+      "@type": "Question",
+      "name": "Hoe ver van tevoren moet ik boeken?",
+      "acceptedAnswer": {"@type": "Answer", "text": "Boek bij voorkeur vooraf via het formulier bovenaan de pagina. Voor een rit op korte termijn kun je ook gewoon bellen."}
+    },
+    {
+      "@type": "Question",
+      "name": "Kan ik mijn rit gratis annuleren?",
+      "acceptedAnswer": {"@type": "Answer", "text": "Ja, tot 6 uur voor de ophaaltijd kun je kosteloos annuleren."}
+    },
+    {
+      "@type": "Question",
+      "name": "Blijft de afgesproken prijs staan bij vertraging of file?",
+      "acceptedAnswer": {"@type": "Answer", "text": "Ja, de afgesproken prijs blijft staan, ook bij vertraging of file."}
+    }
+  ]
+}
+</script>
 <style>
   @font-face{
     font-family:'Bodoni Grand';
@@ -88,7 +167,7 @@
   @media (max-width:760px){
     .brand-divider, .brand-tagline{ display:none; }
   }
-  @media (max-width:620px){
+  @media (max-width:860px){
     .navright .nav-link{ display:none; }
   }
 
@@ -396,6 +475,105 @@
   @media (max-width:480px){
     .navright .phone-link{ display:none; }
   }
+
+  /* ============ SINGLE-PAGE: smooth in-page anchors ============ */
+  @media (prefers-reduced-motion: no-preference){ html{ scroll-behavior:smooth; } }
+  /* keep anchored sections clear of the sticky header */
+  [id]{ scroll-margin-top:84px; }
+
+  /* ============ MERGED INFO BLOCK (sections below the fold on the single page) ============ */
+  /* Reused Schiphol control-tower photo as a full-width dark contrast band. Text is scoped
+     light because it sits on the deliberate dark duotone photo. */
+  .info-band{
+    position:relative; overflow:hidden; isolation:isolate;
+    padding:clamp(3.2rem,9vw,6rem) 1.6rem clamp(3rem,7vw,4.6rem);
+    background-color:#241a17;
+    background-image:url("assets/hero-schiphol.jpg");
+    background-size:cover; background-position:center top;
+    border-top:1px solid var(--line); border-bottom:1px solid var(--line);
+  }
+  .info-band::before{
+    content:''; position:absolute; inset:0; z-index:0;
+    background:linear-gradient(180deg, rgba(15,10,9,0.78) 0%, rgba(15,10,9,0.5) 32%, rgba(15,10,9,0.4) 58%, rgba(15,10,9,0.85) 100%);
+    pointer-events:none;
+  }
+  .info-band-inner{ position:relative; z-index:2; max-width:1160px; margin:0 auto; }
+  .info-band .info-eyebrow{ color:#f4906f; }
+  .info-band .band-title{ color:#f8f1e7; }
+  .info-band .band-title em{ color:#f4906f; }
+  .info-band .band-dek{ color:rgba(248,241,231,0.82); }
+  .info-band .trust-line{ color:rgba(248,241,231,0.82); }
+  .info-band .trust-line b{ color:#f4906f; }
+  .info-band .trust-sep{ color:#d8b075; }
+  .info-eyebrow{
+    font-family:var(--font-mono); font-size:.72rem; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-text);
+    margin:0 0 1.2rem; display:flex; align-items:center; gap:.6rem;
+  }
+  .info-eyebrow::before{ content:''; width:26px; height:1px; background:currentColor; display:inline-block; flex:none; }
+  .band-title{
+    font-family:var(--font-display); font-weight:600; letter-spacing:-.02em; line-height:1;
+    font-size:clamp(2.2rem,5.4vw,3.8rem); text-wrap:balance; margin:0 0 1.1rem; max-width:18ch;
+  }
+  .band-title em{ font-style:italic; font-weight:500; }
+  .band-dek{ font-size:1.05rem; line-height:1.65; max-width:52ch; margin:0 0 2rem; }
+  .trust-line{
+    display:flex; flex-wrap:wrap; align-items:baseline; gap:.4rem 1.2rem;
+    font-family:var(--font-mono); font-size:.86rem; letter-spacing:.02em;
+  }
+  .trust-line b{ font-weight:700; }
+  .trust-sep{ font-weight:600; }
+
+  /* Section heads inside the info block stack vertically (override the shared flex .section-head)
+     and never touch the "Populaire bestemmingen" head above. */
+  .info-block .section.alt{ background:var(--surface-1); border-top:1px solid var(--line); border-bottom:1px solid var(--line); }
+  .info-block .section-head{ display:block; margin-bottom:2.2rem; padding-bottom:1.3rem; border-bottom:1px solid var(--line); }
+  .info-block .section-title{ max-width:26ch; margin:0 0 .8rem; }
+  .section-intro{ font-size:.98rem; line-height:1.7; color:var(--text-soft); max-width:62ch; margin:0; }
+
+  /* diensten (three services) */
+  .service-grid{ display:grid; grid-template-columns:1fr; gap:1.4rem; }
+  @media (min-width:860px){ .service-grid{ grid-template-columns:repeat(3,1fr); } }
+  .service-card{ background:var(--surface-1); border:1px solid var(--line); border-radius:var(--radius); padding:1.7rem 1.5rem; }
+  .service-card h3{ font-family:var(--font-display); font-weight:600; font-size:1.3rem; margin:0 0 .8rem; letter-spacing:-.005em; color:var(--ink-text); }
+  .service-card p{ font-size:.9rem; line-height:1.7; color:var(--text-soft); margin:0; }
+
+  /* waarom Le Grand Services (editorial, colored sub-headings carry the weight, no lists/pills/cards) */
+  .waarom-lead-copy{ font-size:1.05rem; line-height:1.75; color:var(--text-soft); max-width:60ch; margin:0 0 2.6rem; }
+  .waarom-lead-copy strong{ color:var(--text); font-weight:600; }
+  .waarom-grid{ display:grid; grid-template-columns:1fr; gap:2.1rem 3.2rem; }
+  @media (min-width:820px){ .waarom-grid{ grid-template-columns:1fr 1fr; } }
+  .waarom-point h3{ font-family:var(--font-display); font-weight:600; font-style:italic; font-size:1.35rem; letter-spacing:-.01em; margin:0 0 .5rem; }
+  .waarom-point p{ font-size:.95rem; line-height:1.72; color:var(--text-soft); margin:0; max-width:48ch; }
+  .waarom-point.accent-red h3{ color:var(--ink-text); }
+  .waarom-point.accent-brass h3{ color:var(--brass); }
+  .waarom-area{ margin-top:2.8rem; padding-top:1.6rem; border-top:1px solid var(--line); font-size:.98rem; line-height:1.75; color:var(--text-soft); max-width:64ch; }
+  .waarom-area strong{ color:var(--ink-text); font-weight:700; }
+
+  /* vlucht / schiphol */
+  .flight-grid{ display:grid; grid-template-columns:1fr; gap:1.3rem; }
+  @media (min-width:760px){ .flight-grid{ grid-template-columns:repeat(3,1fr); } }
+  .flight-step{ border-left:2px solid var(--line-strong); padding:.2rem 0 .2rem 1.1rem; }
+  .flight-step-num{ font-family:var(--font-mono); font-size:.82rem; font-weight:700; color:var(--ink-text); letter-spacing:.03em; display:block; margin-bottom:.6rem; }
+  .flight-step p{ font-size:.88rem; line-height:1.65; color:var(--text-soft); margin:0; }
+
+  /* betalen */
+  .pay-copy{ font-size:.98rem; line-height:1.75; color:var(--text-soft); max-width:62ch; margin:0 0 1.6rem; }
+  .pay-copy strong{ color:var(--ink-text); font-weight:700; }
+  .pay-note{ margin-top:1.2rem; font-size:.85rem; color:var(--text-soft); max-width:62ch; }
+
+  /* FAQ */
+  .faq-list{ max-width:760px; display:flex; flex-direction:column; gap:.6rem; }
+  .faq-item{ background:var(--surface-1); border:1px solid var(--line); border-radius:var(--radius); overflow:hidden; }
+  .faq-item summary{
+    cursor:pointer; list-style:none; padding:1.05rem 1.2rem; display:flex; align-items:center; justify-content:space-between; gap:1rem;
+    font-family:var(--font-display); font-weight:600; font-size:1rem;
+  }
+  .faq-item summary::-webkit-details-marker{ display:none; }
+  .faq-item summary::after{
+    content:'+'; font-family:var(--font-mono); font-size:1.1rem; color:var(--ink-text); flex:none; transition:transform .18s ease;
+  }
+  .faq-item[open] summary::after{ transform:rotate(45deg); }
+  .faq-item p{ margin:0; padding:0 1.2rem 1.15rem; font-size:.88rem; line-height:1.7; color:var(--text-soft); }
 </style>
 </head>
 <body>
@@ -409,7 +587,10 @@
     <span class="brand-tagline">Persoonlijke Taxi</span>
   </div>
   <div class="navright">
-    <a class="nav-link" href="info.html">Schiphol &amp; Info</a>
+    <a class="nav-link" href="#tarieven">Tarieven</a>
+    <a class="nav-link" href="#diensten">Diensten</a>
+    <a class="nav-link" href="#vluchtinfo">Vluchtinfo</a>
+    <a class="nav-link" href="#faq">Vragen</a>
     <a class="phone-link" href="tel:+31685639077">06 85 63 90 77</a>
     <button class="btn" type="button" data-open-modal>Reserveer</button>
   </div>
@@ -538,7 +719,7 @@
   </div>
 </div>
 
-<div class="section">
+<div class="section" id="tarieven">
   <div class="inner">
     <div class="section-head">
       <div>
@@ -575,6 +756,171 @@
   </div>
 </div>
 
+<!-- ============ SCHIPHOL PHOTO BAND (reused control-tower duotone photo) ============ -->
+<div class="info-band">
+  <div class="info-band-inner">
+    <span class="info-eyebrow">Schiphol &middot; informatie</span>
+    <h2 class="band-title">Je rit naar Schiphol, <em>tot in de puntjes</em> geregeld</h2>
+    <p class="band-dek">Hoe we je vlucht volgen, wie er rijdt en hoe je betaalt. Kort en concreet.</p>
+    <p class="trust-line">
+      <span><b>Vaste prijs</b> vooraf</span><span class="trust-sep" aria-hidden="true">&middot;</span>
+      <span><b>Real-time</b> vluchtvolging</span><span class="trust-sep" aria-hidden="true">&middot;</span>
+      <span>Persoonlijk contact</span><span class="trust-sep" aria-hidden="true">&middot;</span>
+      <span>Vergunninghouder taxivervoer</span>
+    </p>
+  </div>
+</div>
+
+<div class="info-block">
+
+  <!-- ============ DIENSTEN ============ -->
+  <section class="section" id="diensten" aria-labelledby="diensten-title">
+    <div class="inner">
+      <div class="section-head">
+        <span class="section-label">Onze diensten</span>
+        <h2 class="section-title" id="diensten-title">Drie manieren waarop we je vervoeren</h2>
+        <p class="section-intro">Le Grand Services rijdt niet op de meter. Je weet vooraf de prijs, van een lokale rit tot zakelijk vervoer.</p>
+      </div>
+      <div class="service-grid">
+        <article class="service-card">
+          <h3>Lokaal taxivervoer</h3>
+          <p>Voor ritten binnen en rond Amsterdam, Rotterdam, Utrecht en Almere: naar het station, een afspraak of een avondje uit. Je boekt vooraf tegen een vaste prijs, zonder verrassingen achteraf. Ideaal als je liever met een vast gezicht rijdt dan met een wisselende centrale.</p>
+        </article>
+        <article class="service-card">
+          <h3>Taxi van en naar de luchthaven</h3>
+          <p>Onze kern: taxivervoer van en naar Schiphol. Bij vertrek sta je ruim op tijd bij de incheckbalie. Bij aankomst volgen we je vlucht real-time, ook bij vertraging.</p>
+        </article>
+        <article class="service-card">
+          <h3>Zakelijk vervoer</h3>
+          <p>Voor bedrijven die op tijd en representatief vervoerd willen worden: naar een klantafspraak, de luchthaven of vast woon-werkverkeer. Op verzoek factureren we op naam van je bedrijf.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ WAAROM LE GRAND SERVICES ============ -->
+  <section class="section alt" id="waarom" aria-labelledby="waarom-title">
+    <div class="inner">
+      <div class="section-head">
+        <span class="section-label">Waarom Le Grand Services</span>
+        <h2 class="section-title" id="waarom-title">Vaste prijs. Vast gezicht. Geen verrassingen.</h2>
+        <p class="section-intro">Waarom mensen voor ons kiezen in plaats van een wisselende centrale.</p>
+      </div>
+      <p class="waarom-lead-copy">Le Grand Services is persoonlijk taxivervoer met een vaste prijs. <strong>Michell</strong> rijdt zelf het grootste deel van de ritten, dus je weet wie er voorrijdt.</p>
+      <div class="waarom-grid">
+        <div class="waarom-point accent-red">
+          <h3>Vaste prijs vooraf</h3>
+          <p>Je weet de prijs voordat je instapt. Geen meter, geen toeslag achteraf. Wat je afspreekt, betaal je.</p>
+        </div>
+        <div class="waarom-point accent-brass">
+          <h3>De snelste veilige route</h3>
+          <p>Michell kent de wegen rond Amsterdam en Schiphol. Hij kiest altijd de snelste veilige route, ook als het druk is.</p>
+        </div>
+        <div class="waarom-point accent-brass">
+          <h3>Wachten bij vertraging inbegrepen</h3>
+          <p>Vertraagde vlucht? We volgen je vlucht en passen de ophaaltijd aan, zonder extra kosten. Verderop lees je precies hoe dat werkt.</p>
+        </div>
+        <div class="waarom-point accent-red">
+          <h3>Officieel en verzekerd</h3>
+          <p>Le Grand Services rijdt met een geldige taxivergunning. Netjes en verzekerd geregeld, zoals het hoort.</p>
+        </div>
+        <div class="waarom-point accent-red">
+          <h3>Persoonlijk contact</h3>
+          <p>Geen callcenter en geen wisselende chauffeur. Je krijgt bericht van Michell, meestal binnen 15 minuten na de landing.</p>
+        </div>
+      </div>
+      <p class="waarom-area">We rijden in <strong>Amsterdam en omgeving</strong>: Schiphol, Haarlem, Hoofddorp en Amstelveen. Een ander adres in de Randstad? Reken bovenaan je vaste prijs uit of bel Michell.</p>
+    </div>
+  </section>
+
+  <!-- ============ SCHIPHOL / VLUCHTVOLGING ============ -->
+  <section class="section" id="vluchtinfo" aria-labelledby="vluchtinfo-title">
+    <div class="inner">
+      <div class="section-head">
+        <span class="section-label">Schiphol &middot; real-time vluchtinformatie</span>
+        <h2 class="section-title" id="vluchtinfo-title">Wij houden je vlucht in de gaten, jij hoeft dat niet te doen</h2>
+        <p class="section-intro">Geef bij het boeken je vluchtnummer door. Wij volgen je vlucht real-time, dus een vertraging leidt nooit tot een gemiste pickup.</p>
+      </div>
+      <div class="flight-grid">
+        <div class="flight-step">
+          <span class="flight-step-num">Bij het boeken</span>
+          <p>Je geeft je vluchtnummer door bij de reservering. Wij koppelen dat direct aan de actuele vluchtstatus.</p>
+        </div>
+        <div class="flight-step">
+          <span class="flight-step-num">Bij vertraging</span>
+          <p>Land je later dan gepland? De vlucht blijft gevolgd en de ophaaltijd schuift automatisch mee, zonder extra kosten.</p>
+        </div>
+        <div class="flight-step">
+          <span class="flight-step-num">Na de landing</span>
+          <p>Na het ophalen van je bagage belt of appt Michell je, meestal binnen 15 minuten. Je spreekt dan af waar je elkaar in de aankomsthal treft.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ BETAALMETHODEN ============ -->
+  <section class="section alt" id="betalen" aria-labelledby="betalen-title">
+    <div class="inner">
+      <div class="section-head">
+        <span class="section-label">Tarieven &amp; betalen</span>
+        <h2 class="section-title" id="betalen-title">Betalen zoals het jou uitkomt</h2>
+        <p class="section-intro">Geen verrassingen op de rekening: je krijgt vooraf een vaste prijs.</p>
+      </div>
+      <p class="pay-copy">Je rekent af via <strong>iDEAL</strong> vooraf, met <strong>pin of creditcard</strong> in de auto, <strong>contant</strong>, of <strong>op factuur</strong> bij zakelijk vervoer.</p>
+      <p class="pay-note">De vaste prijs blijft staan, ook bij vertraging. Annuleren kan gratis tot 6 uur van tevoren.</p>
+    </div>
+  </section>
+
+  <!-- ============ FAQ ============ -->
+  <section class="section" id="faq" aria-labelledby="faq-title">
+    <div class="inner">
+      <div class="section-head">
+        <span class="section-label">Veelgestelde vragen</span>
+        <h2 class="section-title" id="faq-title">Boeken, betalen en Schiphol</h2>
+      </div>
+      <div class="faq-list">
+        <details class="faq-item">
+          <summary>Hoe weet Le Grand Services dat mijn vlucht vertraging heeft?</summary>
+          <p>Geef bij het boeken je vluchtnummer door. Wij volgen je vlucht real-time en de ophaaltijd schuift automatisch mee.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Waar tref ik mijn chauffeur op Schiphol?</summary>
+          <p>Na het ophalen van je bagage belt of appt Michell je, meestal binnen 15 minuten, om af te spreken waar je elkaar in de aankomsthal treft.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Wat kost een taxi naar of van Schiphol?</summary>
+          <p>Wij rijden niet op de meter. Je spreekt vooraf een vaste prijs af via het boekingsformulier bovenaan de pagina.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Rijden jullie ook buiten Amsterdam, Rotterdam, Utrecht en Almere?</summary>
+          <p>Deze vier steden zijn onze populaire vaste routes. Andere bestemmingen in Nederland zijn ook mogelijk, bel voor een prijsopgave.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Bieden jullie facturatie voor zakelijk vervoer?</summary>
+          <p>Ja. Op verzoek stellen we een factuur op naam van je bedrijf op.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Hoe kan ik betalen bij Le Grand Services?</summary>
+          <p>Contant, met pin of creditcard, via iDEAL vooraf, of op factuur bij zakelijke ritten.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Hoe ver van tevoren moet ik boeken?</summary>
+          <p>Boek bij voorkeur vooraf via het formulier bovenaan de pagina. Voor een rit op korte termijn kun je ook gewoon bellen.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Kan ik mijn rit gratis annuleren?</summary>
+          <p>Ja, tot 6 uur voor de ophaaltijd kun je kosteloos annuleren.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Blijft de afgesproken prijs staan bij vertraging of file?</summary>
+          <p>Ja, de afgesproken prijs blijft staan, ook bij vertraging of file.</p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+</div>
+
 <footer class="site-footer">
   <div class="footer-inner">
     <p class="footer-signature">Le Grand Services</p>
@@ -585,7 +931,11 @@
         06 85 63 90 77<br>
         KVK 91578388 &middot; BTW NL004905641B18
         <div class="footer-links">
-          <a href="info.html">Schiphol &amp; Info</a>
+          <a href="#tarieven">Tarieven</a>
+          <a href="#diensten">Diensten</a>
+          <a href="#waarom">Waarom</a>
+          <a href="#vluchtinfo">Vluchtinfo</a>
+          <a href="#faq">Veelgestelde vragen</a>
         </div>
       </div>
       <div class="footer-cta">
