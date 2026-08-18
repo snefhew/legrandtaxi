@@ -46,42 +46,47 @@
     {
       "@type": "Question",
       "name": "Hoe weet Le Grand Taxi dat mijn vlucht vertraging heeft?",
-      "acceptedAnswer": {"@type": "Answer", "text": "Geeft u bij het boeken uw vluchtnummer door, dan volgen we uw vlucht real-time. Loopt de landing uit, dan schuift de ophaaltijd automatisch mee, zonder dat u hoeft te bellen of iets te wijzigen."}
+      "acceptedAnswer": {"@type": "Answer", "text": "Geef bij het boeken uw vluchtnummer door. Wij volgen uw vlucht real-time en de ophaaltijd schuift automatisch mee."}
     },
     {
       "@type": "Question",
       "name": "Waar tref ik mijn chauffeur op Schiphol?",
-      "acceptedAnswer": {"@type": "Answer", "text": "Na het ophalen van uw bagage neemt uw chauffeur rechtstreeks contact met u op om af te spreken waar u elkaar in de aankomsthal treft, zodat u niet hoeft te zoeken en er geen wachttijd bij de balie nodig is."}
+      "acceptedAnswer": {"@type": "Answer", "text": "Na het ophalen van uw bagage belt of appt Michell u, meestal binnen 15 minuten, om af te spreken waar u elkaar in de aankomsthal treft."}
     },
     {
       "@type": "Question",
       "name": "Wat kost een taxi naar of van Schiphol?",
-      "acceptedAnswer": {"@type": "Answer", "text": "Wij rijden niet op de meter. U spreekt vooraf een vaste prijs af via het boekingsformulier op de homepage, gebaseerd op de rit die u invoert, zodat u vooraf precies weet waar u aan toe bent."}
+      "acceptedAnswer": {"@type": "Answer", "text": "Wij rijden niet op de meter. U spreekt vooraf een vaste prijs af via het boekingsformulier op de homepage."}
     },
     {
       "@type": "Question",
       "name": "Rijden jullie ook buiten Amsterdam, Rotterdam, Utrecht en Almere?",
-      "acceptedAnswer": {"@type": "Answer", "text": "Deze vier steden zijn onze vaste tarieven, maar andere bestemmingen in Nederland zijn ook mogelijk. Bel ons voor een prijsopgave op maat."}
+      "acceptedAnswer": {"@type": "Answer", "text": "Deze vier steden zijn onze vaste tarieven. Andere bestemmingen in Nederland zijn ook mogelijk, bel voor een prijsopgave."}
     },
     {
       "@type": "Question",
       "name": "Bieden jullie facturatie voor zakelijk vervoer?",
-      "acceptedAnswer": {"@type": "Answer", "text": "Ja. Voor zakelijke ritten kunnen we op verzoek een factuur op naam van uw bedrijf opstellen, handig voor bedrijven die regelmatig gebruikmaken van onze diensten."}
+      "acceptedAnswer": {"@type": "Answer", "text": "Ja. Op verzoek stellen we een factuur op naam van uw bedrijf op."}
     },
     {
       "@type": "Question",
       "name": "Hoe kan ik betalen bij Le Grand Taxi?",
-      "acceptedAnswer": {"@type": "Answer", "text": "Contant, met pin of creditcard in de auto, via iDEAL vooraf, of op factuur bij zakelijke ritten. U spreekt bij het boeken af wat u het beste uitkomt."}
+      "acceptedAnswer": {"@type": "Answer", "text": "Contant, met pin of creditcard, via iDEAL vooraf, of op factuur bij zakelijke ritten."}
     },
     {
       "@type": "Question",
       "name": "Hoe ver van tevoren moet ik boeken?",
-      "acceptedAnswer": {"@type": "Answer", "text": "Vooraf boeken via het formulier op de homepage geeft de meeste zekerheid over uw voorkeurstijd. Heeft u een rit op korte termijn nodig, bel dan gerust, dan kijken we wat er mogelijk is."}
+      "acceptedAnswer": {"@type": "Answer", "text": "Boek bij voorkeur vooraf via het formulier op de homepage. Voor een rit op korte termijn kunt u ook gewoon bellen."}
+    },
+    {
+      "@type": "Question",
+      "name": "Kan ik mijn rit gratis annuleren?",
+      "acceptedAnswer": {"@type": "Answer", "text": "Ja, tot 6 uur voor de ophaaltijd kunt u kosteloos annuleren."}
     },
     {
       "@type": "Question",
       "name": "Blijft de afgesproken prijs staan bij vertraging of file?",
-      "acceptedAnswer": {"@type": "Answer", "text": "Ja. De vaste prijs die u vooraf krijgt bevestigd, blijft staan, ook als uw vlucht vertraging heeft of het onderweg drukker is dan verwacht."}
+      "acceptedAnswer": {"@type": "Answer", "text": "Ja, de afgesproken prijs blijft staan, ook bij vertraging of file."}
     }
   ]
 }
@@ -203,12 +208,12 @@
   h1.info-h1 em{ font-style:italic; font-weight:500; color:var(--ink-text); }
   .info-dek{ font-size:1.05rem; line-height:1.65; color:var(--text-soft); max-width:52ch; margin:0 0 2.2rem; }
 
-  .badge-row{ display:flex; flex-wrap:wrap; gap:.7rem; }
-  .badge{
-    display:inline-flex; align-items:center;
-    background:rgba(36,26,23,0.6); border:1px solid var(--line-strong); border-radius:var(--radius-pill);
-    padding:.6rem 1.1rem; font-size:.76rem; color:var(--text-soft); font-family:var(--font-mono); letter-spacing:.03em;
+  .trust-line{
+    display:flex; flex-wrap:wrap; align-items:baseline; gap:.4rem 1.2rem;
+    font-family:var(--font-mono); font-size:.86rem; letter-spacing:.02em; color:var(--text-soft);
   }
+  .trust-line b{ color:var(--ink-text); font-weight:700; }
+  .trust-sep{ color:var(--brass); font-weight:600; }
 
   /* ============ SECTIONS ============ */
   .section{ padding:clamp(2.8rem,5.5vw,4.2rem) 1.6rem; }
@@ -222,10 +227,10 @@
   .service-grid{ display:grid; grid-template-columns:1fr; gap:1.4rem; }
   @media (min-width:860px){ .service-grid{ grid-template-columns:repeat(3,1fr); } }
   .service-card{
-    background:var(--surface-1); border:1px solid var(--line); border-top:2px solid var(--ink-fill);
+    background:var(--surface-1); border:1px solid var(--line);
     border-radius:var(--radius); padding:1.7rem 1.5rem;
   }
-  .service-card h3{ font-family:var(--font-display); font-weight:600; font-size:1.3rem; margin:0 0 .8rem; letter-spacing:-.005em; }
+  .service-card h3{ font-family:var(--font-display); font-weight:600; font-size:1.3rem; margin:0 0 .8rem; letter-spacing:-.005em; color:var(--ink-text); }
   .service-card p{ font-size:.9rem; line-height:1.7; color:var(--text-soft); margin:0; }
 
   /* ---- chauffeur section ---- */
@@ -240,7 +245,6 @@
   .chauffeur-seal{ display:flex; align-items:center; gap:1rem; margin-bottom:1.3rem; }
   .chauffeur-seal-ring{
     width:52px; height:52px; border-radius:var(--radius-pill); border:1px solid var(--brass-soft);
-    box-shadow:inset 0 0 0 1px rgba(207,159,94,0.12);
     display:flex; align-items:center; justify-content:center; flex:none;
   }
   .chauffeur-seal-ring span{ font-family:var(--font-display); font-weight:600; font-style:italic; font-size:.88rem; color:var(--brass); }
@@ -254,13 +258,12 @@
   .flight-grid{ display:grid; grid-template-columns:1fr; gap:1.3rem; }
   @media (min-width:760px){ .flight-grid{ grid-template-columns:repeat(3,1fr); } }
   .flight-step{ border-left:2px solid var(--line-strong); padding:.2rem 0 .2rem 1.1rem; }
-  .flight-step-num{ font-family:var(--font-mono); font-size:.7rem; color:var(--ink-text); letter-spacing:.1em; display:block; margin-bottom:.5rem; }
-  .flight-step h4{ font-family:var(--font-display); font-weight:600; font-size:1.05rem; margin:0 0 .5rem; }
-  .flight-step p{ font-size:.85rem; line-height:1.65; color:var(--text-soft); margin:0; }
+  .flight-step-num{ font-family:var(--font-mono); font-size:.82rem; font-weight:700; color:var(--ink-text); letter-spacing:.03em; display:block; margin-bottom:.6rem; }
+  .flight-step p{ font-size:.88rem; line-height:1.65; color:var(--text-soft); margin:0; }
 
   /* ---- betalen (payment methods) ---- */
   .pay-copy{ font-size:.98rem; line-height:1.75; color:var(--text-soft); max-width:62ch; margin:0 0 1.6rem; }
-  .pay-copy strong{ color:var(--text); }
+  .pay-copy strong{ color:var(--ink-text); font-weight:700; }
   .pay-note{ margin-top:1.2rem; font-size:.85rem; color:var(--text-soft); max-width:62ch; }
 
   /* ---- FAQ ---- */
@@ -329,13 +332,13 @@
   <div class="info-hero-inner">
     <span class="info-eyebrow">Schiphol &middot; informatie</span>
     <h1 class="info-h1">Uw rit naar Schiphol, <em>tot in de puntjes</em> geregeld</h1>
-    <p class="info-dek">Alles wat u wilt weten voordat u instapt: hoe we uw vlucht volgen, wie er rijdt, hoe u kunt betalen en wat onze drie diensten precies inhouden.</p>
-    <div class="badge-row">
-      <span class="badge">Vaste prijs, vooraf afgesproken</span>
-      <span class="badge">Vlucht wordt real-time gevolgd</span>
-      <span class="badge">Persoonlijk contact, geen callcenter</span>
-      <span class="badge">Vergunninghouder taxivervoer</span>
-    </div>
+    <p class="info-dek">Hoe we uw vlucht volgen, wie er rijdt en hoe u betaalt. Praktische informatie, kort en concreet.</p>
+    <p class="trust-line">
+      <span><b>Vaste prijs</b> vooraf</span><span class="trust-sep" aria-hidden="true">&middot;</span>
+      <span><b>Real-time</b> vluchtvolging</span><span class="trust-sep" aria-hidden="true">&middot;</span>
+      <span>Persoonlijk contact</span><span class="trust-sep" aria-hidden="true">&middot;</span>
+      <span>Vergunninghouder taxivervoer</span>
+    </p>
   </div>
 </div>
 
@@ -345,20 +348,20 @@
     <div class="section-head">
       <span class="section-label">Onze diensten</span>
       <h2 class="section-title" id="diensten-title">Drie manieren waarop we u vervoeren</h2>
-      <p class="section-intro">Le Grand Taxi is geen taxi met een meter. Voor elke rit spreken we vooraf een vaste prijs af, of het nu om een korte lokale rit gaat, een transfer naar Schiphol, of terugkerend zakelijk vervoer.</p>
+      <p class="section-intro">Le Grand Taxi rijdt niet op de meter. U weet vooraf de prijs, van een lokale rit tot zakelijk vervoer.</p>
     </div>
     <div class="service-grid">
       <article class="service-card">
         <h3>Lokaal taxivervoer</h3>
-        <p>Voor ritten binnen en rond Amsterdam, Rotterdam, Utrecht en Almere: naar het station, een afspraak, een avondje uit of gewoon naar huis. U boekt vooraf, spreekt een vaste prijs af en stapt in zonder verrassingen achteraf. Ideaal voor terugkerende ritten waarbij u liever met een vast gezicht rijdt dan met een wisselende taxicentrale.</p>
+        <p>Voor ritten binnen en rond Amsterdam, Rotterdam, Utrecht en Almere: naar het station, een afspraak of een avondje uit. U boekt vooraf tegen een vaste prijs, zonder verrassingen achteraf. Ideaal als u liever met een vast gezicht rijdt dan met een wisselende taxicentrale.</p>
       </article>
       <article class="service-card">
         <h3>Taxi van en naar de luchthaven</h3>
-        <p>Onze kern: taxivervoer van en naar Schiphol. Bij een vertrek halen we u op tijd op zodat u ruim voor de incheckbalie staat. Bij een aankomst volgen we uw vlucht real-time, zodat een vertraagde landing nooit betekent dat u tevergeefs staat te wachten of dat wij te laat komen. Meer over hoe dat precies werkt leest u verderop op deze pagina.</p>
+        <p>Onze kern: taxivervoer van en naar Schiphol. Bij vertrek staat u ruim op tijd bij de incheckbalie. Bij aankomst volgen we uw vlucht real-time, ook bij vertraging.</p>
       </article>
       <article class="service-card">
         <h3>Zakelijk vervoer</h3>
-        <p>Voor bedrijven die op tijd, discreet en representatief vervoerd willen worden: naar een klantafspraak, een luchthaven voor een zakenreis, of structureel woon-werkverkeer voor een collega. Op verzoek stellen we een factuur op naam van uw bedrijf op, zodat zakelijke ritten eenvoudig via de administratie lopen in plaats van los te worden gedeclareerd.</p>
+        <p>Voor bedrijven die op tijd en representatief vervoerd willen worden: naar een klantafspraak, de luchthaven of vast woon-werkverkeer. Op verzoek factureren we op naam van uw bedrijf.</p>
       </article>
     </div>
   </div>
@@ -371,16 +374,17 @@
       <div class="chauffeur-copy">
         <span class="section-label">Achter het stuur</span>
         <h2 class="section-title" id="chauffeur-title">Persoonlijk, van deur tot deur</h2>
-        <p>Vandaag rijdt <strong>Michell</strong> zelf het overgrote deel van de ritten. Geen anoniem callcenter, geen wisselende chauffeur bij elke boeking: u boekt bij Le Grand Taxi en u weet wie er voorrijdt. Dat persoonlijke contact, van de bevestiging van uw boeking tot het moment dat u uitstapt, is waar dit bedrijf om draait.</p>
-        <p>Le Grand Taxi is opgezet om mee te groeien. Naarmate de vraag toeneemt, sluiten er zorgvuldig gekozen chauffeurs aan die dezelfde standaard aanhouden: op tijd, representatief en met oog voor de klant. Voor u verandert er niets aan de aanpak, alleen aan wie er precies rijdt.</p>
-        <p>Iedere chauffeur die voor Le Grand Taxi rijdt, doet dat met een geldige chauffeurskaart en de wettelijk verplichte vergunning voor taxivervoer.</p>
+        <p>Vandaag rijdt <strong>Michell</strong> zelf het grootste deel van de ritten. Geen callcenter, geen wisselende chauffeur: u weet wie er voorrijdt.</p>
+        <p>Michell kent de wegen rond Amsterdam en Schiphol goed en kiest altijd de snelste veilige route.</p>
+        <p>Le Grand Taxi groeit mee met de vraag. Nieuwe chauffeurs sluiten aan, altijd met dezelfde standaard: op tijd en representatief.</p>
+        <p>Iedere chauffeur rijdt met een geldige chauffeurskaart en de wettelijke vergunning voor taxivervoer.</p>
       </div>
       <div class="chauffeur-card">
         <div class="chauffeur-seal">
           <span class="chauffeur-seal-ring" aria-hidden="true"><span>LG</span></span>
           <span class="chauffeur-seal-text"><b>Michell</b><span>Chauffeur, Le Grand Taxi</span></span>
         </div>
-        <p class="chauffeur-card-copy">Michell rijdt vandaag zelf het grootste deel van de ritten in en rond Amsterdam, Rotterdam, Utrecht, Almere en Schiphol, met een geldige chauffeurskaart en de wettelijke vergunning voor taxivervoer op zak, en blijft van boeking tot aankomst uw persoonlijke aanspreekpunt. Komen er meer chauffeurs bij, dan verandert er aan die standaard niets.</p>
+        <p class="chauffeur-card-copy">Zelf achter het stuur, van boeking tot aankomst uw vaste aanspreekpunt in en rond Amsterdam, Rotterdam, Utrecht, Almere en Schiphol.</p>
         <div class="chauffeur-note">Vergunninghouder taxivervoer &middot; P-136560</div>
       </div>
     </div>
@@ -393,23 +397,20 @@
     <div class="section-head">
       <span class="section-label">Schiphol &middot; real-time vluchtinformatie</span>
       <h2 class="section-title" id="schiphol-title">Wij houden uw vlucht in de gaten, u hoeft dat niet te doen</h2>
-      <p class="section-intro">Geef bij het boeken uw vluchtnummer door. Vanaf dat moment volgen we uw vlucht real-time, zodat een vertraging bij u nooit tot een gemiste of te vroege pickup leidt.</p>
+      <p class="section-intro">Geef bij het boeken uw vluchtnummer door. Wij volgen uw vlucht real-time, dus een vertraging leidt nooit tot een gemiste pickup.</p>
     </div>
     <div class="flight-grid">
       <div class="flight-step">
         <span class="flight-step-num">Bij het boeken</span>
-        <h4>Vluchtnummer doorgeven</h4>
-        <p>U geeft uw vluchtnummer door bij de reservering. Wij koppelen dat aan de actuele vluchtstatus, van geplande landingstijd tot eventuele vertraging.</p>
+        <p>U geeft uw vluchtnummer door bij de reservering. Wij koppelen dat direct aan de actuele vluchtstatus.</p>
       </div>
       <div class="flight-step">
-        <span class="flight-step-num">Tijdens de vlucht</span>
-        <h4>De ophaaltijd schuift automatisch mee</h4>
-        <p>Landt uw toestel later dan gepland? Dan passen we de ophaaltijd daarop aan, zonder dat u hoeft te bellen, te wijzigen of extra te betalen.</p>
+        <span class="flight-step-num">Bij vertraging</span>
+        <p>Landt u later dan gepland? De vlucht blijft gevolgd en de ophaaltijd schuift automatisch mee, zonder extra kosten.</p>
       </div>
       <div class="flight-step">
         <span class="flight-step-num">Na de landing</span>
-        <h4>Contact zodra u er bent</h4>
-        <p>Na het ophalen van uw bagage neemt uw chauffeur rechtstreeks contact met u op om af te spreken waar u elkaar in de aankomsthal treft, zodat u niet hoeft te zoeken.</p>
+        <p>Na het ophalen van uw bagage belt of appt Michell u, meestal binnen 15 minuten. U spreekt dan af waar u elkaar in de aankomsthal treft.</p>
       </div>
     </div>
   </div>
@@ -421,16 +422,10 @@
     <div class="section-head">
       <span class="section-label">Tarieven &amp; betalen</span>
       <h2 class="section-title" id="betalen-title">Betalen zoals het u uitkomt</h2>
-      <p class="section-intro">Geen verrassingen op de rekening: u krijgt vooraf een vaste prijs, en u kiest zelf hoe u die afrekent.</p>
+      <p class="section-intro">Geen verrassingen op de rekening: u krijgt vooraf een vaste prijs.</p>
     </div>
-    <p class="pay-copy">U rekent af zoals het u uitkomt: <strong>vooraf via iDEAL</strong>, <strong>contactloos met pin of creditcard</strong> in de auto, <strong>contant</strong> bij het uitstappen, of <strong>op factuur</strong> op naam van uw bedrijf wanneer het om zakelijk vervoer gaat.</p>
-    <div class="badge-row">
-      <span class="badge">iDEAL</span>
-      <span class="badge">Pin &amp; creditcard</span>
-      <span class="badge">Contant</span>
-      <span class="badge">Op factuur, zakelijk</span>
-    </div>
-    <p class="pay-note">De vaste prijs die u vooraf krijgt bevestigd, blijft staan, ook bij vertraging of drukte onderweg. U betaalt nooit meer dan is afgesproken.</p>
+    <p class="pay-copy">U rekent af via <strong>iDEAL</strong> vooraf, met <strong>pin of creditcard</strong> in de auto, <strong>contant</strong>, of <strong>op factuur</strong> bij zakelijk vervoer.</p>
+    <p class="pay-note">De vaste prijs blijft staan, ook bij vertraging. Annuleren kan gratis tot 6 uur van tevoren.</p>
   </div>
 </section>
 
@@ -439,40 +434,44 @@
   <div class="inner">
     <div class="section-head">
       <span class="section-label">Veelgestelde vragen</span>
-      <h2 class="section-title" id="faq-title">Nog vragen over uw rit?</h2>
+      <h2 class="section-title" id="faq-title">Boeken, betalen en Schiphol</h2>
     </div>
     <div class="faq-list">
       <details class="faq-item">
         <summary>Hoe weet Le Grand Taxi dat mijn vlucht vertraging heeft?</summary>
-        <p>Geeft u bij het boeken uw vluchtnummer door, dan volgen we uw vlucht real-time. Loopt de landing uit, dan schuift de ophaaltijd automatisch mee, zonder dat u hoeft te bellen of iets te wijzigen.</p>
+        <p>Geef bij het boeken uw vluchtnummer door. Wij volgen uw vlucht real-time en de ophaaltijd schuift automatisch mee.</p>
       </details>
       <details class="faq-item">
         <summary>Waar tref ik mijn chauffeur op Schiphol?</summary>
-        <p>Na het ophalen van uw bagage neemt uw chauffeur rechtstreeks contact met u op om af te spreken waar u elkaar in de aankomsthal treft, zodat u niet hoeft te zoeken en er geen wachttijd bij een balie nodig is.</p>
+        <p>Na het ophalen van uw bagage belt of appt Michell u, meestal binnen 15 minuten, om af te spreken waar u elkaar in de aankomsthal treft.</p>
       </details>
       <details class="faq-item">
         <summary>Wat kost een taxi naar of van Schiphol?</summary>
-        <p>Wij rijden niet op de meter. U spreekt vooraf een vaste prijs af via het boekingsformulier op de homepage, gebaseerd op de rit die u invoert, zodat u vooraf precies weet waar u aan toe bent.</p>
+        <p>Wij rijden niet op de meter. U spreekt vooraf een vaste prijs af via het boekingsformulier op de homepage.</p>
       </details>
       <details class="faq-item">
         <summary>Rijden jullie ook buiten Amsterdam, Rotterdam, Utrecht en Almere?</summary>
-        <p>Deze vier steden zijn onze vaste tarieven, maar andere bestemmingen in Nederland zijn ook mogelijk. Bel ons voor een prijsopgave op maat.</p>
+        <p>Deze vier steden zijn onze vaste tarieven. Andere bestemmingen in Nederland zijn ook mogelijk, bel voor een prijsopgave.</p>
       </details>
       <details class="faq-item">
         <summary>Bieden jullie facturatie voor zakelijk vervoer?</summary>
-        <p>Ja. Voor zakelijke ritten kunnen we op verzoek een factuur op naam van uw bedrijf opstellen, handig voor bedrijven die regelmatig gebruikmaken van onze diensten.</p>
+        <p>Ja. Op verzoek stellen we een factuur op naam van uw bedrijf op.</p>
       </details>
       <details class="faq-item">
         <summary>Hoe kan ik betalen bij Le Grand Taxi?</summary>
-        <p>Contant, met pin of creditcard in de auto, via iDEAL vooraf, of op factuur bij zakelijke ritten. U spreekt bij het boeken af wat u het beste uitkomt.</p>
+        <p>Contant, met pin of creditcard, via iDEAL vooraf, of op factuur bij zakelijke ritten.</p>
       </details>
       <details class="faq-item">
         <summary>Hoe ver van tevoren moet ik boeken?</summary>
-        <p>Vooraf boeken via het formulier op de homepage geeft de meeste zekerheid over uw voorkeurstijd. Heeft u een rit op korte termijn nodig, bel dan gerust, dan kijken we wat er mogelijk is.</p>
+        <p>Boek bij voorkeur vooraf via het formulier op de homepage. Voor een rit op korte termijn kunt u ook gewoon bellen.</p>
+      </details>
+      <details class="faq-item">
+        <summary>Kan ik mijn rit gratis annuleren?</summary>
+        <p>Ja, tot 6 uur voor de ophaaltijd kunt u kosteloos annuleren.</p>
       </details>
       <details class="faq-item">
         <summary>Blijft de afgesproken prijs staan bij vertraging of file?</summary>
-        <p>Ja. De vaste prijs die u vooraf krijgt bevestigd, blijft staan, ook als uw vlucht vertraging heeft of het onderweg drukker is dan verwacht.</p>
+        <p>Ja, de afgesproken prijs blijft staan, ook bij vertraging of file.</p>
       </details>
     </div>
   </div>
