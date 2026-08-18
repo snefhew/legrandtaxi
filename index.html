@@ -120,6 +120,9 @@
     --brass:#8a6220; --brass-soft:rgba(138,98,32,0.45);
     --text:#241512; --text-soft:#6a5c50;
     --line:rgba(36,21,18,0.14); --line-strong:rgba(36,21,18,0.3);
+    /* keyboard-focus ring: a neutral dark outline, deliberately NOT the red accent,
+       so focus is unmistakable without reading as a brand/error colour */
+    --focus:#20140f;
     --radius:6px; --radius-pill:999px;
     --font-body:-apple-system,"Segoe UI",Roboto,sans-serif;
     --font-mono:ui-monospace,"SF Mono",Consolas,monospace;
@@ -189,7 +192,7 @@
   .btn.ghost{ background:transparent; color:var(--text); border-color:var(--line-strong); }
   .btn.ghost:hover{ border-color:var(--ink-text); color:var(--ink-text); filter:none; box-shadow:none; }
   .btn:disabled{ opacity:.4; cursor:not-allowed; filter:none; transform:none; box-shadow:none; }
-  .btn:focus-visible{ outline:2px solid var(--ink-text); outline-offset:2px; }
+  .btn:focus-visible{ outline:2px solid var(--focus); outline-offset:2px; }
   .btn.block{ width:100%; }
 
   /* ============ HERO ============ */
@@ -204,12 +207,14 @@
      multiply so its cream ground melts into the page canvas with no rectangular
      seam. It supports the headline, never competes with it. */
   .hero-illustration{
-    display:block; width:100%; max-width:440px; height:auto; margin:1.4rem auto 0;
+    display:block; width:100%; max-width:460px; height:auto; margin:2rem auto 0;
     aspect-ratio:3/2; object-fit:cover; object-position:center center;
     border-radius:var(--radius); pointer-events:none;
   }
   @media (min-width:860px){
-    .hero-illustration{ max-width:520px; margin:2.4rem 0 0; margin-top:auto; aspect-ratio:16/11; }
+    /* Confident lower-left anchor: full column width, clearly separated from the
+       small process line above it, and sized to bottom out level with the form. */
+    .hero-illustration{ max-width:none; margin:3.4rem 0 0; aspect-ratio:16/10; }
   }
 
   .eyebrow{
@@ -252,14 +257,14 @@
     min-height:46px; width:100%; transition:border-color .15s ease, background .15s ease;
   }
   .hero-calc-field input::placeholder{ color:#847c72; }
-  .hero-calc-field input:focus-visible{ outline:2px solid var(--ink-text); outline-offset:1px; border-color:var(--line-strong); background:var(--surface-3); }
+  .hero-calc-field input:focus-visible{ outline:2px solid var(--focus); outline-offset:1px; border-color:var(--line-strong); background:var(--surface-3); }
   .hero-calc-swap{
     align-self:center; width:34px; height:34px; border-radius:var(--radius-pill); border:1px solid var(--line);
     background:var(--surface-2); color:var(--text-soft); cursor:pointer; display:flex; align-items:center; justify-content:center;
     transition:border-color .15s ease, color .15s ease, transform .15s ease; flex:none; margin:-.15rem 0;
   }
   .hero-calc-swap:hover{ border-color:var(--ink-text); color:var(--ink-text); transform:rotate(180deg); }
-  .hero-calc-swap:focus-visible{ outline:2px solid var(--ink-text); outline-offset:2px; }
+  .hero-calc-swap:focus-visible{ outline:2px solid var(--focus); outline-offset:2px; }
 
   /* the hero card holds the COMPLETE booking form (client requirement: no
      modal needed to finish a booking) - compact 2-up rows for datum/tijd,
@@ -368,7 +373,7 @@
     transition:border-color .15s ease, color .15s ease, transform .15s ease;
   }
   .modal-close:hover{ border-color:var(--ink-text); color:var(--ink-text); transform:rotate(90deg); }
-  .modal-close:focus-visible{ outline:2px solid var(--ink-text); outline-offset:2px; }
+  .modal-close:focus-visible{ outline:2px solid var(--focus); outline-offset:2px; }
 
   .modal-scroll{ overflow-y:auto; padding:1.9rem 1.5rem 1.2rem; }
   .modal-scroll h2{ font-family:var(--font-display); font-weight:700; font-size:1.6rem; letter-spacing:-.005em; margin:0 .1rem .35rem; padding-right:2.4rem; }
@@ -388,7 +393,7 @@
   }
   .field-group input::placeholder{ color:#847c72; }
   .field-group input{ transition:border-color .15s ease, background .15s ease; }
-  .field-group input:focus-visible{ outline:2px solid var(--ink-text); outline-offset:1px; border-color:var(--line-strong); background:var(--surface-3); }
+  .field-group input:focus-visible{ outline:2px solid var(--focus); outline-offset:1px; border-color:var(--line-strong); background:var(--surface-3); }
   .fixed-value{
     background:var(--surface-1); border:1px dashed var(--line-strong); border-radius:var(--radius);
     color:var(--text-soft); padding:.8rem .85rem; font-size:.95rem; min-height:48px; display:flex; align-items:center;
@@ -411,7 +416,7 @@
   }
   .segmented label:hover{ border-color:var(--line-strong); color:var(--text); }
   .vh-radio:checked + label{ background:var(--ink-fill); color:var(--on-ink); border-color:var(--ink-fill); }
-  .vh-radio:focus-visible + label{ outline:2px solid var(--ink-text); outline-offset:2px; }
+  .vh-radio:focus-visible + label{ outline:2px solid var(--focus); outline-offset:2px; }
 
   /* ---- optional trip-detail fields: passenger stepper + luggage choice ---- */
   .stepper{
@@ -424,7 +429,7 @@
     transition:background .15s ease, color .15s ease;
   }
   .stepper-btn:hover{ background:var(--surface-3); color:var(--ink-text); }
-  .stepper-btn:focus-visible{ outline:2px solid var(--ink-text); outline-offset:-2px; }
+  .stepper-btn:focus-visible{ outline:2px solid var(--focus); outline-offset:-2px; }
   .stepper input[type="number"]{
     border:none; border-left:1px solid var(--line); border-right:1px solid var(--line); border-radius:0;
     text-align:center; min-height:48px; width:100%; background:transparent; color:var(--text);
@@ -1901,30 +1906,38 @@
       cfg.waSendBtn.focus();
     });
 
+    // Clears every field and returns the flow to a blank form view. Shared by
+    // the "Nieuwe boeking" button and by the modal's open handler (so reopening
+    // the modal after a submitted booking always shows a fresh form, never the
+    // previous confirmation screen).
+    function resetForm(){
+      cfg.vanInput.value = '';
+      cfg.naarInput.value = '';
+      cfg.datumInput.value = '';
+      cfg.tijdInput.value = '';
+      cfg.naamInput.value = '';
+      cfg.telefoonInput.value = '';
+      if (cfg.passagiersInput) cfg.passagiersInput.value = '';
+      if (cfg.vluchtnummerInput) cfg.vluchtnummerInput.value = '';
+      if (cfg.bagageName){
+        var bagageRadios = document.querySelectorAll('input[name="' + cfg.bagageName + '"]');
+        for (var r = 0; r < bagageRadios.length; r++){ bagageRadios[r].checked = (r === 0); }
+      }
+      vanGeo = { status: 'idle', result: null };
+      naarGeo = { status: 'idle', result: null };
+      currentPrice = null;
+      renderGeoStatus(cfg.vanStatusEl, vanGeo);
+      renderGeoStatus(cfg.naarStatusEl, naarGeo);
+      renderPrice();
+      cfg.formView.hidden = false;
+      cfg.confirmView.hidden = true;
+      validateForm();
+    }
+
     if (cfg.newBookingBtn){
       cfg.newBookingBtn.addEventListener('click', function(){
-        cfg.vanInput.value = '';
-        cfg.naarInput.value = '';
-        cfg.datumInput.value = '';
-        cfg.tijdInput.value = '';
-        cfg.naamInput.value = '';
-        cfg.telefoonInput.value = '';
-        if (cfg.passagiersInput) cfg.passagiersInput.value = '';
-        if (cfg.vluchtnummerInput) cfg.vluchtnummerInput.value = '';
-        if (cfg.bagageName){
-          var bagageRadios = document.querySelectorAll('input[name="' + cfg.bagageName + '"]');
-          for (var r = 0; r < bagageRadios.length; r++){ bagageRadios[r].checked = (r === 0); }
-        }
-        vanGeo = { status: 'idle', result: null };
-        naarGeo = { status: 'idle', result: null };
-        currentPrice = null;
-        renderGeoStatus(cfg.vanStatusEl, vanGeo);
-        renderGeoStatus(cfg.naarStatusEl, naarGeo);
-        renderPrice();
-        cfg.formView.hidden = false;
-        cfg.confirmView.hidden = true;
+        resetForm();
         if (cfg.onReset) cfg.onReset();
-        validateForm();
       });
     }
 
@@ -1932,7 +1945,10 @@
     validateForm();
 
     return {
-      focusFirst: function(){ cfg.vanInput.focus(); }
+      focusFirst: function(){ cfg.vanInput.focus(); },
+      // true when a booking has been submitted and the confirmation screen is showing
+      isConfirmShowing: function(){ return !cfg.confirmView.hidden; },
+      resetForm: resetForm
     };
   }
 
@@ -1988,6 +2004,12 @@
 
   function openModal(trigger){
     lastTrigger = trigger;
+    // If the modal still shows a previously submitted booking, start it fresh so
+    // every open lands on a usable form (never a stale confirmation screen).
+    if (modalFlow.isConfirmShowing()){
+      modalFlow.resetForm();
+      modalFooter.hidden = false;
+    }
     if (typeof dialog.showModal === 'function') {
       dialog.showModal();
     } else {
