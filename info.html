@@ -1,0 +1,511 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="data:,">
+<title>Informatie & Schiphol taxi | Le Grand Taxi</title>
+<meta name="description" content="Praktische informatie over Le Grand Taxi: real-time vluchtinformatie op Schiphol, betaalmethoden, onze chauffeur(s) en drie diensten: lokaal taxivervoer, luchthavenvervoer en zakelijk vervoer.">
+<link rel="canonical" href="https://snefhew.github.io/legrandtaxi/info.html">
+
+<!-- Open Graph / social preview -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Le Grand Taxi">
+<meta property="og:title" content="Informatie & Schiphol taxi | Le Grand Taxi">
+<meta property="og:description" content="Real-time vluchtinformatie, betaalmethoden en onze diensten: lokaal taxivervoer, luchthavenvervoer en zakelijk vervoer.">
+<meta property="og:url" content="https://snefhew.github.io/legrandtaxi/info.html">
+<meta property="og:image" content="https://snefhew.github.io/legrandtaxi/assets/logo.png">
+<meta property="og:locale" content="nl_NL">
+<meta name="twitter:card" content="summary_large_image">
+
+<!-- Structured data: local business + FAQ, mirrors the visible content below so it stays accurate -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TaxiService",
+  "name": "Le Grand Taxi",
+  "telephone": "+31685639077",
+  "url": "https://snefhew.github.io/legrandtaxi/",
+  "areaServed": [
+    {"@type": "City", "name": "Amsterdam"},
+    {"@type": "City", "name": "Rotterdam"},
+    {"@type": "City", "name": "Utrecht"},
+    {"@type": "City", "name": "Almere"},
+    {"@type": "Airport", "name": "Amsterdam Airport Schiphol"}
+  ],
+  "priceRange": "EUR",
+  "vatID": "NL004905641B18",
+  "sameAs": ["https://snefhew.github.io/legrandtaxi/"]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Hoe weet Le Grand Taxi dat mijn vlucht vertraging heeft?",
+      "acceptedAnswer": {"@type": "Answer", "text": "Geeft u bij het boeken uw vluchtnummer door, dan volgen we uw vlucht real-time. Loopt de landing uit, dan schuift de ophaaltijd automatisch mee, zonder dat u hoeft te bellen of iets te wijzigen."}
+    },
+    {
+      "@type": "Question",
+      "name": "Waar tref ik mijn chauffeur op Schiphol?",
+      "acceptedAnswer": {"@type": "Answer", "text": "Na het ophalen van uw bagage neemt uw chauffeur rechtstreeks contact met u op om af te spreken waar u elkaar in de aankomsthal treft, zodat u niet hoeft te zoeken en er geen wachttijd bij de balie nodig is."}
+    },
+    {
+      "@type": "Question",
+      "name": "Wat kost een taxi naar of van Schiphol?",
+      "acceptedAnswer": {"@type": "Answer", "text": "Wij rijden niet op de meter. U spreekt vooraf een vaste prijs af via het boekingsformulier op de homepage, gebaseerd op de rit die u invoert, zodat u vooraf precies weet waar u aan toe bent."}
+    },
+    {
+      "@type": "Question",
+      "name": "Rijden jullie ook buiten Amsterdam, Rotterdam, Utrecht en Almere?",
+      "acceptedAnswer": {"@type": "Answer", "text": "Deze vier steden zijn onze vaste tarieven, maar andere bestemmingen in Nederland zijn ook mogelijk. Bel ons voor een prijsopgave op maat."}
+    },
+    {
+      "@type": "Question",
+      "name": "Bieden jullie facturatie voor zakelijk vervoer?",
+      "acceptedAnswer": {"@type": "Answer", "text": "Ja. Voor zakelijke ritten kunnen we op verzoek een factuur op naam van uw bedrijf opstellen, handig voor bedrijven die regelmatig gebruikmaken van onze diensten."}
+    },
+    {
+      "@type": "Question",
+      "name": "Hoe kan ik betalen bij Le Grand Taxi?",
+      "acceptedAnswer": {"@type": "Answer", "text": "Contant, met pin of creditcard in de auto, via iDEAL vooraf, of op factuur bij zakelijke ritten. U spreekt bij het boeken af wat u het beste uitkomt."}
+    },
+    {
+      "@type": "Question",
+      "name": "Hoe ver van tevoren moet ik boeken?",
+      "acceptedAnswer": {"@type": "Answer", "text": "Vooraf boeken via het formulier op de homepage geeft de meeste zekerheid over uw voorkeurstijd. Heeft u een rit op korte termijn nodig, bel dan gerust, dan kijken we wat er mogelijk is."}
+    },
+    {
+      "@type": "Question",
+      "name": "Blijft de afgesproken prijs staan bij vertraging of file?",
+      "acceptedAnswer": {"@type": "Answer", "text": "Ja. De vaste prijs die u vooraf krijgt bevestigd, blijft staan, ook als uw vlucht vertraging heeft of het onderweg drukker is dan verwacht."}
+    }
+  ]
+}
+</script>
+
+<style>
+  @font-face{
+    font-family:'Bodoni Grand';
+    font-style:normal;
+    font-weight:400 900;
+    font-display:swap;
+    src:url("assets/fonts/bodoni-normal-latin.woff2") format('woff2');
+  }
+  @font-face{
+    font-family:'Bodoni Grand';
+    font-style:italic;
+    font-weight:400 900;
+    font-display:swap;
+    src:url("assets/fonts/bodoni-italic-latin.woff2") format('woff2');
+  }
+
+  :root{
+    --canvas:#181110; --surface-1:#241a17; --surface-2:#2f2320; --surface-3:#3c2d27; --surface-image:#33201a;
+    --ink-fill:#c73a26; --ink-text:#f0785a;
+    --brass:#cf9f5e; --brass-soft:rgba(207,159,94,0.4);
+    --text:#f8f1e7; --text-soft:#bcaf9e;
+    --line:rgba(248,241,231,0.13); --line-strong:rgba(248,241,231,0.3);
+    --radius:6px; --radius-pill:999px;
+    --font-body:-apple-system,"Segoe UI",Roboto,sans-serif;
+    --font-mono:ui-monospace,"SF Mono",Consolas,monospace;
+    --font-display:'Bodoni Grand','Bodoni MT','Didot',Georgia,'Times New Roman',serif;
+  }
+  *{box-sizing:border-box;}
+  html{ -webkit-text-size-adjust:100%; }
+  img{ max-width:100%; display:block; }
+  body{
+    margin:0; background-color:var(--canvas); color:var(--text);
+    background-image:radial-gradient(ellipse 900px 520px at 85% -10%, rgba(199,58,38,0.16), transparent 60%),
+      radial-gradient(ellipse 700px 480px at -5% 100%, rgba(207,159,94,0.07), transparent 65%),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.03 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-attachment:fixed;
+    font-family:var(--font-body); line-height:1.5;
+  }
+  .inner{ max-width:1160px; margin:0 auto; padding:0 1.6rem; }
+  a{ color:inherit; }
+
+  /* ============ MASTHEAD + NAV ============ */
+  .masthead{ border-bottom:1px solid var(--line); }
+  .masthead-inner{
+    max-width:1160px; margin:0 auto; padding:.55rem 1.6rem;
+    display:flex; align-items:center; justify-content:center; gap:1rem;
+    font-family:var(--font-mono); font-size:.66rem; letter-spacing:.12em; text-transform:uppercase;
+    color:var(--text-soft); white-space:nowrap;
+  }
+
+  nav.site-nav{
+    position:sticky; top:0; z-index:40;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:1.05rem 1.6rem; max-width:1160px; margin:0 auto;
+    background:rgba(20,17,16,0.78); backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line);
+  }
+  .brand{ display:flex; align-items:center; gap:.65rem; text-decoration:none; }
+  .brand img.icon{ height:27px; width:auto; }
+  .brand img.wordmark{ height:16px; width:auto; }
+  .navright{ display:flex; align-items:center; gap:1.1rem; }
+  .navlink{ font-size:.8rem; color:var(--text-soft); text-decoration:none; transition:color .15s ease; }
+  .navlink:hover{ color:var(--text); }
+  .phone-link{ font-size:.85rem; color:var(--text-soft); text-decoration:none; font-variant-numeric:tabular-nums; font-family:var(--font-mono); transition:color .15s ease; }
+  .phone-link:hover{ color:var(--ink-text); }
+
+  .btn{
+    font-family:var(--font-body); font-size:.78rem; font-weight:600;
+    text-transform:uppercase; letter-spacing:.07em;
+    padding:.85rem 1.4rem; border-radius:0; border:1px solid var(--ink-fill);
+    background:var(--ink-fill); color:var(--text); text-decoration:none; display:inline-flex;
+    align-items:center; justify-content:center; cursor:pointer; min-height:48px;
+    transition:filter .15s ease, transform .12s ease, border-color .15s ease, background .15s ease, box-shadow .2s ease;
+  }
+  .btn:hover{ filter:brightness(1.14); transform:translateY(-1px); box-shadow:0 6px 18px -6px rgba(199,58,38,0.55); }
+  .btn:active{ transform:scale(.98) translateY(0); box-shadow:none; }
+  .btn.ghost{ background:transparent; color:var(--text); border-color:var(--line-strong); }
+  .btn.ghost:hover{ border-color:var(--ink-text); color:var(--ink-text); filter:none; box-shadow:none; }
+
+  /* ============ HERO ============ */
+  /*
+    Background photo: client-supplied shot of Schiphol's air traffic control tower,
+    already cropped and duotone-graded to the site palette (assets/hero-schiphol.jpg, 2400x1740).
+    background-position is anchored to "top" deliberately: there is more headroom in the sky
+    above the tower than below it, so top-anchoring keeps the tower itself in frame at any
+    hero height/crop ratio. The ::before gradient darkens the image for text contrast, it is
+    intentionally heavier near the top (where the headline sits over open sky) and again at
+    the bottom edge; keep it if the photo is ever swapped for a different one.
+  */
+  .info-hero{
+    position:relative; overflow:hidden; isolation:isolate;
+    padding:clamp(3.2rem,9vw,6.5rem) 1.6rem clamp(3rem,7vw,5rem);
+    background-color:#241a17;
+    background-image:url("assets/hero-schiphol.jpg");
+    background-size:cover;
+    background-position:center top;
+    border-bottom:1px solid var(--line);
+  }
+  .info-hero::before{
+    content:''; position:absolute; inset:0; z-index:0;
+    background:linear-gradient(180deg, rgba(15,10,9,0.78) 0%, rgba(15,10,9,0.5) 32%, rgba(15,10,9,0.4) 58%, rgba(15,10,9,0.85) 100%);
+    pointer-events:none;
+  }
+  .info-hero-inner{ position:relative; z-index:2; max-width:1160px; margin:0 auto; }
+  .info-eyebrow{
+    font-family:var(--font-mono); font-size:.72rem; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-text);
+    margin:0 0 1.2rem; display:flex; align-items:center; gap:.6rem;
+  }
+  .info-eyebrow::before{ content:''; width:26px; height:1px; background:var(--ink-text); display:inline-block; flex:none; }
+  h1.info-h1{
+    font-family:var(--font-display); font-weight:600; letter-spacing:-.02em; line-height:.98;
+    font-size:clamp(2.4rem,6vw,4.3rem); text-wrap:balance; margin:0 0 1.2rem; max-width:16ch;
+  }
+  h1.info-h1 em{ font-style:italic; font-weight:500; color:var(--ink-text); }
+  .info-dek{ font-size:1.05rem; line-height:1.65; color:var(--text-soft); max-width:52ch; margin:0 0 2.2rem; }
+
+  .badge-row{ display:flex; flex-wrap:wrap; gap:.7rem; }
+  .badge{
+    display:inline-flex; align-items:center;
+    background:rgba(36,26,23,0.6); border:1px solid var(--line-strong); border-radius:var(--radius-pill);
+    padding:.6rem 1.1rem; font-size:.76rem; color:var(--text-soft); font-family:var(--font-mono); letter-spacing:.03em;
+  }
+
+  /* ============ SECTIONS ============ */
+  .section{ padding:clamp(2.8rem,5.5vw,4.2rem) 1.6rem; }
+  .section.alt{ background:var(--surface-1); border-top:1px solid var(--line); border-bottom:1px solid var(--line); }
+  .section-label{ font-family:var(--font-mono); font-size:.7rem; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-text); margin-bottom:1rem; display:block; }
+  .section-head{ margin-bottom:2.2rem; padding-bottom:1.3rem; border-bottom:1px solid var(--line); }
+  .section-title{ font-family:var(--font-display); font-weight:600; font-size:clamp(1.7rem,3.4vw,2.4rem); line-height:1.1; margin:0 0 .8rem; max-width:26ch; }
+  .section-intro{ font-size:.98rem; line-height:1.7; color:var(--text-soft); max-width:62ch; margin:0; }
+
+  /* ---- diensten (three services) ---- */
+  .service-grid{ display:grid; grid-template-columns:1fr; gap:1.4rem; }
+  @media (min-width:860px){ .service-grid{ grid-template-columns:repeat(3,1fr); } }
+  .service-card{
+    background:var(--surface-1); border:1px solid var(--line); border-top:2px solid var(--ink-fill);
+    border-radius:var(--radius); padding:1.7rem 1.5rem;
+  }
+  .service-card h3{ font-family:var(--font-display); font-weight:600; font-size:1.3rem; margin:0 0 .8rem; letter-spacing:-.005em; }
+  .service-card p{ font-size:.9rem; line-height:1.7; color:var(--text-soft); margin:0; }
+
+  /* ---- chauffeur section ---- */
+  .chauffeur-grid{ display:grid; grid-template-columns:1fr; gap:2.4rem; }
+  @media (min-width:860px){ .chauffeur-grid{ grid-template-columns:1.3fr 1fr; align-items:start; } }
+  .chauffeur-copy p{ font-size:.98rem; line-height:1.75; color:var(--text-soft); margin:0 0 1.1rem; }
+  .chauffeur-copy p:last-child{ margin-bottom:0; }
+  .chauffeur-copy strong{ color:var(--text); }
+  .chauffeur-card{
+    background:var(--surface-1); border:1px solid var(--line); border-radius:var(--radius); padding:1.6rem;
+  }
+  .chauffeur-seal{ display:flex; align-items:center; gap:1rem; margin-bottom:1.3rem; }
+  .chauffeur-seal-ring{
+    width:52px; height:52px; border-radius:var(--radius-pill); border:1px solid var(--brass-soft);
+    box-shadow:inset 0 0 0 1px rgba(207,159,94,0.12);
+    display:flex; align-items:center; justify-content:center; flex:none;
+  }
+  .chauffeur-seal-ring span{ font-family:var(--font-display); font-weight:600; font-style:italic; font-size:.88rem; color:var(--brass); }
+  .chauffeur-seal-text{ font-size:.92rem; }
+  .chauffeur-seal-text b{ display:block; font-family:var(--font-display); font-weight:600; font-size:1.05rem; }
+  .chauffeur-seal-text span{ font-family:var(--font-mono); font-size:.66rem; letter-spacing:.08em; text-transform:uppercase; color:var(--text-soft); }
+  .chauffeur-card-copy{ font-size:.85rem; line-height:1.7; color:var(--text-soft); margin:0; }
+  .chauffeur-note{ margin-top:1.2rem; padding-top:1.1rem; border-top:1px solid var(--line); font-family:var(--font-mono); font-size:.66rem; letter-spacing:.06em; color:var(--text-soft); }
+
+  /* ---- vlucht / schiphol section ---- */
+  .flight-grid{ display:grid; grid-template-columns:1fr; gap:1.3rem; }
+  @media (min-width:760px){ .flight-grid{ grid-template-columns:repeat(3,1fr); } }
+  .flight-step{ border-left:2px solid var(--line-strong); padding:.2rem 0 .2rem 1.1rem; }
+  .flight-step-num{ font-family:var(--font-mono); font-size:.7rem; color:var(--ink-text); letter-spacing:.1em; display:block; margin-bottom:.5rem; }
+  .flight-step h4{ font-family:var(--font-display); font-weight:600; font-size:1.05rem; margin:0 0 .5rem; }
+  .flight-step p{ font-size:.85rem; line-height:1.65; color:var(--text-soft); margin:0; }
+
+  /* ---- betalen (payment methods) ---- */
+  .pay-copy{ font-size:.98rem; line-height:1.75; color:var(--text-soft); max-width:62ch; margin:0 0 1.6rem; }
+  .pay-copy strong{ color:var(--text); }
+  .pay-note{ margin-top:1.2rem; font-size:.85rem; color:var(--text-soft); max-width:62ch; }
+
+  /* ---- FAQ ---- */
+  .faq-list{ max-width:760px; display:flex; flex-direction:column; gap:.6rem; }
+  .faq-item{
+    background:var(--surface-1); border:1px solid var(--line); border-radius:var(--radius); overflow:hidden;
+  }
+  .faq-item summary{
+    cursor:pointer; list-style:none; padding:1.05rem 1.2rem; display:flex; align-items:center; justify-content:space-between; gap:1rem;
+    font-family:var(--font-display); font-weight:600; font-size:1rem;
+  }
+  .faq-item summary::-webkit-details-marker{ display:none; }
+  .faq-item summary::after{
+    content:'+'; font-family:var(--font-mono); font-size:1.1rem; color:var(--ink-text); flex:none;
+    transition:transform .18s ease;
+  }
+  .faq-item[open] summary::after{ transform:rotate(45deg); }
+  .faq-item p{ margin:0; padding:0 1.2rem 1.15rem; font-size:.88rem; line-height:1.7; color:var(--text-soft); }
+
+  /* ============ FOOTER ============ */
+  footer.site-footer{ padding:clamp(2.8rem,6vw,4.4rem) 1.6rem 2.6rem; background:var(--surface-1); border-top:1px solid var(--line); }
+  .footer-inner{ max-width:1160px; margin:0 auto; }
+  .footer-signature{ font-family:var(--font-display); font-weight:600; font-style:italic; font-size:clamp(2.1rem,6vw,3.4rem); line-height:1; margin:0 0 .4rem; letter-spacing:-.01em; }
+  .footer-tagline{ font-family:var(--font-mono); font-size:.7rem; letter-spacing:.12em; text-transform:uppercase; color:var(--brass); margin:0 0 2.4rem; }
+  .footer-links{ display:flex; gap:1.2rem; margin:0 0 1.6rem; flex-wrap:wrap; }
+  .footer-links a{ font-size:.8rem; color:var(--text-soft); text-decoration:none; }
+  .footer-links a:hover{ color:var(--ink-text); }
+  .footer-row{
+    display:flex; justify-content:space-between; align-items:flex-end; flex-wrap:wrap; gap:1.1rem;
+    padding-top:1.7rem; border-top:1px solid var(--line);
+  }
+  .footer-meta{ font-size:.78rem; color:var(--text-soft); line-height:1.7; }
+  .footer-cta{ display:flex; gap:.6rem; }
+
+  @media (max-width:480px){
+    .navright .phone-link{ display:none; }
+    .footer-cta{ width:100%; }
+    .footer-cta .btn{ flex:1; }
+  }
+</style>
+</head>
+<body>
+
+<div class="masthead">
+  <div class="masthead-inner">
+    <span>Praktische informatie &amp; vluchtvolging</span>
+  </div>
+</div>
+
+<nav class="site-nav">
+  <a class="brand" href="index.html" aria-label="Le Grand Taxi, terug naar de homepage">
+    <img class="icon" src="assets/icon-white.png" alt="" width="27" height="27">
+    <img class="wordmark" src="assets/wordmark-white.png" alt="Le Grand Taxi">
+  </a>
+  <div class="navright">
+    <a class="navlink" href="index.html">Home</a>
+    <a class="phone-link" href="tel:+31685639077">06 85 63 90 77</a>
+    <a class="btn" href="index.html">Reserveer</a>
+  </div>
+</nav>
+
+<main>
+
+<div class="info-hero">
+  <!-- background photo: assets/hero-schiphol.jpg (Schiphol tower, client-supplied, see CSS comment above .info-hero) -->
+  <div class="info-hero-inner">
+    <span class="info-eyebrow">Schiphol &middot; informatie</span>
+    <h1 class="info-h1">Uw rit naar Schiphol, <em>tot in de puntjes</em> geregeld</h1>
+    <p class="info-dek">Alles wat u wilt weten voordat u instapt: hoe we uw vlucht volgen, wie er rijdt, hoe u kunt betalen en wat onze drie diensten precies inhouden.</p>
+    <div class="badge-row">
+      <span class="badge">Vaste prijs, vooraf afgesproken</span>
+      <span class="badge">Vlucht wordt real-time gevolgd</span>
+      <span class="badge">Persoonlijk contact, geen callcenter</span>
+      <span class="badge">Vergunninghouder taxivervoer</span>
+    </div>
+  </div>
+</div>
+
+<!-- ============ DIENSTEN ============ -->
+<section class="section" id="diensten" aria-labelledby="diensten-title">
+  <div class="inner">
+    <div class="section-head">
+      <span class="section-label">Onze diensten</span>
+      <h2 class="section-title" id="diensten-title">Drie manieren waarop we u vervoeren</h2>
+      <p class="section-intro">Le Grand Taxi is geen taxi met een meter. Voor elke rit spreken we vooraf een vaste prijs af, of het nu om een korte lokale rit gaat, een transfer naar Schiphol, of terugkerend zakelijk vervoer.</p>
+    </div>
+    <div class="service-grid">
+      <article class="service-card">
+        <h3>Lokaal taxivervoer</h3>
+        <p>Voor ritten binnen en rond Amsterdam, Rotterdam, Utrecht en Almere: naar het station, een afspraak, een avondje uit of gewoon naar huis. U boekt vooraf, spreekt een vaste prijs af en stapt in zonder verrassingen achteraf. Ideaal voor terugkerende ritten waarbij u liever met een vast gezicht rijdt dan met een wisselende taxicentrale.</p>
+      </article>
+      <article class="service-card">
+        <h3>Taxi van en naar de luchthaven</h3>
+        <p>Onze kern: taxivervoer van en naar Schiphol. Bij een vertrek halen we u op tijd op zodat u ruim voor de incheckbalie staat. Bij een aankomst volgen we uw vlucht real-time, zodat een vertraagde landing nooit betekent dat u tevergeefs staat te wachten of dat wij te laat komen. Meer over hoe dat precies werkt leest u verderop op deze pagina.</p>
+      </article>
+      <article class="service-card">
+        <h3>Zakelijk vervoer</h3>
+        <p>Voor bedrijven die op tijd, discreet en representatief vervoerd willen worden: naar een klantafspraak, een luchthaven voor een zakenreis, of structureel woon-werkverkeer voor een collega. Op verzoek stellen we een factuur op naam van uw bedrijf op, zodat zakelijke ritten eenvoudig via de administratie lopen in plaats van los te worden gedeclareerd.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CHAUFFEUR(S) ============ -->
+<section class="section alt" id="chauffeur" aria-labelledby="chauffeur-title">
+  <div class="inner">
+    <div class="chauffeur-grid">
+      <div class="chauffeur-copy">
+        <span class="section-label">Achter het stuur</span>
+        <h2 class="section-title" id="chauffeur-title">Persoonlijk, van deur tot deur</h2>
+        <p>Vandaag rijdt <strong>Michell</strong> zelf het overgrote deel van de ritten. Geen anoniem callcenter, geen wisselende chauffeur bij elke boeking: u boekt bij Le Grand Taxi en u weet wie er voorrijdt. Dat persoonlijke contact, van de bevestiging van uw boeking tot het moment dat u uitstapt, is waar dit bedrijf om draait.</p>
+        <p>Le Grand Taxi is opgezet om mee te groeien. Naarmate de vraag toeneemt, sluiten er zorgvuldig gekozen chauffeurs aan die dezelfde standaard aanhouden: op tijd, representatief en met oog voor de klant. Voor u verandert er niets aan de aanpak, alleen aan wie er precies rijdt.</p>
+        <p>Iedere chauffeur die voor Le Grand Taxi rijdt, doet dat met een geldige chauffeurskaart en de wettelijk verplichte vergunning voor taxivervoer.</p>
+      </div>
+      <div class="chauffeur-card">
+        <div class="chauffeur-seal">
+          <span class="chauffeur-seal-ring" aria-hidden="true"><span>LG</span></span>
+          <span class="chauffeur-seal-text"><b>Michell</b><span>Chauffeur, Le Grand Taxi</span></span>
+        </div>
+        <p class="chauffeur-card-copy">Michell rijdt vandaag zelf het grootste deel van de ritten in en rond Amsterdam, Rotterdam, Utrecht, Almere en Schiphol, met een geldige chauffeurskaart en de wettelijke vergunning voor taxivervoer op zak, en blijft van boeking tot aankomst uw persoonlijke aanspreekpunt. Komen er meer chauffeurs bij, dan verandert er aan die standaard niets.</p>
+        <div class="chauffeur-note">Vergunninghouder taxivervoer &middot; P-136560</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SCHIPHOL / VLUCHTVOLGING ============ -->
+<section class="section" id="schiphol" aria-labelledby="schiphol-title">
+  <div class="inner">
+    <div class="section-head">
+      <span class="section-label">Schiphol &middot; real-time vluchtinformatie</span>
+      <h2 class="section-title" id="schiphol-title">Wij houden uw vlucht in de gaten, u hoeft dat niet te doen</h2>
+      <p class="section-intro">Geef bij het boeken uw vluchtnummer door. Vanaf dat moment volgen we uw vlucht real-time, zodat een vertraging bij u nooit tot een gemiste of te vroege pickup leidt.</p>
+    </div>
+    <div class="flight-grid">
+      <div class="flight-step">
+        <span class="flight-step-num">Bij het boeken</span>
+        <h4>Vluchtnummer doorgeven</h4>
+        <p>U geeft uw vluchtnummer door bij de reservering. Wij koppelen dat aan de actuele vluchtstatus, van geplande landingstijd tot eventuele vertraging.</p>
+      </div>
+      <div class="flight-step">
+        <span class="flight-step-num">Tijdens de vlucht</span>
+        <h4>De ophaaltijd schuift automatisch mee</h4>
+        <p>Landt uw toestel later dan gepland? Dan passen we de ophaaltijd daarop aan, zonder dat u hoeft te bellen, te wijzigen of extra te betalen.</p>
+      </div>
+      <div class="flight-step">
+        <span class="flight-step-num">Na de landing</span>
+        <h4>Contact zodra u er bent</h4>
+        <p>Na het ophalen van uw bagage neemt uw chauffeur rechtstreeks contact met u op om af te spreken waar u elkaar in de aankomsthal treft, zodat u niet hoeft te zoeken.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ BETAALMETHODEN ============ -->
+<section class="section alt" id="betalen" aria-labelledby="betalen-title">
+  <div class="inner">
+    <div class="section-head">
+      <span class="section-label">Tarieven &amp; betalen</span>
+      <h2 class="section-title" id="betalen-title">Betalen zoals het u uitkomt</h2>
+      <p class="section-intro">Geen verrassingen op de rekening: u krijgt vooraf een vaste prijs, en u kiest zelf hoe u die afrekent.</p>
+    </div>
+    <p class="pay-copy">U rekent af zoals het u uitkomt: <strong>vooraf via iDEAL</strong>, <strong>contactloos met pin of creditcard</strong> in de auto, <strong>contant</strong> bij het uitstappen, of <strong>op factuur</strong> op naam van uw bedrijf wanneer het om zakelijk vervoer gaat.</p>
+    <div class="badge-row">
+      <span class="badge">iDEAL</span>
+      <span class="badge">Pin &amp; creditcard</span>
+      <span class="badge">Contant</span>
+      <span class="badge">Op factuur, zakelijk</span>
+    </div>
+    <p class="pay-note">De vaste prijs die u vooraf krijgt bevestigd, blijft staan, ook bij vertraging of drukte onderweg. U betaalt nooit meer dan is afgesproken.</p>
+  </div>
+</section>
+
+<!-- ============ FAQ ============ -->
+<section class="section" id="faq" aria-labelledby="faq-title">
+  <div class="inner">
+    <div class="section-head">
+      <span class="section-label">Veelgestelde vragen</span>
+      <h2 class="section-title" id="faq-title">Nog vragen over uw rit?</h2>
+    </div>
+    <div class="faq-list">
+      <details class="faq-item">
+        <summary>Hoe weet Le Grand Taxi dat mijn vlucht vertraging heeft?</summary>
+        <p>Geeft u bij het boeken uw vluchtnummer door, dan volgen we uw vlucht real-time. Loopt de landing uit, dan schuift de ophaaltijd automatisch mee, zonder dat u hoeft te bellen of iets te wijzigen.</p>
+      </details>
+      <details class="faq-item">
+        <summary>Waar tref ik mijn chauffeur op Schiphol?</summary>
+        <p>Na het ophalen van uw bagage neemt uw chauffeur rechtstreeks contact met u op om af te spreken waar u elkaar in de aankomsthal treft, zodat u niet hoeft te zoeken en er geen wachttijd bij een balie nodig is.</p>
+      </details>
+      <details class="faq-item">
+        <summary>Wat kost een taxi naar of van Schiphol?</summary>
+        <p>Wij rijden niet op de meter. U spreekt vooraf een vaste prijs af via het boekingsformulier op de homepage, gebaseerd op de rit die u invoert, zodat u vooraf precies weet waar u aan toe bent.</p>
+      </details>
+      <details class="faq-item">
+        <summary>Rijden jullie ook buiten Amsterdam, Rotterdam, Utrecht en Almere?</summary>
+        <p>Deze vier steden zijn onze vaste tarieven, maar andere bestemmingen in Nederland zijn ook mogelijk. Bel ons voor een prijsopgave op maat.</p>
+      </details>
+      <details class="faq-item">
+        <summary>Bieden jullie facturatie voor zakelijk vervoer?</summary>
+        <p>Ja. Voor zakelijke ritten kunnen we op verzoek een factuur op naam van uw bedrijf opstellen, handig voor bedrijven die regelmatig gebruikmaken van onze diensten.</p>
+      </details>
+      <details class="faq-item">
+        <summary>Hoe kan ik betalen bij Le Grand Taxi?</summary>
+        <p>Contant, met pin of creditcard in de auto, via iDEAL vooraf, of op factuur bij zakelijke ritten. U spreekt bij het boeken af wat u het beste uitkomt.</p>
+      </details>
+      <details class="faq-item">
+        <summary>Hoe ver van tevoren moet ik boeken?</summary>
+        <p>Vooraf boeken via het formulier op de homepage geeft de meeste zekerheid over uw voorkeurstijd. Heeft u een rit op korte termijn nodig, bel dan gerust, dan kijken we wat er mogelijk is.</p>
+      </details>
+      <details class="faq-item">
+        <summary>Blijft de afgesproken prijs staan bij vertraging of file?</summary>
+        <p>Ja. De vaste prijs die u vooraf krijgt bevestigd, blijft staan, ook als uw vlucht vertraging heeft of het onderweg drukker is dan verwacht.</p>
+      </details>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <p class="footer-signature">Le Grand Taxi</p>
+    <p class="footer-tagline">Persoonlijke chauffeur, vaste prijs</p>
+    <div class="footer-links">
+      <a href="index.html">Home</a>
+      <a href="index.html">Boek een rit</a>
+      <a href="#diensten">Diensten</a>
+      <a href="#chauffeur">Chauffeur(s)</a>
+      <a href="#schiphol">Vluchtinformatie</a>
+      <a href="#betalen">Betalen</a>
+      <a href="#faq">Veelgestelde vragen</a>
+    </div>
+    <div class="footer-row">
+      <div class="footer-meta">
+        <strong style="color:var(--text)">Le Grand Taxi</strong><br>
+        06 85 63 90 77<br>
+        KVK 91578388 &middot; BTW NL004905641B18
+      </div>
+      <div class="footer-cta">
+        <a class="btn ghost" href="tel:+31685639077">Bel</a>
+        <a class="btn" href="index.html">Reserveer</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
