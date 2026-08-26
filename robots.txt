@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://snefhew.github.io/legrandtaxi/sitemap.xml
+Sitemap: https://legrandservice.nl/sitemap.xml

@@ -1,42 +1,42 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://snefhew.github.io/legrandtaxi/</loc>
+    <loc>https://legrandservice.nl/</loc>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://snefhew.github.io/legrandtaxi/en.html</loc>
+    <loc>https://legrandservice.nl/en.html</loc>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://snefhew.github.io/legrandtaxi/amsterdam-schiphol.html</loc>
+    <loc>https://legrandservice.nl/amsterdam-schiphol.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://snefhew.github.io/legrandtaxi/rotterdam-schiphol.html</loc>
+    <loc>https://legrandservice.nl/rotterdam-schiphol.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://snefhew.github.io/legrandtaxi/utrecht-schiphol.html</loc>
+    <loc>https://legrandservice.nl/utrecht-schiphol.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://snefhew.github.io/legrandtaxi/almere-schiphol.html</loc>
+    <loc>https://legrandservice.nl/almere-schiphol.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://snefhew.github.io/legrandtaxi/den-haag-schiphol.html</loc>
+    <loc>https://legrandservice.nl/den-haag-schiphol.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://snefhew.github.io/legrandtaxi/haarlem-schiphol.html</loc>
+    <loc>https://legrandservice.nl/haarlem-schiphol.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
