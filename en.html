@@ -69,7 +69,7 @@
     {
       "@type": "Question",
       "name": "What does a taxi to or from Schiphol cost?",
-      "acceptedAnswer": {"@type": "Answer", "text": "For Schiphol we use fixed transfer rates. From Amsterdam the fare is 39 euro, from Almere 49 euro, from Utrecht 59 euro and from Rotterdam 69 euro. For any other address the form at the top of the page calculates your fixed price automatically."}
+      "acceptedAnswer": {"@type": "Answer", "text": "For Schiphol we use fixed transfer rates. From Amsterdam the fare is 39 euro, from Almere 65 euro, from Utrecht 69 euro and from Rotterdam 99 euro. For any other address the form at the top of the page calculates your fixed price automatically."}
     },
     {
       "@type": "Question",
@@ -1036,7 +1036,7 @@
         </details>
         <details class="faq-item">
           <summary>What does a taxi to or from Schiphol cost?</summary>
-          <p>For Schiphol we use fixed transfer rates. From Amsterdam the fare is 39 euro, from Almere 49 euro, from Utrecht 59 euro and from Rotterdam 69 euro. For any other address the form at the top of the page calculates your fixed price automatically.</p>
+          <p>For Schiphol we use fixed transfer rates. From Amsterdam the fare is 39 euro, from Almere 65 euro, from Utrecht 69 euro and from Rotterdam 99 euro. For any other address the form at the top of the page calculates your fixed price automatically.</p>
         </details>
         <details class="faq-item">
           <summary>How does Le Grand Services know my flight is delayed?</summary>
@@ -1284,12 +1284,12 @@
   // new pricing path (hero form and modal both funnel through it).
   var MIN_FARE = 25;
 
-  // Every ride runs on Michell's driving meter: EUR 1,20 per km + EUR 0,50 per
-  // minute of the real route. Trips to or from Schiphol additionally get a
-  // per-city minimum (see computeRoutePrice) so a known-city transfer never
-  // drops below its advertised "vanaf" price - a farther address in that city
-  // simply meters above it. Same absolute MIN_FARE floor for everything.
-  var METER_PER_KM = 1.20;
+  // Two driving-meter rates. Trips to/from Schiphol: EUR 1,20 per km (tuned so
+  // the per-city minimums below hold, e.g. Rotterdam ~99). Every other local
+  // ride: EUR 2,15 per km. Both add EUR 0,50 per minute and never drop below
+  // MIN_FARE. Schiphol trips also get the per-city minimum floor.
+  var SCHIPHOL_PER_KM = 1.20;
+  var METER_PER_KM = 2.15;
   var METER_PER_MIN = 0.50;
   // If routing returns no duration (rare fallback), estimate minutes from km at
   // ~55 km/h so the meter still has a time component instead of failing.
@@ -1538,17 +1538,20 @@
       // (2,15/km + 0,50/min). isSchiphol() is what decides which model is used.
       var schipholTrip = isSchiphol(fromPoint.lat, fromPoint.lon) || isSchiphol(toPoint.lat, toPoint.lon);
 
-      // All rides meter on distance + time. Schiphol trips then get the per-city
-      // minimum floor (Amsterdam >= 39, Rotterdam >= 69, Utrecht >= 59, Almere
-      // >= 49) so a close address never drops below its advertised price, while a
-      // farther one (e.g. Amsterdam Zuidoost) simply meters above it.
+      // Two meters: Schiphol trips at SCHIPHOL_PER_KM (tuned so the per-city
+      // minimums hold - Amsterdam >= 39, Almere >= 65, Utrecht >= 69, Rotterdam
+      // >= 99), every other local ride at the higher METER_PER_KM. Both add the
+      // per-minute rate and floor at MIN_FARE.
       var minutes = (drivingMin != null && drivingMin > 0) ? drivingMin : (km * FALLBACK_MIN_PER_KM);
-      var amount = Math.max(MIN_FARE, METER_PER_KM * km + METER_PER_MIN * minutes);
+      var amount;
       if (schipholTrip) {
+        amount = Math.max(MIN_FARE, SCHIPHOL_PER_KM * km + METER_PER_MIN * minutes);
         var fromAnchor = findCityAnchor(fromPoint.lat, fromPoint.lon, fromPoint.woonplaats);
         var toAnchor = findCityAnchor(toPoint.lat, toPoint.lon, toPoint.woonplaats);
         if (fromAnchor) amount = Math.max(amount, fromAnchor.price);
         if (toAnchor) amount = Math.max(amount, toAnchor.price);
+      } else {
+        amount = Math.max(MIN_FARE, METER_PER_KM * km + METER_PER_MIN * minutes);
       }
       cb({ amount: amount });
     });
