@@ -225,6 +225,8 @@
   /* ============ HERO ============ */
   .hero{ position:relative; overflow:hidden; padding:clamp(2.8rem,7vw,5.4rem) 1.6rem clamp(2.8rem,6vw,4.4rem); }
   .hero-inner{ max-width:1160px; margin:0 auto; position:relative; z-index:2; }
+  .hero-mark{ position:absolute; z-index:1; pointer-events:none; right:-4%; top:50%; transform:translateY(-50%); width:min(52vw,560px); opacity:.06; }
+  @media (min-width:760px){ .hero-mark{ right:2%; width:min(34vw,420px); opacity:.07; } }
 
   .hero-grid{ display:grid; grid-template-columns:1fr; gap:2.6rem; }
   .hero-lead{ display:flex; flex-direction:column; }
@@ -720,25 +722,15 @@
 
 <main>
 <div class="hero">
+  <img class="hero-mark" src="assets/icon-dark.png" alt="" aria-hidden="true">
   <div class="hero-inner">
     <div class="hero-grid">
       <div class="hero-lead">
         <span class="eyebrow">Schiphol &middot; fixed price</span>
         <h1 class="hero-h1">No meter.<br><em>One price.</em></h1>
-        <div class="process">
-          <span>Book your ride</span>
-          <span class="arrow">&rarr;</span>
-          <span><b>Michell</b> confirms in person</span>
-          <span class="arrow">&rarr;</span>
-          <span>fixed price, no surprises</span>
-        </div>
         <img class="hero-illustration" src="assets/hero-illustratie.jpg" alt="Motorway across the polder toward Schiphol at sunrise" width="1600" height="873">
       </div>
       <div class="hero-aside">
-        <div class="hero-seal" aria-hidden="true">
-          <span class="hero-seal-ring"><span>LG</span></span>
-          <span class="hero-seal-text">Driver<br>Michell</span>
-        </div>
         <div class="hero-calc">
           <div id="heroFormView">
             <p class="hero-calc-label">Get your fixed price</p>
@@ -1293,6 +1285,16 @@
   // new pricing path (hero form and modal both funnel through it).
   var MIN_FARE = 25;
 
+  // Non-Schiphol rides (neither end is Schiphol) are priced on a driving meter,
+  // per Michell: EUR 2,15 per km + EUR 0,50 per minute of the real route. The
+  // fixed advertised tariffs stay ONLY for trips to or from Schiphol; a normal
+  // address-to-address ride runs on this meter instead. Same MIN_FARE floor.
+  var METER_PER_KM = 2.15;
+  var METER_PER_MIN = 0.50;
+  // If routing returns no duration (rare fallback), estimate minutes from km at
+  // ~55 km/h so the meter still has a time component instead of failing.
+  var FALLBACK_MIN_PER_KM = 1.1;
+
   // How close a geocoded point must be to a named city's centre (or match
   // its woonplaats name) to count as "in/near that city" for the per-city
   // minimum below.
@@ -1375,7 +1377,7 @@
         var summary = data && data.features && data.features[0] && data.features[0].properties && data.features[0].properties.summary;
         if (!summary && data && data.routes && data.routes[0]) summary = data.routes[0].summary; // defensive: POST-style shape
         if (!summary || typeof summary.distance !== 'number'){ cb(null); return; }
-        cb(summary.distance / 1000);
+        cb({ km: summary.distance / 1000, min: (typeof summary.duration === 'number' ? summary.duration / 60 : null) });
       })
       .catch(function(){
         clearTimeout(timer);
@@ -1525,24 +1527,27 @@
   function computeRoutePrice(fromPoint, toPoint, cb){
     var straightKm = haversineKm(fromPoint.lat, fromPoint.lon, toPoint.lat, toPoint.lon);
     var fromR = routingCoord(fromPoint), toR = routingCoord(toPoint);
-    drivingDistanceKm(fromR.lat, fromR.lon, toR.lat, toR.lon, function(drivingKm){
+    drivingDistanceKm(fromR.lat, fromR.lon, toR.lat, toR.lon, function(route){
+      var drivingKm = route ? route.km : null;
+      var drivingMin = route ? route.min : null;
       var km = (drivingKm != null && drivingKm > 0) ? drivingKm : straightKm;
       var source = (drivingKm != null && drivingKm > 0) ? 'driving' : 'straight-line';
-      var amount = estimateFromDistance(km, source); // absolute MIN_FARE floor applied here, always
-      // The per-city minimum (Amsterdam >= 39, etc.) exists ONLY to protect the
-      // advertised Schiphol "vanaf" tariffs. It must apply only when Schiphol is
-      // actually one end of the trip - otherwise a short local ride between two
-      // non-Schiphol addresses that merely happens to sit near a city anchor
-      // (e.g. Vinkeveen -> Duivendrecht, which is near the Amsterdam anchor)
-      // gets wrongly inflated to the Amsterdam Schiphol-floor. For any trip that
-      // does not touch Schiphol, only the real distance price + the low absolute
-      // MIN_FARE floor apply.
+
+      // Fixed advertised tariffs apply ONLY to trips to or from Schiphol. Every
+      // other address-to-address ride runs on Michell's driving meter
+      // (2,15/km + 0,50/min). isSchiphol() is what decides which model is used.
       var schipholTrip = isSchiphol(fromPoint.lat, fromPoint.lon) || isSchiphol(toPoint.lat, toPoint.lon);
+
+      var amount;
       if (schipholTrip) {
+        amount = estimateFromDistance(km, source);
         var fromAnchor = findCityAnchor(fromPoint.lat, fromPoint.lon, fromPoint.woonplaats);
         var toAnchor = findCityAnchor(toPoint.lat, toPoint.lon, toPoint.woonplaats);
         if (fromAnchor) amount = Math.max(amount, fromAnchor.price);
         if (toAnchor) amount = Math.max(amount, toAnchor.price);
+      } else {
+        var minutes = (drivingMin != null && drivingMin > 0) ? drivingMin : (km * FALLBACK_MIN_PER_KM);
+        amount = Math.max(MIN_FARE, METER_PER_KM * km + METER_PER_MIN * minutes);
       }
       cb({ amount: amount });
     });
