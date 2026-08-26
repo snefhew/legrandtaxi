@@ -849,17 +849,17 @@
       <a class="rate-row" href="rotterdam-schiphol.html">
         <span class="rate-city"><span class="rate-city-name">Rotterdam <span class="rate-city-dest">- Schiphol</span></span><span class="rate-eta">ca. 50 min</span></span>
         <span class="rate-leader" aria-hidden="true"></span>
-        <span class="rate-amt"><span class="rate-amt-prefix">vanaf</span> &euro;69,-</span>
+        <span class="rate-amt"><span class="rate-amt-prefix">vanaf</span> &euro;99,-</span>
       </a>
       <a class="rate-row" href="utrecht-schiphol.html">
         <span class="rate-city"><span class="rate-city-name">Utrecht <span class="rate-city-dest">- Schiphol</span></span><span class="rate-eta">ca. 40 min</span></span>
         <span class="rate-leader" aria-hidden="true"></span>
-        <span class="rate-amt"><span class="rate-amt-prefix">vanaf</span> &euro;59,-</span>
+        <span class="rate-amt"><span class="rate-amt-prefix">vanaf</span> &euro;69,-</span>
       </a>
       <a class="rate-row" href="almere-schiphol.html">
         <span class="rate-city"><span class="rate-city-name">Almere <span class="rate-city-dest">- Schiphol</span></span><span class="rate-eta">ca. 35 min</span></span>
         <span class="rate-leader" aria-hidden="true"></span>
-        <span class="rate-amt"><span class="rate-amt-prefix">vanaf</span> &euro;49,-</span>
+        <span class="rate-amt"><span class="rate-amt-prefix">vanaf</span> &euro;65,-</span>
       </a>
     </div>
     <p class="price-note">Indicatieve startprijzen voor deze populaire routes. Je chauffeur kiest altijd de snelste veilige route en kent Schiphol als geen ander. Naar een ander adres? Reken hierboven je eigen vaste prijs uit.</p>
@@ -1284,11 +1284,12 @@
   // new pricing path (hero form and modal both funnel through it).
   var MIN_FARE = 25;
 
-  // Non-Schiphol rides (neither end is Schiphol) are priced on a driving meter,
-  // per Michell: EUR 2,15 per km + EUR 0,50 per minute of the real route. The
-  // fixed advertised tariffs stay ONLY for trips to or from Schiphol; a normal
-  // address-to-address ride runs on this meter instead. Same MIN_FARE floor.
-  var METER_PER_KM = 2.15;
+  // Every ride runs on Michell's driving meter: EUR 1,20 per km + EUR 0,50 per
+  // minute of the real route. Trips to or from Schiphol additionally get a
+  // per-city minimum (see computeRoutePrice) so a known-city transfer never
+  // drops below its advertised "vanaf" price - a farther address in that city
+  // simply meters above it. Same absolute MIN_FARE floor for everything.
+  var METER_PER_KM = 1.20;
   var METER_PER_MIN = 0.50;
   // If routing returns no duration (rare fallback), estimate minutes from km at
   // ~55 km/h so the meter still has a time component instead of failing.
@@ -1308,9 +1309,9 @@
   // floor, based on their own real distance.
   var CITY_ANCHORS = [
     { name: 'amsterdam', price: 39, lat: 52.37344272, lon: 4.90454379 },
-    { name: 'rotterdam', price: 69, lat: 51.92248806, lon: 4.48653571 },
-    { name: 'utrecht',   price: 59, lat: 52.0886922,  lon: 5.09520363 },
-    { name: 'almere',    price: 49, lat: 52.40247126, lon: 5.20565106 }
+    { name: 'rotterdam', price: 99, lat: 51.92248806, lon: 4.48653571 },
+    { name: 'utrecht',   price: 69, lat: 52.0886922,  lon: 5.09520363 },
+    { name: 'almere',    price: 65, lat: 52.40247126, lon: 5.20565106 }
   ];
 
   var PDOK_URL = 'https://api.pdok.nl/bzk/locatieserver/search/v3_1/free';
@@ -1537,21 +1538,17 @@
       // (2,15/km + 0,50/min). isSchiphol() is what decides which model is used.
       var schipholTrip = isSchiphol(fromPoint.lat, fromPoint.lon) || isSchiphol(toPoint.lat, toPoint.lon);
 
-      var amount;
+      // All rides meter on distance + time. Schiphol trips then get the per-city
+      // minimum floor (Amsterdam >= 39, Rotterdam >= 69, Utrecht >= 59, Almere
+      // >= 49) so a close address never drops below its advertised price, while a
+      // farther one (e.g. Amsterdam Zuidoost) simply meters above it.
+      var minutes = (drivingMin != null && drivingMin > 0) ? drivingMin : (km * FALLBACK_MIN_PER_KM);
+      var amount = Math.max(MIN_FARE, METER_PER_KM * km + METER_PER_MIN * minutes);
       if (schipholTrip) {
-        // Schiphol: the distance formula calibrated to the fixed tariffs, then
-        // the per-city minimum (Amsterdam >= 39, etc.) that protects the
-        // advertised "vanaf" prices. Only ever applied on Schiphol trips.
-        amount = estimateFromDistance(km, source);
         var fromAnchor = findCityAnchor(fromPoint.lat, fromPoint.lon, fromPoint.woonplaats);
         var toAnchor = findCityAnchor(toPoint.lat, toPoint.lon, toPoint.woonplaats);
         if (fromAnchor) amount = Math.max(amount, fromAnchor.price);
         if (toAnchor) amount = Math.max(amount, toAnchor.price);
-      } else {
-        // Non-Schiphol: driving meter. Use the real route minutes; if routing
-        // gave none, estimate from km. Same absolute MIN_FARE floor.
-        var minutes = (drivingMin != null && drivingMin > 0) ? drivingMin : (km * FALLBACK_MIN_PER_KM);
-        amount = Math.max(MIN_FARE, METER_PER_KM * km + METER_PER_MIN * minutes);
       }
       cb({ amount: amount });
     });
